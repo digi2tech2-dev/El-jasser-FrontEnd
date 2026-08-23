@@ -980,53 +980,33 @@ const ProductPurchaseDialog = ({
               </div>
             ) : null}
 
-            <label className="purchase-dialog-field purchase-dialog-quantity-field">
-              <span className="purchase-dialog-field-label"><Package className="h-4 w-4" />{copy.quantity}</span>
-              <div className="purchase-dialog-input-shell">
-                <Package className="purchase-dialog-input-icon h-4 w-4" />
+            {/* ── Quantity + Total — single premium row ── */}
+            <div className="ppd-gold-row">
+              <div className="ppd-gold-qty">
+                <span className="ppd-gold-label">{copy.quantity}</span>
                 <input
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9,]*"
                   dir="ltr"
+                  className="ppd-gold-input"
                   value={quantityInput}
-                  placeholder={copy.quantityPlaceholder}
+                  placeholder="0"
                   onChange={(event) => {
                     setQuantityInput(formatQuantityInput(event.target.value));
                     setFormError('');
                   }}
                 />
+                <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} — {formatCount(quantityMeta.maxQty)}</span>
               </div>
-              <small className="purchase-dialog-quantity-limits is-muted">
-                <span>
-                  {copy.minQuantity}
-                  <strong dir="ltr">{formatCount(quantityMeta.minQty)}</strong>
-                </span>
-                <span>
-                  {copy.maxQuantity}
-                  <strong dir="ltr">{formatCount(quantityMeta.maxQty)}</strong>
-                </span>
-              </small>
-            </label>
-
-            <div className="purchase-dialog-total is-muted">
-              <div className="purchase-dialog-summary-title">
-                <span>{copy.purchaseSummary}</span>
-                <ShoppingCart className="h-3.5 w-3.5" />
+              <div className="ppd-gold-divider" />
+              <div className="ppd-gold-total">
+                <span className="ppd-gold-label">{copy.total}</span>
+                <strong className="ppd-gold-price" dir="ltr">{formattedTotalPrice}</strong>
+                {shouldShowUsdEquivalent ? (
+                  <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span>
+                ) : null}
               </div>
-              <div className="purchase-dialog-total-primary">
-                <span>{copy.total}</span>
-                <strong dir="ltr">{formattedTotalPrice}</strong>
-              </div>
-              {shouldShowUsdEquivalent ? (
-                <div className="purchase-dialog-usd-equivalent">
-                  <div>
-                    <span>{copy.usdEquivalent}</span>
-                    <small>{copy.usdSettlementNote}</small>
-                  </div>
-                  <strong dir="ltr">{formattedTotalPriceUsd}</strong>
-                </div>
-              ) : null}
             </div>
 
             {hasPrimaryOrderField ? (

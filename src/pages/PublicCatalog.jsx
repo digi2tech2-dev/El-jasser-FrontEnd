@@ -50,7 +50,7 @@ import targetSalesImage from '../assets/تارجت.jpg';
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
 const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb5xkFpFMqrUmvTSil0Q';
-const SLIDE_TWO_URL = 'https://chat.whatsapp.com/H4FHROhJBEFLYGRc8aqtA0';
+const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDgien6RGJJnl8WYV0Q';
 const PUBLIC_NOTICES_SEEN_KEY = 'ka-card-public-notices-seen-v1';
 const normalizeCategoryKey = (value) => String(value || '').trim().toLowerCase();
 

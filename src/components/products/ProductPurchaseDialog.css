@@ -3283,3 +3283,789 @@
     color: #4ade80;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PPD — Quantity Block (New Design)
+═══════════════════════════════════════════════════════════ */
+
+.ppd-qty-block {
+  margin-top: 0.75rem;
+  border: 1px solid rgb(99 102 241 / 0.22);
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, rgb(30 27 75 / 0.55), rgb(15 23 42 / 0.72));
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 8px 24px -16px rgb(99 102 241 / 0.4);
+}
+
+.ppd-qty-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem 0.5rem;
+  border-bottom: 1px solid rgb(99 102 241 / 0.14);
+  flex-wrap: wrap;
+}
+
+.ppd-qty-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  color: rgb(199 210 254 / 0.9);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.ppd-qty-label svg {
+  color: #818cf8;
+}
+
+.ppd-qty-limits {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ppd-qty-limit-sep {
+  width: 1px;
+  height: 1.1rem;
+  background: rgb(99 102 241 / 0.28);
+  border-radius: 999px;
+}
+
+.ppd-qty-limit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-radius: 999px;
+  padding: 0.18rem 0.52rem;
+  font-size: 0.64rem;
+}
+
+.ppd-qty-limit-min {
+  border: 1px solid rgb(251 191 36 / 0.22);
+  background: rgb(251 191 36 / 0.08);
+}
+
+.ppd-qty-limit-max {
+  border: 1px solid rgb(34 211 238 / 0.22);
+  background: rgb(34 211 238 / 0.07);
+}
+
+.ppd-qty-limit-key {
+  color: rgb(203 213 225 / 0.65);
+  font-weight: 700;
+}
+
+.ppd-qty-limit-min strong {
+  color: #fcd34d;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ppd-qty-limit-max strong {
+  color: #67e8f9;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ppd-qty-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ppd-qty-input-ico {
+  position: absolute;
+  inset-inline-start: 0.85rem;
+  color: #818cf8;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.ppd-qty-input {
+  width: 100%;
+  min-height: 3rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  outline: 0;
+  padding: 0 3rem 0 2.6rem;
+  text-align: center;
+  transition: background-color 160ms ease;
+}
+
+.ppd-qty-input:focus {
+  background: rgb(99 102 241 / 0.06) !important;
+}
+
+.ppd-qty-input::placeholder {
+  color: rgb(199 210 254 / 0.32) !important;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.ppd-qty-live {
+  position: absolute;
+  inset-inline-end: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(99 102 241 / 0.32);
+  border-radius: 999px;
+  background: rgb(99 102 241 / 0.14);
+  color: #a5b4fc;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 0.12rem 0.48rem;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: ppd-live-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@keyframes ppd-live-in {
+  from { opacity: 0; transform: scale(0.8) translateX(4px); }
+  to   { opacity: 1; transform: scale(1) translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PPD — Purchase Summary Block (New Design)
+═══════════════════════════════════════════════════════════ */
+
+.ppd-summary-block {
+  position: relative;
+  margin-top: 0.65rem;
+  border: 1px solid rgb(20 184 166 / 0.26);
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, rgb(6 44 38 / 0.72), rgb(4 30 40 / 0.82));
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 12px 32px -20px rgb(20 184 166 / 0.45);
+}
+
+.ppd-summary-block::before {
+  content: '';
+  position: absolute;
+  inset-inline: 12%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(45 212 191 / 0.5), transparent);
+  pointer-events: none;
+}
+
+.ppd-summary-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  margin: 0.65rem 0.9rem 0;
+  border: 1px solid rgb(20 184 166 / 0.2);
+  border-radius: 999px;
+  background: rgb(20 184 166 / 0.08);
+  color: rgb(94 234 212 / 0.85);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.56rem;
+  text-transform: uppercase;
+}
+
+.ppd-summary-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem 0.6rem;
+}
+
+.ppd-summary-total-label {
+  color: rgb(148 163 184 / 0.78);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.ppd-summary-total-value {
+  color: #ccfbf1;
+  font-size: 1.42rem;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.ppd-summary-usd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.45rem 0.9rem 0.65rem;
+  border-top: 1px solid rgb(20 184 166 / 0.14);
+}
+
+.ppd-summary-usd-label {
+  color: rgb(148 163 184 / 0.6);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.ppd-summary-usd-value {
+  border: 1px solid rgb(74 222 128 / 0.22);
+  border-radius: 999px;
+  background: rgb(74 222 128 / 0.08);
+  color: #86efac;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 0.18rem 0.56rem;
+}
+
+/* ── Light mode overrides ── */
+
+:root:not(.dark) .ppd-qty-block {
+  border-color: rgb(99 102 241 / 0.18);
+  background: linear-gradient(135deg, rgb(238 242 255 / 0.9), rgb(245 247 255 / 0.95));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 8px 24px -16px rgb(99 102 241 / 0.18);
+}
+
+:root:not(.dark) .ppd-qty-header {
+  border-bottom-color: rgb(99 102 241 / 0.1);
+}
+
+:root:not(.dark) .ppd-qty-label {
+  color: rgb(79 70 229 / 0.85);
+}
+
+:root:not(.dark) .ppd-qty-label svg {
+  color: #6366f1;
+}
+
+:root:not(.dark) .ppd-qty-input {
+  color: #1e1b4b !important;
+}
+
+:root:not(.dark) .ppd-qty-input::placeholder {
+  color: rgb(99 102 241 / 0.38) !important;
+}
+
+:root:not(.dark) .ppd-qty-limit-min {
+  border-color: rgb(245 158 11 / 0.28);
+  background: rgb(245 158 11 / 0.08);
+}
+
+:root:not(.dark) .ppd-qty-limit-max {
+  border-color: rgb(6 182 212 / 0.26);
+  background: rgb(6 182 212 / 0.07);
+}
+
+:root:not(.dark) .ppd-qty-limit-min strong {
+  color: #b45309;
+}
+
+:root:not(.dark) .ppd-qty-limit-max strong {
+  color: #0e7490;
+}
+
+:root:not(.dark) .ppd-qty-input-ico {
+  color: #6366f1;
+}
+
+:root:not(.dark) .ppd-qty-live {
+  border-color: rgb(99 102 241 / 0.26);
+  background: rgb(99 102 241 / 0.08);
+  color: #4f46e5;
+}
+
+:root:not(.dark) .ppd-summary-block {
+  border-color: rgb(15 118 110 / 0.2);
+  background: linear-gradient(135deg, rgb(236 253 245 / 0.92), rgb(240 255 254 / 0.95));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 12px 32px -20px rgb(15 118 110 / 0.18);
+}
+
+:root:not(.dark) .ppd-summary-block::before {
+  background: linear-gradient(90deg, transparent, rgb(15 118 110 / 0.3), transparent);
+}
+
+:root:not(.dark) .ppd-summary-kicker {
+  border-color: rgb(15 118 110 / 0.18);
+  background: rgb(15 118 110 / 0.07);
+  color: #0f766e;
+}
+
+:root:not(.dark) .ppd-summary-total-label {
+  color: rgb(71 85 105 / 0.8);
+}
+
+:root:not(.dark) .ppd-summary-total-value {
+  color: #0f766e;
+}
+
+:root:not(.dark) .ppd-summary-usd-row {
+  border-top-color: rgb(15 118 110 / 0.12);
+}
+
+:root:not(.dark) .ppd-summary-usd-label {
+  color: rgb(71 85 105 / 0.65);
+}
+
+:root:not(.dark) .ppd-summary-usd-value {
+  border-color: rgb(22 163 74 / 0.22);
+  background: rgb(22 163 74 / 0.07);
+  color: #15803d;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PPD — Gold Premium Overrides (Logo Colors)
+   Palette: #FFF2B5 #E9BE58 #FFD978 #B87413 #9C5E08
+   Background: #0A0906 #141008 #201D16
+═══════════════════════════════════════════════════════════ */
+
+/* ── Card shell ── */
+.purchase-dialog-card {
+  border-color: rgb(233 190 88 / 0.22);
+  background: linear-gradient(168deg, #0e0c08 2%, #090806 46%, #0d0b07 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 242 181 / 0.08),
+    0 0 0 1px rgb(156 94 8 / 0.14),
+    0 30px 80px -40px rgb(0 0 0 / 0.92);
+}
+
+.purchase-dialog-grid {
+  background: linear-gradient(180deg, rgb(233 190 88 / 0.04), transparent 55%);
+}
+
+/* ── Close button ── */
+.purchase-dialog-close {
+  border-color: rgb(233 190 88 / 0.18);
+  background: rgb(20 16 8 / 0.78);
+  color: #FFD978;
+}
+
+/* ── Product image frame ── */
+.purchase-dialog-image {
+  border-color: rgb(184 116 19 / 0.22);
+  background: rgb(18 14 8 / 0.85);
+  box-shadow: inset 0 1px 0 rgb(255 242 181 / 0.06);
+}
+
+/* ── Product name ── */
+.purchase-dialog-product h2 {
+  color: #FFF2B5;
+}
+
+.purchase-dialog-product p {
+  color: rgb(233 190 88 / 0.55);
+}
+
+/* ── Availability badge ── */
+.purchase-dialog-product .is-available {
+  border-color: rgb(233 190 88 / 0.28);
+  background: rgb(233 190 88 / 0.1);
+  color: #FFD978;
+}
+
+/* ── Description (Note Box) ── */
+.purchase-dialog-description {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgb(233 190 88 / 0.32);
+  background: linear-gradient(135deg, rgb(233 190 88 / 0.12), rgb(32 26 15 / 0.7));
+  color: #FFF2B5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 rgb(255 242 181 / 0.15),
+    0 4px 16px -8px rgb(233 190 88 / 0.25);
+}
+
+.purchase-dialog-description-icon {
+  color: #FFD978;
+  background: rgb(233 190 88 / 0.18);
+  border: 1px solid rgb(233 190 88 / 0.3);
+  padding: 0.22rem;
+  border-radius: 0.6rem;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* ── Account number card ── */
+.purchase-dialog-copy-card {
+  border-color: rgb(184 116 19 / 0.2);
+  background: rgb(20 16 8 / 0.6);
+}
+
+.purchase-dialog-copy-card:hover {
+  border-color: rgb(233 190 88 / 0.42);
+  background: rgb(233 190 88 / 0.08);
+}
+
+.purchase-dialog-copy-card svg {
+  color: #E9BE58;
+}
+
+/* ── Field labels ── */
+.purchase-dialog-field span,
+.purchase-dialog-total span,
+.purchase-dialog-price-card span {
+  color: rgb(255 217 120 / 0.6);
+}
+
+/* ── Input fields ── */
+.purchase-dialog-field input {
+  border: 1.5px solid rgb(233 190 88 / 0.55);
+  border-radius: 0.85rem;
+  background: rgb(10 8 4 / 0.78) !important;
+  color: #FFF2B5 !important;
+  animation: ppd-pulse-glow 3.5s ease-in-out infinite;
+  transition: all 0.25s ease;
+}
+
+.purchase-dialog-field input:focus {
+  border-color: #FFD978;
+  background: rgb(10 8 4 / 0.92) !important;
+  animation: none;
+  box-shadow:
+    0 0 18px 2px rgb(233 190 88 / 0.65),
+    inset 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.purchase-dialog-field input::placeholder {
+  color: rgb(233 190 88 / 0.28) !important;
+}
+
+/* ── Buy / Cancel buttons ── */
+.purchase-dialog-primary {
+  background: linear-gradient(135deg, #9C5E08, #B87413 50%, #9C5E08);
+  color: #FFF2B5;
+  box-shadow:
+    inset 0 1px 0 rgb(255 242 181 / 0.22),
+    0 18px 40px -24px rgb(156 94 8 / 0.7);
+}
+
+.purchase-dialog-secondary {
+  border-color: rgb(184 116 19 / 0.2);
+  background: rgb(20 16 8 / 0.5);
+  color: rgb(255 217 120 / 0.7);
+}
+
+/* ── Error ── */
+.purchase-dialog-error {
+  border-color: rgb(220 38 38 / 0.3);
+  background: rgb(80 12 12 / 0.35);
+  color: #fca5a5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PPD-GOLD — Quantity + Total in ONE row
+═══════════════════════════════════════════════════════════ */
+
+.ppd-gold-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 0.7rem;
+  border: 1px solid rgb(233 190 88 / 0.24);
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, rgb(32 29 22 / 0.9), rgb(14 12 8 / 0.95));
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgb(255 242 181 / 0.07),
+    0 10px 28px -18px rgb(156 94 8 / 0.4);
+}
+
+.ppd-gold-qty,
+.ppd-gold-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 0.6rem 0.6rem;
+  gap: 0.22rem;
+}
+
+.ppd-gold-label {
+  color: rgb(255 217 120 / 0.55);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ppd-gold-divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 0.5rem 0;
+  background: linear-gradient(180deg, transparent, rgb(233 190 88 / 0.35), transparent);
+}
+
+/* ── Quantity input ── */
+.ppd-gold-input {
+  width: 100%;
+  max-width: 7.5rem;
+  border: 1.5px solid rgb(233 190 88 / 0.55);
+  border-radius: 0.85rem;
+  background: rgb(20 16 9 / 0.75) !important;
+  color: #FFF2B5 !important;
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  outline: 0;
+  padding: 0.32rem 0.5rem;
+  text-align: center;
+  animation: ppd-pulse-glow 3.5s ease-in-out infinite;
+  transition: all 0.25s ease;
+}
+
+.ppd-gold-input:focus {
+  border-color: #FFD978;
+  background: rgb(24 19 10 / 0.95) !important;
+  animation: none;
+  box-shadow:
+    0 0 18px 2px rgb(233 190 88 / 0.65),
+    inset 0 1px 3px rgb(0 0 0 / 0.5);
+}
+
+@keyframes ppd-pulse-glow {
+  0%, 100% {
+    border-color: rgb(233 190 88 / 0.42);
+    box-shadow:
+      0 0 8px 0px rgb(233 190 88 / 0.28),
+      inset 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+  50% {
+    border-color: rgb(255 217 120 / 0.85);
+    box-shadow:
+      0 0 14px 2px rgb(233 190 88 / 0.52),
+      inset 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+.ppd-gold-input::placeholder {
+  color: rgb(233 190 88 / 0.25) !important;
+  font-weight: 800;
+}
+
+/* ── Min-Max range ── */
+.ppd-gold-range {
+  color: rgb(184 116 19 / 0.55);
+  font-size: 0.56rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ── Total price ── */
+.ppd-gold-price {
+  color: #FFD978;
+  font-size: 1.3rem;
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* ── USD equivalent pill ── */
+.ppd-gold-usd {
+  display: inline-flex;
+  margin-top: 0.1rem;
+  border: 1px solid rgb(34 197 94 / 0.28);
+  border-radius: 999px;
+  background: rgb(34 197 94 / 0.1);
+  color: #4ade80;
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 0.1rem 0.42rem;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PPD-GOLD — Light-mode overrides
+═══════════════════════════════════════════════════════════ */
+
+:root:not(.dark) .purchase-dialog-card {
+  border-color: rgb(184 116 19 / 0.14);
+  background: linear-gradient(168deg, #fffdf6 2%, #fefcf3 46%, #fdf8eb 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 0 0 1px rgb(184 116 19 / 0.08),
+    0 30px 80px -40px rgb(60 40 10 / 0.22);
+}
+
+:root:not(.dark) .purchase-dialog-grid {
+  background: linear-gradient(180deg, rgb(184 116 19 / 0.04), transparent 55%);
+}
+
+:root:not(.dark) .purchase-dialog-close {
+  border-color: rgb(184 116 19 / 0.14);
+  background: rgb(255 253 246 / 0.9);
+  color: #9C5E08;
+}
+
+:root:not(.dark) .purchase-dialog-image {
+  border-color: rgb(184 116 19 / 0.12);
+  background: rgb(254 250 238 / 0.88);
+}
+
+:root:not(.dark) .purchase-dialog-product h2 {
+  color: #4a3006;
+}
+
+:root:not(.dark) .purchase-dialog-product p {
+  color: rgb(156 94 8 / 0.55);
+}
+
+:root:not(.dark) .purchase-dialog-product .is-available {
+  border-color: rgb(156 94 8 / 0.2);
+  background: rgb(233 190 88 / 0.1);
+  color: #9C5E08;
+}
+
+:root:not(.dark) .purchase-dialog-description {
+  border-color: rgb(184 116 19 / 0.28);
+  background: linear-gradient(135deg, rgb(255 248 225 / 0.95), rgb(254 242 200 / 0.9));
+  color: #68400C;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 4px 16px -8px rgb(184 116 19 / 0.15);
+}
+
+:root:not(.dark) .purchase-dialog-description-icon {
+  color: #8C5C18;
+  background: rgb(233 190 88 / 0.2);
+  border-color: rgb(184 116 19 / 0.24);
+}
+
+:root:not(.dark) .purchase-dialog-field span,
+:root:not(.dark) .purchase-dialog-total span,
+:root:not(.dark) .purchase-dialog-price-card span {
+  color: rgb(156 94 8 / 0.6);
+}
+
+:root:not(.dark) .purchase-dialog-field input {
+  border: 1.5px solid rgb(184 116 19 / 0.45);
+  border-radius: 0.85rem;
+  background: rgb(255 253 246 / 0.92) !important;
+  color: #4a3006 !important;
+  animation: ppd-pulse-glow-light 3.5s ease-in-out infinite;
+  transition: all 0.25s ease;
+}
+
+:root:not(.dark) .purchase-dialog-field input:focus {
+  border-color: #B87413;
+  background: #ffffff !important;
+  animation: none;
+  box-shadow: 0 0 16px 2px rgb(233 190 88 / 0.5);
+}
+
+@keyframes ppd-pulse-glow-light {
+  0%, 100% {
+    border-color: rgb(184 116 19 / 0.35);
+    box-shadow: 0 0 6px 0px rgb(233 190 88 / 0.25);
+  }
+  50% {
+    border-color: rgb(184 116 19 / 0.7);
+    box-shadow: 0 0 12px 2px rgb(233 190 88 / 0.45);
+  }
+}
+
+:root:not(.dark) .purchase-dialog-field input::placeholder {
+  color: rgb(156 94 8 / 0.35) !important;
+}
+
+:root:not(.dark) .purchase-dialog-primary {
+  background: linear-gradient(135deg, #B87413, #9C5E08);
+  color: #FFF2B5;
+  box-shadow:
+    inset 0 1px 0 rgb(255 242 181 / 0.3),
+    0 18px 40px -24px rgb(156 94 8 / 0.4);
+}
+
+:root:not(.dark) .purchase-dialog-secondary {
+  border-color: rgb(184 116 19 / 0.14);
+  background: rgb(255 253 246 / 0.8);
+  color: #9C5E08;
+}
+
+:root:not(.dark) .purchase-dialog-copy-card {
+  border-color: rgb(184 116 19 / 0.12);
+  background: rgb(255 250 235 / 0.7);
+}
+
+:root:not(.dark) .purchase-dialog-copy-card:hover {
+  border-color: rgb(184 116 19 / 0.3);
+  background: rgb(255 248 225 / 0.85);
+}
+
+:root:not(.dark) .purchase-dialog-copy-card svg {
+  color: #B87413;
+}
+
+:root:not(.dark) .ppd-gold-row {
+  border-color: rgb(184 116 19 / 0.18);
+  background: linear-gradient(135deg, rgb(255 250 235 / 0.92), rgb(254 248 225 / 0.95));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 10px 28px -18px rgb(156 94 8 / 0.14);
+}
+
+:root:not(.dark) .ppd-gold-label {
+  color: rgb(156 94 8 / 0.55);
+}
+
+:root:not(.dark) .ppd-gold-divider {
+  background: linear-gradient(180deg, transparent, rgb(184 116 19 / 0.24), transparent);
+}
+
+:root:not(.dark) .ppd-gold-input {
+  border: 1.5px solid rgb(184 116 19 / 0.45);
+  background: rgb(255 253 246 / 0.95) !important;
+  color: #4a3006 !important;
+  animation: ppd-pulse-glow-light 3.5s ease-in-out infinite;
+}
+
+:root:not(.dark) .ppd-gold-input:focus {
+  border-color: #B87413;
+  background: #ffffff !important;
+  animation: none;
+  box-shadow: 0 0 16px 2px rgb(233 190 88 / 0.5);
+}
+
+:root:not(.dark) .ppd-gold-input::placeholder {
+  color: rgb(156 94 8 / 0.22) !important;
+}
+
+:root:not(.dark) .ppd-gold-range {
+  color: rgb(156 94 8 / 0.42);
+}
+
+:root:not(.dark) .ppd-gold-price {
+  color: #9C5E08;
+}
+
+:root:not(.dark) .ppd-gold-usd {
+  border-color: rgb(22 163 74 / 0.22);
+  background: rgb(22 163 74 / 0.08);
+  color: #15803d;
+}
+
+:root:not(.dark) .purchase-dialog-error {
+  border-color: rgb(220 38 38 / 0.2);
+  background: rgb(254 226 226 / 0.85);
+  color: #991b1b;
+}
