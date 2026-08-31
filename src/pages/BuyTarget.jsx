@@ -142,7 +142,7 @@ const BuyTarget = () => {
             >
               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.45)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] shadow-[0_12px_28px_-18px_rgb(var(--color-primary-rgb)/0.9)]">
                 {selectedTargetApp.image ? (
-                  <img src={resolveImageUrl(selectedTargetApp.image)} alt="" className="h-full w-full object-cover" />
+                  <img src={resolveImageUrl(selectedTargetApp.image)} alt="" className="h-full w-full object-contain" />
                 ) : (
                   <span className="flex h-full w-full items-center justify-center text-[var(--color-primary)]"><Target className="h-5 w-5" /></span>
                 )}

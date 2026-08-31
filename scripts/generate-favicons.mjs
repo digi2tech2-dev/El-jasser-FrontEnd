@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import toIco from 'to-ico';
 
 const repoRoot = process.cwd();
-const inputPath = path.join(repoRoot, 'src', 'assets', 'logo.svg');
+const inputPath = path.join(repoRoot, 'src', 'assets', 'logo.PNG');
 const outDir = path.join(repoRoot, 'public');
 
 const ensureDir = async (dir) => {

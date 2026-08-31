@@ -387,7 +387,7 @@ const Products = () => {
   );
 
   const seoImage = useMemo(
-    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/android-chrome-192x192.png?v=ka-card'),
+    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/dra90n-og.png?v=dra90n-store'),
     [storefrontProducts]
   );
 

@@ -101,7 +101,7 @@ const Header = ({ toggleSidebar }) => {
     if (normalizedType === 'success') return 'border-emerald-400/30 bg-emerald-500/10';
     if (normalizedType === 'warning') return 'border-amber-400/30 bg-amber-500/10';
     if (normalizedType === 'error') return 'border-red-400/30 bg-red-500/10';
-    return 'border-cyan-400/30 bg-cyan-500/10';
+    return 'border-orange-400/30 bg-orange-500/10';
   };
 
   const getNotificationMeta = (notification) => {
@@ -128,7 +128,7 @@ const Header = ({ toggleSidebar }) => {
       return {
         icon: CreditCard,
         label: 'عملية رصيد',
-        className: 'bg-indigo-500/12 text-indigo-500 ring-cyan-400/24',
+        className: 'bg-orange-500/12 text-orange-500 ring-orange-400/24',
       };
     }
 
@@ -136,7 +136,7 @@ const Header = ({ toggleSidebar }) => {
       return {
         icon: UserCheck,
         label: 'حساب',
-        className: 'bg-indigo-500/12 text-indigo-500 ring-indigo-400/24',
+        className: 'bg-orange-500/12 text-orange-500 ring-orange-400/24',
       };
     }
 
@@ -144,7 +144,7 @@ const Header = ({ toggleSidebar }) => {
       return {
         icon: ShoppingBag,
         label: 'طلب',
-        className: 'bg-cyan-500/12 text-cyan-500 ring-cyan-400/24',
+        className: 'bg-orange-500/12 text-orange-500 ring-orange-400/24',
       };
     }
 
@@ -219,18 +219,18 @@ const Header = ({ toggleSidebar }) => {
           <div className={cn(
             'header-mobile-actions col-start-1 row-start-1 flex min-w-0 shrink-0 items-center gap-1 justify-self-start px-0 sm:gap-2'
           )}>
-            <ThemeToggle compact className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_255_255/0.16),transparent_34%),linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.78))] shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8" />
+            <ThemeToggle compact className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_224_138/0.16),transparent_34%),linear-gradient(180deg,rgb(36_17_8/0.9),rgb(5_3_2/0.86))] shadow-[inset_0_0_18px_rgb(245_158_11/0.08),0_0_28px_-18px_rgb(245_158_11/0.9)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8" />
 
             <div ref={notificationsRef} className="relative">
               <button
                 type="button"
                 onClick={handleNotificationsToggle}
-                className="relative inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_255_255/0.14),transparent_34%),linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.78))] text-[var(--color-text)] shadow-[inset_0_0_18px_rgb(168_85_247/0.12),0_0_28px_-18px_rgb(168_85_247/0.95)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.38)] hover:text-[var(--color-primary)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
+                className="relative inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_224_138/0.14),transparent_34%),linear-gradient(180deg,rgb(36_17_8/0.9),rgb(5_3_2/0.86))] text-[var(--color-text)] shadow-[inset_0_0_18px_rgb(245_158_11/0.12),0_0_28px_-18px_rgb(245_158_11/0.95)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.38)] hover:text-[var(--color-primary)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
                 aria-label="الإشعارات"
               >
                 <Bell className="h-3.5 w-3.5" />
                 {unreadCount > 0 ? (
-                  <span className="absolute -end-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[linear-gradient(135deg,#b37a18,#f0cf7a)] px-1 text-[10px] font-black text-white shadow-[0_0_18px_rgb(244_63_221/0.52)]">
+                  <span className="absolute -end-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[linear-gradient(135deg,#a81713,#ffb52e)] px-1 text-[10px] font-black text-white shadow-[0_0_18px_rgb(168_23_19/0.52)]">
                     {unreadCount > 9 ? '+9' : unreadCount}
                   </span>
                 ) : null}
@@ -298,7 +298,7 @@ const Header = ({ toggleSidebar }) => {
                 <button
                   type="button"
                   onClick={() => navigate(walletTargetPath)}
-                  className="inline-flex h-[1.875rem] shrink-0 items-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.72))] px-1.5 text-start shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] transition-all hover:-translate-y-0.5 min-[380px]:h-8 sm:hidden"
+                  className="inline-flex h-[1.875rem] shrink-0 items-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(36_17_8/0.9),rgb(5_3_2/0.84))] px-1.5 text-start shadow-[inset_0_0_18px_rgb(245_158_11/0.08),0_0_28px_-18px_rgb(245_158_11/0.9)] transition-all hover:-translate-y-0.5 min-[380px]:h-8 sm:hidden"
                   aria-label={language === 'ar' ? 'الرصيد' : 'Balance'}
                 >
                   <span className="header-wallet-balance max-w-[48px] truncate text-[0.62rem] font-semibold text-white dark:text-[var(--color-text)] min-[380px]:max-w-[62px]">
@@ -312,7 +312,7 @@ const Header = ({ toggleSidebar }) => {
                 <button
                   type="button"
                   onClick={() => navigate(walletTargetPath)}
-                  className="hidden h-9 items-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.72))] px-3 text-start shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] transition-all hover:-translate-y-0.5 sm:inline-flex"
+                  className="hidden h-9 items-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(36_17_8/0.9),rgb(5_3_2/0.84))] px-3 text-start shadow-[inset_0_0_18px_rgb(245_158_11/0.08),0_0_28px_-18px_rgb(245_158_11/0.9)] transition-all hover:-translate-y-0.5 sm:inline-flex"
                   aria-label={language === 'ar' ? 'المحفظة' : 'Wallet'}
                 >
                   <span className="min-w-0">

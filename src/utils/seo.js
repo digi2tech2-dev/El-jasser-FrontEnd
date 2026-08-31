@@ -1,7 +1,8 @@
 import resolveImageUrl from './imageUrl';
 
-const STORE_NAME = 'KA CARD';
-const DEFAULT_DESCRIPTION = 'KA CARD منصة متكاملة لشحن الألعاب وتطبيقات الدردشة الصوتية وشراء الاشتراكات والبطاقات والخدمات الرقمية بسرعة وأمان.';
+const STORE_NAME = 'Dra90n STORE';
+const DEFAULT_DESCRIPTION = 'اشحن ألعابك وتطبيقاتك وبطاقاتك الرقمية فورًا بأسعار منافسة وعروض قوية مع Dra90n STORE — سرعة وأمان ودعم متواصل.';
+const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.png?v=dra90n-store';
 
 const SEARCH_PHRASES = [
   'شحن تطبيقات دردشة صوتية',
@@ -13,8 +14,8 @@ const SEARCH_PHRASES = [
   'اشتراكات رقمية',
   'بطاقات رقمية',
   'شحن منتجات رقمية',
-  'KA CARD',
-  'KA-CARD',
+  'Dra90n STORE',
+  'Dragon Store',
 ];
 
 const cleanText = (value) => String(value || '')
@@ -56,8 +57,8 @@ export const getProductSeoDescription = (product, language = 'ar') => {
   const productName = getProductSeoName(product, language);
   const description = cleanText(product?.displayDescription || product?.descriptionAr || product?.description);
   const fallback = language === 'ar'
-    ? `شحن ${productName} عبر KA-CARD ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
-    : `Top up ${productName} through KA-CARD for voice chat apps, games, subscriptions, and digital products.`;
+    ? `شحن ${productName} عبر Dra90n STORE ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
+    : `Top up ${productName} through Dra90n STORE for voice chat apps, games, subscriptions, and digital products.`;
 
   return truncateText(description || fallback, 220);
 };
@@ -95,8 +96,8 @@ export const buildStoreSeo = ({
 
   const seoTitle = title || (
     language === 'ar'
-      ? `${STORE_NAME} | شحن الألعاب والتطبيقات والبطاقات الرقمية`
-      : `${STORE_NAME} | Games, Apps and Digital Cards`
+      ? `${STORE_NAME} | اشحن ألعابك الآن بسرعة وعروض مميزة`
+      : `${STORE_NAME} | Fast Top-Ups and Great Offers`
   );
   const seoDescription = truncateText(description || DEFAULT_DESCRIPTION, 160);
   const keywords = [...SEARCH_PHRASES, ...categoryNames, ...productKeywords].join(', ');
@@ -141,16 +142,16 @@ export const buildStoreSeo = ({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: STORE_NAME,
-      alternateName: 'KA-CARD',
+      alternateName: 'Dra90n STORE',
       url: origin || canonicalUrl,
-      logo: origin ? `${origin}/android-chrome-192x192.png?v=ka-card` : '/android-chrome-192x192.png?v=ka-card',
+      logo: origin ? `${origin}${DEFAULT_SOCIAL_IMAGE}` : DEFAULT_SOCIAL_IMAGE,
       description: seoDescription,
     },
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: STORE_NAME,
-      alternateName: 'KA-CARD',
+      alternateName: 'Dra90n STORE',
       url: origin || canonicalUrl,
       inLanguage: language === 'ar' ? 'ar-EG' : 'en',
     },
@@ -169,7 +170,7 @@ export const buildStoreSeo = ({
     jsonLd.push({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      name: language === 'ar' ? 'منتجات KA-CARD' : 'KA-CARD Products',
+      name: language === 'ar' ? 'منتجات Dra90n STORE' : 'Dra90n STORE Products',
       description: seoDescription,
       itemListElement: productList,
     });

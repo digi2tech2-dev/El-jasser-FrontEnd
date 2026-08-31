@@ -1,8 +1,22 @@
+const SUPPORT_PHONE_NUMBER = '01060682018';
+const SUPPORT_WHATSAPP_NUMBER = '01144558644';
 const SUPPORT_CONTACTS = Object.freeze([
-  { nameAr: 'جاسر كارد', nameEn: 'Jaser Card', number: '01503222311' },
-  { nameAr: 'أحمد كارد', nameEn: 'Ahmed Card', number: '01012286661' },
+  {
+    id: 'phone',
+    type: 'phone',
+    nameAr: 'دعم دراجون',
+    nameEn: 'Dra90n Support',
+    number: SUPPORT_PHONE_NUMBER,
+  },
+  {
+    id: 'whatsapp',
+    type: 'whatsapp',
+    nameAr: 'دعم دراجون',
+    nameEn: 'Dra90n Support',
+    number: SUPPORT_WHATSAPP_NUMBER,
+  },
 ]);
-const FALLBACK_WHATSAPP_NUMBER = SUPPORT_CONTACTS[0].number;
+const FALLBACK_WHATSAPP_NUMBER = SUPPORT_WHATSAPP_NUMBER;
 const ENV_ADMIN_WHATSAPP_NUMBER =
   import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER
   || import.meta.env.ADMIN_WHATSAPP_NUMBER
@@ -27,6 +41,12 @@ export const buildWhatsAppLink = ({ number, message = '' }) => {
   return `https://wa.me/${normalizedNumber}${suffix}`;
 };
 
+export const buildPhoneLink = (number) => {
+  const value = String(number || '').trim().replace(/[^\d+]/g, '');
+  return value ? `tel:${value}` : '';
+};
+
 export const getDefaultWhatsAppNumber = () => FALLBACK_WHATSAPP_NUMBER;
 export const getAdminWhatsAppNumber = () => normalizeWhatsAppNumber(ENV_ADMIN_WHATSAPP_NUMBER || FALLBACK_WHATSAPP_NUMBER);
+export const getSupportPhoneNumber = () => SUPPORT_PHONE_NUMBER;
 export const getSupportContacts = () => SUPPORT_CONTACTS;

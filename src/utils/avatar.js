@@ -1,12 +1,12 @@
 import { resolveImageUrl } from './imageUrl';
 
 const AVATAR_PALETTES = [
-  ['#087f9b', '#42d7e9', '#b37a18'],
-  ['#087f9b', '#312e81', '#b37a18'],
-  ['#087f9b', '#087f9b', '#42d7e9'],
-  ['#f59e0b', '#ef4444', '#b37a18'],
-  ['#22c55e', '#087f9b', '#087f9b'],
-  ['#b37a18', '#b37a18', '#42d7e9'],
+  ['#160b07', '#7f2717', '#f59e0b'],
+  ['#080403', '#a81713', '#ffb52e'],
+  ['#21120b', '#c2410c', '#ffe08a'],
+  ['#120807', '#8f1d14', '#d97706'],
+  ['#050302', '#7c2d12', '#fbbf24'],
+  ['#24110a', '#b91c1c', '#f59e0b'],
 ];
 
 const AVATAR_CACHE_LIMIT = 180;
@@ -52,7 +52,7 @@ const isGeneratedSvgAvatarUrl = (value) => {
 };
 
 const hashString = (value) => {
-  const text = String(value || 'KA-CARD');
+  const text = String(value || 'Dra90n');
   let hash = 0;
 
   for (let index = 0; index < text.length; index += 1) {
@@ -64,7 +64,7 @@ const hashString = (value) => {
 };
 
 const getInitials = (value) => {
-  const parts = String(value || 'KA-CARD User')
+  const parts = String(value || 'Dra90n User')
     .replace(/[^\p{L}\p{N}\s._-]/gu, ' ')
     .split(/[\s._-]+/)
     .map((part) => part.trim())
@@ -130,7 +130,7 @@ const getGulfAdminAvatarUrl = (identity = 'Platform Admin') => {
   const palette = AVATAR_PALETTES[hash % AVATAR_PALETTES.length];
   const skinPalette = ['#f3c7a4', '#e8b384', '#d99a66', '#c9875f'];
   const skinColor = skinPalette[(hash >> 3) % skinPalette.length];
-  const eyeColor = ['#312e81', '#087f9b', '#5b3a1d'][(hash >> 5) % 3];
+  const eyeColor = ['#5b3a1d', '#8a5b12', '#f59e0b'][(hash >> 5) % 3];
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Platform Admin">
@@ -196,20 +196,20 @@ const isAdminIdentity = (source, identity = '') => {
   return text.includes('platform admin') || text.includes('مدير المنصة') || text.includes('مدير المنصه');
 };
 
-export const getDefaultAvatarUrl = (identity = 'KA-CARD User', options = {}) => {
+export const getDefaultAvatarUrl = (identity = 'Dra90n User', options = {}) => {
   if (options.variant === 'gulf-admin') {
     return getGulfAdminAvatarUrl(identity);
   }
 
-  const seed = String(identity || 'KA-CARD User').trim() || 'KA-CARD User';
+  const seed = String(identity || 'Dra90n User').trim() || 'Dra90n User';
   const cacheKey = `anime:${seed}`;
 
   return getCachedAvatar(cacheKey, () => {
   const hash = hashString(seed);
   const palette = AVATAR_PALETTES[hash % AVATAR_PALETTES.length];
   const initials = getInitials(seed);
-  const hairPalette = ['#161827', '#20243a', '#32224a', '#172f3a', '#3a2432', '#44301a'];
-  const eyePalette = ['#087f9b', '#b37a18', '#13b8d2', '#22c55e', '#42d7e9', '#f59e0b'];
+  const hairPalette = ['#120807', '#1b0b07', '#2b120a', '#3a1710', '#24100b', '#44301a'];
+  const eyePalette = ['#8a5b12', '#f59e0b', '#ffb52e', '#c2410c', '#ffe08a', '#b91c1c'];
   const skinPalette = ['#ffe1c7', '#f6c9a7', '#eeb993', '#f3d4bd', '#d8a277', '#c9875f'];
   const hairColor = hairPalette[hash % hairPalette.length];
   const eyeColor = eyePalette[(hash >> 2) % eyePalette.length];
@@ -319,13 +319,13 @@ export const getDefaultAvatarUrl = (identity = 'KA-CARD User', options = {}) => 
   });
 };
 
-export const resolveUserAvatar = (source, fallbackIdentity = 'KA-CARD User') => {
+export const resolveUserAvatar = (source, fallbackIdentity = 'Dra90n User') => {
   const isObject = source && typeof source === 'object';
   const rawAvatar = isObject ? source.avatar : source;
   const identity = String(
     fallbackIdentity
     || (isObject ? (source.name || source.username || source.email) : '')
-    || 'KA-CARD User'
+    || 'Dra90n User'
   ).trim();
   const resolved = resolveImageUrl(rawAvatar);
 

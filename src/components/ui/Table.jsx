@@ -3,7 +3,7 @@ import { cn } from './Button';
 
 const Table = ({ className, children, ...props }) => {
   return (
-    <div className="min-w-0 max-w-full overflow-x-auto rounded-[1.1rem] border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-elevated-rgb)/0.76))] shadow-[var(--shadow-subtle)] [scrollbar-width:thin] [-webkit-overflow-scrolling:touch]">
+    <div className="min-w-0 max-w-full overflow-x-auto rounded-[1.1rem] border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-elevated-rgb)/0.76))] shadow-[var(--shadow-subtle)] [-webkit-overflow-scrolling:touch]">
       <table className={cn('w-full caption-bottom text-sm', className)} {...props}>
         {children}
       </table>

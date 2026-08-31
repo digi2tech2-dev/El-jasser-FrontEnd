@@ -11,8 +11,7 @@ import {
   Code2,
 } from 'lucide-react';
 import { cn } from '../ui/Button';
-import HeaderBrand from './HeaderBrand';
-import LanguageSwitcher from '../ui/LanguageSwitcher';
+import dragonLogo from '../../assets/logo.PNG';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4.5 w-4.5 shrink-0">
@@ -89,25 +88,6 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
           'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col overflow-hidden rounded-[32px] border backdrop-blur-[24px]'
         )}>
           <div className="relative z-10 px-4 pb-4 pt-5">
-            <div className="flex items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={onHome}
-                className="flex min-w-0 items-center rounded-[24px] transition-all hover:-translate-y-0.5"
-              >
-                <HeaderBrand
-                  className="scale-[0.86] justify-center"
-                  iconClassName="scale-[0.9]"
-                  textClassName="text-center"
-                />
-              </button>
-
-            </div>
-
-            <div className="mt-4">
-              <LanguageSwitcher showIcon variant="sidebar" className="ka-sidebar-language w-full justify-center" />
-            </div>
-
             <div className="ka-sidebar-action-card mt-4">
               <div className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-text)]">
                 <span className="ka-sidebar-icon-bubble is-active">
@@ -151,6 +131,21 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
           </div>
 
           <div className="relative z-10 flex flex-1 flex-col gap-2 overflow-y-auto p-3 scrollbar-hide">
+            <button
+              type="button"
+              onClick={onHome}
+              className="mb-1 flex w-full items-center justify-center rounded-[24px] transition-all hover:-translate-y-0.5"
+              aria-label="Dra90n STORE"
+            >
+              <img
+                src={dragonLogo}
+                alt="Dra90n STORE"
+                className="ka-sidebar-dragon-logo h-auto w-[min(9rem,64%)] object-contain drop-shadow-[0_12px_24px_rgba(168,23,19,0.42)]"
+                loading="eager"
+                decoding="async"
+              />
+            </button>
+
             {navItems.map((item) => (
               <button
                 key={item.label}
@@ -173,7 +168,10 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
               </button>
             ))}
 
-            <div className="mt-auto" />
+            <div className="ka-sidebar-copyright mt-auto" dir="ltr">
+              <span>© 2026</span>
+              <strong>Dra90n STORE</strong>
+            </div>
           </div>
         </div>
       </aside>

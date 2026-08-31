@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Building2,
-  CheckCircle2,
   ChevronLeft,
+  ChevronRight,
   CreditCard,
   Globe2,
   ShieldCheck,
@@ -18,6 +18,7 @@ import useSystemStore from '../store/useSystemStore';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { formatWalletNumber } from '../utils/storefront';
 import { getActivePaymentGroups } from '../utils/paymentSettings';
+import dragonLogo from '../assets/logo.PNG';
 
 const getMethodIcon = (method) => {
   const token = `${method?.type || ''} ${method?.id || ''} ${method?.name || ''}`.toLowerCase();
@@ -36,7 +37,7 @@ const PaymentMethodButton = ({ method, groupImage, onSelect, isRTL }) => {
     <button
       type="button"
       onClick={() => onSelect(method)}
-      className="group flex min-w-0 items-center gap-2.5 rounded-[1rem] border border-indigo-500/15 bg-[color:rgb(var(--color-card-rgb)/0.78)] p-2.5 text-start shadow-[0_14px_34px_-30px_rgb(99_102_241/0.48)] transition-all hover:-translate-y-0.5 hover:border-indigo-500/35 hover:bg-indigo-500/[0.06]"
+      className="wallet-payment-method-card group flex min-w-0 items-center gap-2.5 rounded-[1rem] border p-2.5 text-start transition-all"
     >
       <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl border border-indigo-500/15 bg-indigo-500/[0.07] text-indigo-500">
         {showImage ? (
@@ -81,7 +82,7 @@ const PaymentGroupImage = ({ group, isSelected, isGlobal }) => {
   }, [group?.image]);
 
   return (
-    <span className={`grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl ${
+    <span className={`grid h-[4.35rem] w-[4.35rem] shrink-0 place-items-center overflow-hidden rounded-full border ${
       isSelected ? 'bg-indigo-500 text-white' : 'bg-indigo-500/[0.08] text-indigo-500'
     }`}>
       {showImage ? (
@@ -132,7 +133,7 @@ const AddBalance = ({
     () => getActivePaymentGroups(paymentSettings, { fallbackToDefault: false }),
     [paymentSettings]
   );
-  const activePaymentGroup = paymentGroups.find((group) => String(group.id) === String(openGroupId)) || paymentGroups[0] || null;
+  const activePaymentGroup = paymentGroups.find((group) => String(group.id) === String(openGroupId)) || null;
 
   useEffect(() => {
     if (!paymentGroups.length) {
@@ -140,9 +141,7 @@ const AddBalance = ({
       return;
     }
     setOpenGroupId((current) => (
-      paymentGroups.some((group) => String(group.id) === String(current))
-        ? current
-        : paymentGroups[0].id
+      paymentGroups.some((group) => String(group.id) === String(current)) ? current : null
     ));
   }, [paymentGroups]);
 
@@ -165,12 +164,13 @@ const AddBalance = ({
   return (
     <div className={embedded ? 'w-full min-w-0 overflow-x-hidden pb-1' : 'min-h-full pb-6'} dir={dir}>
       <div className="mx-auto w-full min-w-0 max-w-3xl space-y-3 px-1 sm:space-y-4 sm:px-2">
-        <section className="relative isolate overflow-hidden rounded-[1.55rem] border border-cyan-300/20 bg-[radial-gradient(22rem_circle_at_95%_-20%,rgb(244_114_208/0.42),transparent_48%),radial-gradient(18rem_circle_at_4%_115%,rgb(37_99_235/0.5),transparent_52%),linear-gradient(135deg,#10082b_0%,#24205c_38%,#075a75_70%,#b37a18_115%)] p-4 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_70px_-38px_rgb(109_40_217/0.95),0_18px_45px_-34px_rgb(192_38_211/0.9)] sm:p-5">
+        <section className="wallet-topup-hero relative isolate overflow-hidden rounded-[1.55rem] border border-cyan-300/20 bg-[radial-gradient(22rem_circle_at_95%_-20%,rgb(244_114_208/0.42),transparent_48%),radial-gradient(18rem_circle_at_4%_115%,rgb(37_99_235/0.5),transparent_52%),linear-gradient(135deg,#10082b_0%,#24205c_38%,#075a75_70%,#b37a18_115%)] p-4 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_70px_-38px_rgb(109_40_217/0.95),0_18px_45px_-34px_rgb(192_38_211/0.9)] sm:p-5">
           <span className="pointer-events-none absolute -end-8 -top-12 -z-10 h-32 w-32 rounded-full border border-white/10 bg-white/8 blur-[1px]" />
           <span className="pointer-events-none absolute end-12 top-2 -z-10 h-20 w-20 rounded-full bg-amber-300/20 blur-3xl" />
           <span className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(255_255_255/0.025)_1px,transparent_1px),linear-gradient(180deg,rgb(255_255_255/0.025)_1px,transparent_1px)] bg-[length:28px_28px] [mask-image:linear-gradient(110deg,black,transparent_72%)]" />
+          <img src={dragonLogo} alt="" aria-hidden="true" className="wallet-topup-dragon-logo" />
 
-          <div className="relative flex items-center justify-between gap-3 sm:gap-5">
+          <div className="wallet-topup-hero-content relative z-10 flex items-center justify-between gap-3 sm:gap-5">
             <div className="min-w-0 flex-1">
               <p className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/8 px-2 py-1 text-[0.62rem] font-black text-amber-100 backdrop-blur-md">
                 <Wallet className="h-3 w-3" />
@@ -218,97 +218,65 @@ const AddBalance = ({
           </section>
         ) : null}
 
-        <section className="overflow-hidden rounded-[1.45rem] border border-indigo-500/15 bg-[radial-gradient(24rem_circle_at_top_right,rgb(99_102_241/0.1),transparent_55%),rgb(var(--color-card-rgb)/0.7)] shadow-[0_24px_60px_-48px_rgb(99_102_241/0.58)]">
-          <div className="flex items-center gap-3 border-b border-indigo-500/10 px-3.5 py-3.5 sm:px-4">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/15">
-              <CreditCard className="h-4.5 w-4.5" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="text-sm font-black text-[var(--color-text)]">
-                {isRTL ? 'اختر وسيلة الدفع' : 'Choose a payment method'}
-              </h2>
-              <p className="mt-0.5 text-[0.68rem] font-semibold text-[var(--color-text-secondary)]">
-                {isRTL ? 'اختر نوع التحويل ثم وسيلة الدفع المناسبة' : 'Choose a transfer type, then select a payment method'}
-              </p>
-            </div>
-          </div>
-
-          {paymentGroups.length ? (
-            <div className="space-y-4 p-3 sm:p-4">
-              <div>
-                <p className="mb-2 text-[10px] font-black text-[var(--color-text-secondary)]">
-                  {isRTL ? 'نوع التحويل' : 'Transfer type'}
-                </p>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {paymentGroups.map((group) => {
-                    const isSelected = String(activePaymentGroup?.id) === String(group.id);
-                    const isGlobal = String(group.currency || '').toUpperCase() === 'USD' || /global|عالمي/i.test(String(group.name || ''));
-                    return (
-                      <button
-                        key={group.id}
-                        type="button"
-                        onClick={() => setOpenGroupId(group.id)}
-                        aria-pressed={isSelected}
-                        className={`relative flex min-w-0 items-center gap-2.5 overflow-hidden rounded-[1.05rem] border p-3 text-start transition-all duration-200 ${
-                          isSelected
-                            ? 'border-indigo-500/55 bg-indigo-500/10 shadow-[0_14px_34px_-26px_rgb(99_102_241/0.65)]'
-                            : 'border-[color:rgb(var(--color-border-rgb)/0.7)] bg-[color:rgb(var(--color-surface-rgb)/0.5)] hover:border-indigo-500/25 hover:bg-indigo-500/[0.04]'
-                        }`}
-                      >
-                        <PaymentGroupImage group={group} isSelected={isSelected} isGlobal={isGlobal} />
-                        <span className="min-w-0 flex-1">
-                          <strong
-                            className="block whitespace-normal break-words text-xs font-black leading-4 text-[var(--color-text)]"
-                            title={group.name}
-                          >
-                            {group.name}
-                          </strong>
-                          <span className="mt-0.5 block truncate text-[9px] font-semibold text-[var(--color-text-secondary)]">
-                            {group.description || `${group.methods.length} ${isRTL ? 'وسيلة دفع' : 'payment methods'}`}
-                          </span>
-                        </span>
-                        <span className="flex shrink-0 flex-col items-end gap-1">
-                          {group.currency ? (
-                            <span className={`rounded-md px-1.5 py-0.5 font-['Poppins'] text-[9px] font-black ${isSelected ? 'bg-indigo-500 text-white' : 'bg-indigo-500/[0.08] text-indigo-500'}`}>
-                              {String(group.currency).toUpperCase()}
-                            </span>
-                          ) : null}
-                          {isSelected ? <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" /> : null}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+        <section className="wallet-payment-flow">
+          {activePaymentGroup ? (
+            <div className="wallet-payment-method-page">
+              <div className="wallet-payment-page-header">
+                <button
+                  type="button"
+                  onClick={() => setOpenGroupId(null)}
+                  className="wallet-payment-back-button"
+                >
+                  {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                  <span>{isRTL ? 'المجموعات' : 'Groups'}</span>
+                </button>
+                <span className="wallet-payment-step">{isRTL ? 'الخطوة 2 من 2' : 'Step 2 of 2'}</span>
               </div>
 
-              {activePaymentGroup ? (
-                <div className="rounded-[1.15rem] border border-indigo-500/10 bg-[color:rgb(var(--color-surface-rgb)/0.34)] p-3">
-                  <div className="mb-2.5 flex items-center justify-between gap-2">
-                    <div>
-                      <h3 className="text-xs font-black text-[var(--color-text)]">
-                        {isRTL ? 'وسائل الدفع' : 'Payment methods'}
-                      </h3>
-                      <p className="mt-0.5 text-[9px] font-semibold text-[var(--color-text-secondary)]">{activePaymentGroup.name}</p>
-                    </div>
-                    <span className="rounded-lg border border-indigo-500/15 bg-indigo-500/[0.07] px-2 py-1 text-[9px] font-black text-indigo-500">
-                      {activePaymentGroup.methods.length} {isRTL ? 'متاحة' : 'available'}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 sm:grid-cols-3">
-                    {activePaymentGroup.methods.map((method) => (
-                      <PaymentMethodButton
-                        key={method.id}
-                        method={method}
-                        groupImage={activePaymentGroup.image}
-                        onSelect={handleMethodSelect}
-                        isRTL={isRTL}
-                      />
-                    ))}
+              <div className="wallet-payment-selected-group">
+                <PaymentGroupImage
+                  group={activePaymentGroup}
+                  isSelected
+                  isGlobal={String(activePaymentGroup.currency || '').toUpperCase() === 'USD' || /global|عالمي/i.test(String(activePaymentGroup.name || ''))}
+                />
+                <div className="min-w-0 flex-1">
+                  <span className="wallet-payment-eyebrow">{isRTL ? 'وسائل الدفع المتاحة' : 'Available payment methods'}</span>
+                  <h2>{activePaymentGroup.name}</h2>
+                  <p>{activePaymentGroup.description || (isRTL ? 'اختر الوسيلة التي تناسبك لإكمال الشحن' : 'Choose the method that suits you to complete your top-up')}</p>
+                </div>
+                {activePaymentGroup.currency ? (
+                  <span className="wallet-payment-currency">{String(activePaymentGroup.currency).toUpperCase()}</span>
+                ) : null}
+              </div>
+
+              <div className="wallet-payment-methods-grid">
+                {activePaymentGroup.methods.map((method) => (
+                  <PaymentMethodButton
+                    key={method.id}
+                    method={method}
+                    groupImage={activePaymentGroup.image}
+                    onSelect={handleMethodSelect}
+                    isRTL={isRTL}
+                  />
+                ))}
+              </div>
+
+              <aside className="wallet-payment-tips" aria-label={isRTL ? 'نصائح قبل الدفع' : 'Payment tips'}>
+                <div className="wallet-payment-tips-heading">
+                  <span aria-hidden="true">✦</span>
+                  <div>
+                    <h3>{isRTL ? 'نصائح قبل الدفع' : 'Tips before payment'}</h3>
+                    <p>{isRTL ? 'خطوات بسيطة لحماية عملية الشحن' : 'A few steps to keep your top-up safe'}</p>
                   </div>
                 </div>
-              ) : null}
+                <div className="wallet-payment-tips-list">
+                  <p><b>1</b>{isRTL ? 'تأكد من اسم الوسيلة والمبلغ قبل التحويل.' : 'Confirm the payment method and amount before transferring.'}</p>
+                  <p><b>2</b>{isRTL ? 'احتفظ بإيصال التحويل حتى يكتمل الشحن.' : 'Keep your transfer receipt until the top-up is completed.'}</p>
+                  <p><b>3</b>{isRTL ? 'لا تشارك رمز التحقق أو بيانات حسابك مع أي شخص.' : 'Never share verification codes or account details with anyone.'}</p>
+                </div>
+              </aside>
             </div>
-          ) : (
+          ) : !paymentGroups.length ? (
             <div className="rounded-[1rem] border border-dashed border-[color:rgb(var(--color-border-rgb)/0.82)] px-4 py-8 text-center">
               <Wallet className="mx-auto h-7 w-7 text-[var(--color-text-secondary)]" />
               <h3 className="mt-2 text-sm font-black text-[var(--color-text)]">
@@ -317,6 +285,35 @@ const AddBalance = ({
               <p className="mt-1 text-xs font-semibold text-[var(--color-text-secondary)]">
                 {isRTL ? 'يرجى المحاولة لاحقًا أو التواصل مع الدعم' : 'Try again later or contact support'}
               </p>
+            </div>
+          ) : (
+            <div className="wallet-payment-groups-page">
+              <div className="wallet-payment-page-header wallet-payment-page-header--groups">
+                <span className="wallet-payment-header-icon"><CreditCard className="h-4.5 w-4.5" /></span>
+                <div>
+                  <span className="wallet-payment-eyebrow">{isRTL ? '1 / 2' : '1 / 2'}</span>
+                  <h2>{isRTL ? 'اختر التحويل' : 'Choose transfer'}</h2>
+                  <p>{isRTL ? 'اختر البلد أو العملة' : 'Choose country or currency'}</p>
+                </div>
+              </div>
+
+              <div className="wallet-payment-groups-grid">
+                {paymentGroups.map((group) => {
+                  const isGlobal = String(group.currency || '').toUpperCase() === 'USD' || /global|عالمي/i.test(String(group.name || ''));
+                  return (
+                    <button
+                      key={group.id}
+                      type="button"
+                      onClick={() => setOpenGroupId(group.id)}
+                      className="wallet-payment-group-card"
+                    >
+                      <PaymentGroupImage group={group} isSelected={false} isGlobal={isGlobal} />
+                      <strong title={group.name}>{group.name}</strong>
+                      <span>{group.currency ? String(group.currency).toUpperCase() : `${group.methods.length} ${isRTL ? 'وسائل' : 'methods'}`}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
         </section>

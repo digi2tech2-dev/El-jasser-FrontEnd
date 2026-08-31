@@ -90,6 +90,17 @@ const AdminDashboardRoute = () => {
   return renderSuspended(<AdminDashboard />);
 };
 
+const CreatedByEntryRoute = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const role = useAuthStore((state) => state.user?.role);
+
+  if (isAuthenticated && role === 'customer') {
+    return <Navigate to="/account/created-by" replace />;
+  }
+
+  return renderSuspended(<CreatedBy />);
+};
+
 const AnimatedAppRoutes = ({ location }) => {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -98,7 +109,7 @@ const AnimatedAppRoutes = ({ location }) => {
       <Route path="/" element={renderSuspended(<PublicCatalog />)} />
       <Route path="/catalog" element={renderSuspended(<PublicCatalog />)} />
       <Route path="/about-us" element={renderSuspended(<AboutUsPage />)} />
-      <Route path="/created-by" element={renderSuspended(<CreatedBy />)} />
+      <Route path="/created-by" element={<CreatedByEntryRoute />} />
       <Route path="/public-contact-us" element={renderSuspended(<ContactUs accountOnly />)} />
       <Route path="/auth" element={renderSuspended(<Auth />)} />
       <Route path="/login" element={renderSuspended(<Auth />)} />
@@ -180,6 +191,14 @@ const AnimatedAppRoutes = ({ location }) => {
           element={(
             <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
               {renderSuspended(<Account />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/account/created-by"
+          element={(
+            <ProtectedRoute roles={['customer']}>
+              {renderSuspended(<CreatedBy inAccount />)}
             </ProtectedRoute>
           )}
         />

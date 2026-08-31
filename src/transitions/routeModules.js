@@ -77,6 +77,7 @@ const routeMatchers = [
   [/^\/account-security\/?$/, routeLoaders.AccountSecurity],
   [/^\/referral\/?$/, routeLoaders.Referral],
   [/^\/account\/?$/, routeLoaders.Account],
+  [/^\/account\/created-by\/?$/, routeLoaders.CreatedBy],
   [/^\/created-by\/?$/, routeLoaders.CreatedBy],
   [/^\/contact-us\/?$/, routeLoaders.ContactUs],
   [/^\/buy-target\/?$/, routeLoaders.BuyTarget],

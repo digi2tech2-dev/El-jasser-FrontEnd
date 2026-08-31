@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Home, Menu, MessageCircle, ShieldCheck, UserRound, Zap } from 'lucide-react';
+import { CheckCircle2, Home, Menu, MessageCircle, Phone, ShieldCheck, UserRound, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../store/useAuthStore';
 import ThemeToggle from '../components/ui/ThemeToggle';
@@ -10,8 +10,8 @@ import HeaderBrand from '../components/layout/HeaderBrand';
 import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
-import { buildWhatsAppLink, getAdminWhatsAppNumber, getSupportContacts } from '../utils/whatsapp';
-import brandIconImage from '../assets/logo.svg';
+import { buildPhoneLink, buildWhatsAppLink, getAdminWhatsAppNumber, getSupportContacts } from '../utils/whatsapp';
+import brandIconImage from '../assets/logo.PNG';
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const AboutUsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fff8ea_0%,#f4fbff_48%,#fffdf8_100%)] pb-5 pt-[4.75rem] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.16),transparent_34%),linear-gradient(180deg,#041019_0%,#07111f_52%,#03070d_100%)]">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#fff8ee_0%,#fff0df_48%,#fffaf3_100%)] pb-5 pt-[4.75rem] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.16),transparent_34%),linear-gradient(180deg,#041019_0%,#07111f_52%,#03070d_100%)]">
       {typeof document !== 'undefined' && createPortal(
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
         <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
@@ -155,28 +155,28 @@ const AboutUsPage = () => {
             <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#f59e0b,#087f9b,#13b8d2)] dark:bg-[linear-gradient(90deg,#f0cf7a,#087f9b,#13b8d2)]" />
 
             <div className="grid items-stretch gap-5 lg:grid-cols-[0.82fr_1.18fr]">
-              <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-[14px] border border-cyan-200 bg-[linear-gradient(160deg,#e0f7ff_0%,#fff7df_56%,#ffffff_100%)] px-5 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:py-10 dark:border-cyan-300/16 dark:bg-[linear-gradient(160deg,rgba(124,58,237,0.18)_0%,rgba(244,114,208,0.1)_54%,rgba(139,92,246,0.12)_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                <div className="absolute -left-14 -top-14 h-32 w-32 rounded-full bg-cyan-200/70 blur-2xl dark:bg-cyan-400/10" />
+              <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-[14px] border border-orange-300/70 bg-[linear-gradient(160deg,#2a1208_0%,#1b0d08_56%,#0b0705_100%)] px-5 py-8 text-center shadow-[inset_0_1px_0_rgba(255,224,138,0.18)] sm:py-10 dark:border-orange-300/30 dark:bg-[linear-gradient(160deg,rgba(168,23,19,0.24)_0%,rgba(194,65,12,0.12)_54%,rgba(245,158,11,0.14)_100%)] dark:shadow-[inset_0_1px_0_rgba(255,224,138,0.08)]">
+                <div className="absolute -left-14 -top-14 h-32 w-32 rounded-full bg-orange-400/25 blur-2xl dark:bg-orange-400/10" />
                 <div className="absolute -bottom-16 -right-12 h-36 w-36 rounded-full bg-amber-200/75 blur-2xl dark:bg-amber-300/10" />
                 <div className="relative flex flex-col items-center gap-3">
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-[18px] border border-amber-300/80 bg-white/88 p-2 shadow-[0_18px_38px_-24px_rgba(245,158,11,0.95),0_0_0_6px_rgba(14,165,233,0.08)] dark:border-cyan-300/26 dark:bg-slate-950/58 dark:shadow-[0_18px_40px_-24px_rgba(34,211,238,0.8),0_0_0_6px_rgba(244,114,208,0.08)]">
-                    <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(135deg,rgba(245,158,11,0.18),rgba(6,182,212,0.12),rgba(139,92,246,0.13))]" />
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-[18px] border border-orange-300/80 bg-[#120905] p-2 shadow-[0_18px_38px_-24px_rgba(245,158,11,0.95),0_0_0_6px_rgba(194,65,12,0.14)] dark:border-orange-300/35 dark:bg-[#090504] dark:shadow-[0_18px_40px_-24px_rgba(245,158,11,0.8),0_0_0_6px_rgba(168,23,19,0.18)]">
+                    <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(135deg,rgba(245,158,11,0.18),rgba(194,65,12,0.12),rgba(168,23,19,0.13))]" />
                     <img
                       src={brandIconImage}
-                      alt="KA-CARD"
+                      alt="Dra90n STORE"
                       loading="eager"
                       decoding="async"
-                      className="relative h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(15,23,42,0.18)] dark:drop-shadow-[0_10px_18px_rgba(34,211,238,0.2)]"
+                      className="relative h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(245,158,11,0.22)]"
                     />
                   </div>
                   <div dir="ltr" className="text-center">
-                    <p className="text-[1.15rem] font-black uppercase leading-none tracking-[0.12em] sm:text-[1.35rem]">
+                    <p className="font-['Orbitron'] text-[1.15rem] font-black leading-none tracking-[0.08em] sm:text-[1.35rem]">
                       <span className="bg-[linear-gradient(120deg,#0f172a_0%,#087f9b_34%,#f59e0b_70%,#087f9b_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fff7d6_0%,#f0cf7a_30%,#42d7e9_66%,#a78bfa_100%)]">
-                        KA
+                        Dra90n
                       </span>
-                      <span className="mx-1 text-cyan-600 dark:text-cyan-200">—</span>
-                      <span className="bg-[linear-gradient(120deg,#7c2d12_0%,#d97706_38%,#0f766e_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fef3c7_0%,#c4b5fd_48%,#67e8f9_100%)]">
-                        CARD
+                      <span className="mx-1 text-orange-400">·</span>
+                      <span className="bg-[linear-gradient(120deg,#fff3c4_0%,#f59e0b_38%,#a81713_100%)] bg-clip-text text-transparent">
+                        STORE
                       </span>
                     </p>
                   </div>
@@ -218,13 +218,15 @@ const AboutUsPage = () => {
                   <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
                     {supportContacts.map((contact) => (
                       <a
-                        key={contact.number}
-                        href={buildWhatsAppLink({ number: contact.number, message: isArabic ? 'مرحبًا، أحتاج إلى مساعدة من فريق KA-CARD.' : 'Hello, I need help from the KA-CARD support team.' })}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border border-emerald-300/45 bg-[linear-gradient(135deg,#20c66b,#128c7e)] px-3 text-xs font-extrabold text-white shadow-[0_18px_34px_-24px_rgba(34,197,94,0.95)] transition-all hover:-translate-y-0.5"
+                        key={contact.id || contact.number}
+                        href={contact.type === 'phone'
+                          ? buildPhoneLink(contact.number)
+                          : buildWhatsAppLink({ number: contact.number, message: isArabic ? 'مرحبًا، أحتاج إلى مساعدة من فريق دعم دراجون.' : 'Hello, I need help from Dra90n Support.' })}
+                        target={contact.type === 'phone' ? undefined : '_blank'}
+                        rel={contact.type === 'phone' ? undefined : 'noreferrer'}
+                        className={`inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 text-xs font-extrabold text-white shadow-[0_18px_34px_-24px_rgba(34,197,94,0.95)] transition-all hover:-translate-y-0.5 ${contact.type === 'phone' ? 'border-[color:rgb(var(--color-primary-rgb)/0.45)] bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-hover))]' : 'border-emerald-300/45 bg-[linear-gradient(135deg,#20c66b,#128c7e)]'}`}
                       >
-                        <MessageCircle className="h-4 w-4" />
+                        {contact.type === 'phone' ? <Phone className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
                         <span>
                           <span className="block">{isArabic ? contact.nameAr : contact.nameEn}</span>
                           <span dir="ltr" className="block text-[10px] font-bold opacity-85">{contact.number}</span>

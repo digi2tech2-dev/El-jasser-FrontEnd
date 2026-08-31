@@ -86,23 +86,26 @@ const BestSellingSection = ({
 
   return (
     <section
-      className="mx-auto w-full max-w-5xl border-y border-[color:rgb(var(--color-border-rgb)/0.7)] py-4 sm:py-5"
+      className="best-selling-section mx-auto w-full max-w-5xl"
       aria-labelledby={id}
     >
-      <div className="mb-3 flex items-center justify-between gap-3 px-0.5 sm:mb-4 sm:px-1">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[color:rgb(var(--color-primary-rgb)/0.12)] text-[var(--color-primary)]" aria-hidden="true">
+      <div className="best-selling-heading">
+        <div className="best-selling-heading-title">
+          <span className="best-selling-heading-icon" aria-hidden="true">
             <ShoppingBag className="h-4 w-4" strokeWidth={2.2} />
           </span>
-          <h2 id={id} className="truncate text-base font-black text-[var(--color-text)] sm:text-lg">
+          <div>
+            <span className="best-selling-kicker">{isArabic ? 'مختارات Dra90n' : 'Dra90n picks'}</span>
+            <h2 id={id} className="best-selling-title">
             {title}
-          </h2>
+            </h2>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={onViewAll}
-          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg px-2 text-[0.72rem] font-extrabold text-[var(--color-primary)] transition-colors hover:bg-[color:rgb(var(--color-primary-rgb)/0.09)] sm:px-2.5 sm:text-xs"
+          className="best-selling-view-all"
         >
           <span>{viewAllLabel}</span>
           <DirectionIcon className="h-3.5 w-3.5" strokeWidth={2.3} aria-hidden="true" />
@@ -110,7 +113,7 @@ const BestSellingSection = ({
       </div>
 
       <div
-        className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain px-0.5 pb-1 sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:px-1 lg:grid-cols-5"
+        className="best-selling-list scrollbar-hide flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
         dir={isArabic ? 'rtl' : 'ltr'}
       >
         {products.map((product) => {
@@ -129,22 +132,22 @@ const BestSellingSection = ({
                 if (!isDisabled) onProductSelect(product);
               }}
               disabled={isDisabled}
-              className={`group min-w-[9.25rem] snap-start overflow-hidden rounded-xl border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[var(--color-card)] text-start transition-colors hover:border-[color:rgb(var(--color-primary-rgb)/0.42)] min-[430px]:min-w-[10.25rem] sm:min-w-0 ${isDisabled ? 'cursor-not-allowed opacity-70' : ''}`}
+              className={`best-selling-product group snap-start text-start ${isDisabled ? 'best-selling-product--disabled cursor-not-allowed' : ''}`}
               aria-label={productName}
             >
-              <span className="relative flex aspect-[5/4] w-full items-center justify-center overflow-hidden border-b border-[color:rgb(var(--color-border-rgb)/0.62)] bg-[color:rgb(var(--color-surface-rgb)/0.72)]">
+              <span className="best-selling-product-media">
                 <ProductArtwork product={product} categoryImage={categoryImage} isUnavailable={isUnavailable} />
-                <span className={`absolute end-2 top-2 inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[0.6rem] font-extrabold ${isUnavailable ? 'border-rose-400/25 bg-[var(--color-card)] text-rose-500' : 'border-emerald-400/25 bg-[var(--color-card)] text-emerald-600 dark:text-emerald-400'}`}>
-                  <span className={`h-1.5 w-1.5 rounded-full ${isUnavailable ? 'bg-rose-500' : 'bg-emerald-500'}`} aria-hidden="true" />
+                <span className={`best-selling-status ${isUnavailable ? 'best-selling-status--unavailable' : ''}`}>
+                  <span className="best-selling-status-dot" aria-hidden="true" />
                   {statusLabel}
                 </span>
               </span>
 
-              <span className="flex min-h-[3.6rem] items-center justify-between gap-2 px-2.5 py-2">
-                <span className="line-clamp-2 text-[0.75rem] font-extrabold leading-5 text-[var(--color-text)] sm:text-[0.8rem]">
+              <span className="best-selling-product-content">
+                <span className="best-selling-product-name">
                   {productName}
                 </span>
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.1)] text-[var(--color-primary)] transition-colors group-hover:bg-[color:rgb(var(--color-primary-rgb)/0.16)]" aria-hidden="true">
+                <span className="best-selling-product-arrow" aria-hidden="true">
                   <DirectionIcon className="h-3.5 w-3.5" strokeWidth={2.4} />
                 </span>
               </span>

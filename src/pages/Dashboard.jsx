@@ -14,8 +14,8 @@ import slideOneHeroImage from '../assets/slide-1.jpg';
 import slideTwoHeroImage from '../assets/slide-2.jpg';
 import slideThreeHeroImage from '../assets/slide-3.jpg';
 import slideFourHeroImage from '../assets/slide-4.jpg';
-import slideFiveHeroImage from '../assets/slide-5.jpg';
 import targetBannerImage from '../assets/تارجت.jpg';
+import paymentWarningDragon from '../assets/payment-warning-dragon.webp';
 import {
   createStorefrontCategories,
   createStorefrontProducts,
@@ -29,9 +29,34 @@ const Dashboard = () => {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showWelcomeDragon, setShowWelcomeDragon] = useState(false);
   const language = getStorefrontLanguage(i18n);
   const isTwoFactorEnabled = Boolean(user?.twoFactorEnabled ?? user?.isTwoFactorEnabled);
   const isCustomerUser = String(user?.role || '').trim().toLowerCase() === 'customer';
+
+  useEffect(() => {
+    const userKey = String(user?.id || user?._id || user?.email || user?.username || '').trim();
+    if (!userKey || typeof window === 'undefined') return;
+
+    const storageKey = `dra90n:dashboard-welcome:v1:${userKey}`;
+    try {
+      if (window.localStorage.getItem(storageKey)) return;
+      window.localStorage.setItem(storageKey, 'seen');
+      setShowWelcomeDragon(true);
+    } catch {
+      setShowWelcomeDragon(true);
+    }
+  }, [user?.email, user?.id, user?._id, user?.username]);
+
+  useEffect(() => {
+    if (!showWelcomeDragon || typeof document === 'undefined') return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showWelcomeDragon]);
 
   useEffect(() => {
     if (refreshProfile) refreshProfile();
@@ -57,13 +82,12 @@ const Dashboard = () => {
     };
   }, [loadProducts]);
 
-  const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDgien6RGJJnl8WYV0Q';
+  const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
   const heroSlides = useMemo(() => ([
     { id: 'landing-slide-1', image: slideOneHeroImage, title: '' },
     { id: 'landing-slide-2', image: slideTwoHeroImage, title: '', href: slideTwoUrl },
     { id: 'landing-slide-3', image: slideThreeHeroImage, title: '', href: '/referral' },
     { id: 'landing-slide-4', image: slideFourHeroImage, title: '' },
-    { id: 'landing-slide-5', image: slideFiveHeroImage, title: '' },
   ]), []);
 
   const storefrontProducts = useMemo(
@@ -168,6 +192,26 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-5 pb-5 sm:space-y-6">
+      {showWelcomeDragon ? (
+        <div className="dashboard-welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="dashboard-welcome-title" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <div className="dashboard-welcome-card">
+            <span className="dashboard-welcome-fire-glow" aria-hidden="true" />
+            <span className="dashboard-welcome-embers" aria-hidden="true" />
+            <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
+              <img src={paymentWarningDragon} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
+            </div>
+            <div className="dashboard-welcome-content">
+              <span className="dashboard-welcome-kicker">DRA90N STORE</span>
+              <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في DRA90N' : 'Welcome to DRA90N'}</h1>
+              <p>{language === 'ar' ? 'استعد لتجربة شحن نارية وسريعة.' : 'Get ready for a fast, fiery top-up experience.'}</p>
+              <button type="button" onClick={() => setShowWelcomeDragon(false)} className="dashboard-welcome-button">
+                {language === 'ar' ? 'ابدأ الآن' : 'Start now'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {!isTwoFactorEnabled ? (
         <section className="group relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(120deg,rgb(16_185_129/0.08),rgb(var(--color-card-rgb)/0.72)_48%,rgb(56_189_248/0.07))] p-2 shadow-[0_16px_40px_-34px_rgb(16_185_129/0.72)] backdrop-blur-xl sm:p-2.5">
           <span className="pointer-events-none absolute -start-8 -top-10 h-24 w-24 rounded-full bg-emerald-400/10 blur-2xl" />
@@ -217,14 +261,14 @@ const Dashboard = () => {
         <div className="mx-auto w-full max-w-5xl px-0.5 sm:px-2">
           <Link
             to="/buy-target"
-            className="group mx-auto block w-[21rem] max-w-full overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)] sm:w-[26rem]"
+            className="group mx-auto block w-full max-w-5xl overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)]"
             aria-label={language === 'ar' ? 'بيع تارجت' : 'Sell Target'}
           >
             <span className="block overflow-hidden bg-black">
               <img
                 src={targetBannerImage}
                 alt={language === 'ar' ? 'بيع تارجت' : 'Sell Target'}
-                className="block aspect-[2048/800] w-full object-cover transition-transform duration-500 group-hover:scale-[1.012]"
+                className="block aspect-[2112/745] w-full object-contain transition-transform duration-500 group-hover:scale-[1.012]"
                 loading="lazy"
               />
             </span>

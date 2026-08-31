@@ -4,7 +4,6 @@ import {
   Activity,
   Banknote,
   Boxes,
-  ChevronDown,
   ChevronLeft,
   Check,
   ClipboardCheck,
@@ -35,12 +34,12 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import { cn } from '../ui/Button';
 import { useLanguage } from '../../context/LanguageContext';
-import LanguageSwitcher from '../ui/LanguageSwitcher';
 import WalletSidebarCard from './WalletSidebarCard';
 import HeaderBrand from './HeaderBrand';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
+import dragonLogo from '../../assets/logo.PNG';
 
 const ADMIN_NAV_ROLES = ['admin', 'super_admin', ...SUPERVISOR_ROLES];
 
@@ -78,7 +77,6 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [copiedUserId, setCopiedUserId] = useState(false);
-  const [collapsedSections, setCollapsedSections] = useState({});
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const { dir } = useLanguage();
@@ -135,14 +133,6 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     closeSidebarOnMobile();
   };
 
-  const isSectionOpen = (sectionKey) => collapsedSections[sectionKey] !== true;
-  const toggleSidebarSection = (sectionKey) => {
-    setCollapsedSections((current) => ({
-      ...current,
-      [sectionKey]: current[sectionKey] !== true,
-    }));
-  };
-
   const navItems = [
     {
       icon: House,
@@ -182,7 +172,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
       roles: ['customer', 'admin', ...SUPERVISOR_ROLES],
       visible: (currentUser) => currentUser?.isApiEnabled === true,
     },
-    { icon: Code2, label: dir === 'rtl' ? 'تم الإنشاء بواسطة' : 'Created By', path: '/created-by', roles: ['customer'] },
+    { icon: Code2, label: dir === 'rtl' ? 'تم الإنشاء بواسطة' : 'Created By', path: '/account/created-by', roles: ['customer'] },
     { icon: UsersRound, label: t('sidebar.users'), path: '/admin/users', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_USERS, section: 'admin' },
     { icon: Share2, label: dir === 'rtl' ? 'أرباح كود الإحالة' : 'Referral Earnings', path: '/admin/referrals', roles: ADMIN_NAV_ROLES, section: 'admin' },
     { icon: UserCog, label: t('sidebar.supervisors'), path: '/admin/supervisors', roles: ['admin'], section: 'admin' },
@@ -330,27 +320,21 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
           !isMobile && 'backdrop-blur-[24px]',
           isAdmin && 'border-[color:rgb(var(--color-primary-rgb)/0.26)]'
         )}>
-          <div className="relative z-10 px-4 pb-4 pt-5">
+          <div className={cn('relative z-10', isExpanded ? 'px-4 pb-2 pt-2' : 'px-4 pb-4 pt-5')}>
             <div className={cn('relative flex items-center', isExpanded ? 'justify-center' : 'justify-center')}>
-              <button
-                type="button"
-                onClick={() => navigate(getDefaultRouteForRole(user?.role))}
-                className={cn(
-                  'flex items-center rounded-[24px] transition-all hover:-translate-y-0.5',
-                  isExpanded ? 'bg-transparent' : 'mx-auto'
-                )}
-              >
-                <HeaderBrand
-                  className={cn(
-                    'transition-transform',
-                    isExpanded
-                      ? 'scale-[1.18]'
-                      : 'max-w-11 scale-[0.82] justify-center overflow-hidden [&>span:first-child]:hidden'
-                  )}
-                  iconClassName={isExpanded ? 'scale-[1.14]' : 'scale-[1.04]'}
-                  textClassName="shrink-0"
-                />
-              </button>
+              {!isExpanded && (
+                <button
+                  type="button"
+                  onClick={() => navigate(getDefaultRouteForRole(user?.role))}
+                  className="mx-auto flex w-full items-center justify-center rounded-[24px] transition-all hover:-translate-y-0.5"
+                >
+                  <HeaderBrand
+                    className="max-w-11 scale-[0.82] justify-center overflow-hidden transition-transform [&>span:first-child]:hidden"
+                    iconClassName="scale-[1.04]"
+                    textClassName="shrink-0"
+                  />
+                </button>
+              )}
 
               {!isMobile && (
                 <button
@@ -368,61 +352,85 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
               )}
             </div>
 
-            {isExpanded && (
-              <>
-                <div className="mt-4">
-                  <LanguageSwitcher showIcon variant="sidebar" className="ka-sidebar-language w-full justify-center" />
-                </div>
-
-                <div className="ka-sidebar-user-card mt-2 px-2.5 py-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative flex shrink-0 flex-col items-center">
-                      {userId ? (
-                        <button
-                          type="button"
-                          onClick={handleCopyUserId}
-                          className="ka-sidebar-id-chip absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
-                          title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
-                          aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
-                        >
-                          {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
-                          <span className="truncate">{copiedUserId ? 'تم النسخ' : `...${userId.slice(-8)}`}</span>
-                        </button>
-                      ) : null}
-
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={handleOpenMyAccount}
-                          className="ka-sidebar-avatar h-9 w-9"
-                          aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
-                        >
-                          <img
-                            src={userAvatar}
-                            alt={userDisplayName}
-                          />
-                        </button>
-                        <span
-                          className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_3px_rgb(16_185_129/0.16),0_0_14px_rgb(16_185_129/0.76)]"
-                          role="status"
-                          aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                          title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[0.74rem] font-semibold leading-tight text-[var(--color-text)]">{userDisplayName}</div>
-                      <div className="mt-0.5 truncate text-[0.62rem] font-bold text-[var(--color-primary-hover)]">{userRoleLabel}</div>
-                    </div>
-
-                  </div>
-                </div>
-              </>
-            )}
           </div>
 
           <div className="relative z-10 flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+            {isExpanded && (
+              <div className="mb-3 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => navigate(getDefaultRouteForRole(user?.role))}
+                  className="flex w-full items-center justify-center rounded-[24px] transition-all hover:-translate-y-0.5"
+                  aria-label="Dra90n STORE"
+                >
+                  <img
+                    src={dragonLogo}
+                    alt="Dra90n STORE"
+                    className="ka-sidebar-dragon-logo h-auto w-[min(9rem,64%)] object-contain drop-shadow-[0_12px_24px_rgba(168,23,19,0.42)]"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </button>
+              </div>
+            )}
+
+            {isExpanded && (
+              <div className="ka-sidebar-user-card mb-3 px-2.5 py-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative flex shrink-0 flex-col items-center">
+                    {userId ? (
+                      <button
+                        type="button"
+                        onClick={handleCopyUserId}
+                        className="ka-sidebar-id-chip absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
+                        title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
+                        aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
+                      >
+                        {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
+                        <span className="truncate">{copiedUserId ? 'تم النسخ' : `...${userId.slice(-8)}`}</span>
+                      </button>
+                    ) : null}
+
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={handleOpenMyAccount}
+                        className="ka-sidebar-avatar h-9 w-9"
+                        aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
+                      >
+                        <img
+                          src={userAvatar}
+                          alt={userDisplayName}
+                        />
+                      </button>
+                      <span
+                        className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_3px_rgb(16_185_129/0.16),0_0_14px_rgb(16_185_129/0.76)]"
+                        role="status"
+                        aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                        title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <div className="min-w-0 flex-1 truncate text-[0.74rem] font-semibold leading-tight text-[var(--color-text)]">{userDisplayName}</div>
+                      <button
+                        type="button"
+                        onClick={handleLogoutClick}
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-400/25 bg-rose-500/10 text-rose-500 transition hover:border-rose-400/45 hover:bg-rose-500/16"
+                        aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                        title={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                      >
+                        <LogOut className="h-5 w-5" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                    <div className="mt-0.5 truncate text-[0.62rem] font-bold text-[var(--color-primary-hover)]">{userRoleLabel}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {showWalletCard && (
               <WalletSidebarCard
                 className="mb-3"
@@ -431,50 +439,42 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
               />
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {sidebarSections.map((section, sectionIndex) => (
-                <div key={section.key} className="space-y-1.5">
+                <div key={section.key} className="space-y-1">
                   {isExpanded ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleSidebarSection(section.key)}
-                      className="flex w-full items-center gap-2 rounded-xl px-2 pb-1 pt-1 text-[0.68rem] font-black text-[var(--color-muted)] transition-colors hover:bg-[color:rgb(var(--color-primary-rgb)/0.08)] hover:text-[var(--color-text)]"
-                      aria-expanded={isSectionOpen(section.key)}
-                      aria-controls={`sidebar-section-${section.key}`}
-                    >
+                    <div className="ka-sidebar-section-heading flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[0.62rem] font-black text-[var(--color-muted)]">
                       <span className="shrink-0">{section.label}</span>
                       <span className="h-px flex-1 bg-[color:rgb(var(--color-border-rgb)/0.42)]" />
-                      <ChevronDown
-                        className={cn(
-                          'h-3.5 w-3.5 shrink-0 transition-transform',
-                          !isSectionOpen(section.key) && (dir === 'rtl' ? 'rotate-90' : '-rotate-90')
-                        )}
-                      />
-                    </button>
+                    </div>
                   ) : (
                     sectionIndex > 0 && <div className="mx-auto my-2 h-px w-7 bg-[color:rgb(var(--color-border-rgb)/0.5)]" />
                   )}
-                  {isSectionOpen(section.key) && (
-                    <div id={`sidebar-section-${section.key}`} className="space-y-1.5">
-                      {section.items.map(renderNavItem)}
-                    </div>
-                  )}
+                  <div id={`sidebar-section-${section.key}`} className="space-y-1.5">
+                    {section.items.map(renderNavItem)}
+                  </div>
                 </div>
               ))}
             </div>
+
+            <div className="ka-sidebar-copyright mt-auto" dir="ltr">
+              <span>© 2026</span>
+              <strong>Dra90n STORE</strong>
+            </div>
           </div>
 
-          <div className={cn('relative z-10 px-4 pb-5 pt-1', !isExpanded && 'px-3')}>
-            <button
-              type="button"
-              onClick={handleLogoutClick}
-              className={cn('ka-sidebar-logout-pill w-full', !isExpanded && 'is-icon-only')}
-              aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
-            >
-              <LogOut className="h-5 w-5" />
-              {isExpanded && <span>{dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}</span>}
-            </button>
-          </div>
+          {!isExpanded ? (
+            <div className="relative z-10 px-3 pb-5 pt-1">
+              <button
+                type="button"
+                onClick={handleLogoutClick}
+                className="ka-sidebar-logout-pill is-icon-only w-full"
+                aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </div>
+          ) : null}
         </div>
       </motion.aside>
       <ConfirmDialog

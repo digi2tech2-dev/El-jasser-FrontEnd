@@ -187,7 +187,7 @@ const TargetOrderSuccessModal = ({ isOpen, onClose, order, onViewOrders }) => {
           <div className="grid grid-cols-2 gap-2.5">
             {appImage ? (
               <div className="group flex min-w-0 items-center gap-3 rounded-xl border border-[color:rgb(var(--color-border-rgb)/0.66)] bg-[color:rgb(var(--color-card-rgb)/0.72)] p-3 shadow-[0_14px_32px_-28px_rgb(15_23_42/0.45)]">
-                <img src={resolveImageUrl(appImage)} alt="" className="h-9 w-9 shrink-0 rounded-xl object-cover" />
+                <img src={resolveImageUrl(appImage)} alt="" className="h-9 w-9 shrink-0 rounded-xl object-contain" />
                 <div className="min-w-0"><p className="text-[9px] font-bold text-[var(--color-text-secondary)]">التطبيق</p><p className="mt-0.5 truncate text-xs font-black text-[var(--color-text)]">{appName}</p></div>
               </div>
             ) : <SummaryItem icon={Target} label="التطبيق" value={appName} />}

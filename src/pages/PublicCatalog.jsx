@@ -44,13 +44,13 @@ import slideOneImage from '../assets/slide-1.jpg';
 import slideTwoImage from '../assets/slide-2.jpg';
 import slideThreeImage from '../assets/slide-3.jpg';
 import slideFourImage from '../assets/slide-4.jpg';
-import slideFiveImage from '../assets/slide-5.jpg';
 import targetSalesImage from '../assets/تارجت.jpg';
+import paymentWarningDragon from '../assets/payment-warning-dragon.webp';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb5xkFpFMqrUmvTSil0Q';
-const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDgien6RGJJnl8WYV0Q';
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
+const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
 const PUBLIC_NOTICES_SEEN_KEY = 'ka-card-public-notices-seen-v1';
 const normalizeCategoryKey = (value) => String(value || '').trim().toLowerCase();
 
@@ -304,7 +304,6 @@ const PublicCatalog = () => {
       { id: 'landing-slide-2', image: slideTwoImage, title: '', href: SLIDE_TWO_URL },
       { id: 'landing-slide-3', image: slideThreeImage, title: '', href: '/referral' },
       { id: 'landing-slide-4', image: slideFourImage, title: '' },
-      { id: 'landing-slide-5', image: slideFiveImage, title: '' },
     ]),
     []
   );
@@ -545,7 +544,7 @@ const PublicCatalog = () => {
   );
 
   const seoImage = useMemo(
-    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/android-chrome-192x192.png?v=ka-card'),
+    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/dra90n-og.png?v=dra90n-store'),
     [storefrontProducts]
   );
 
@@ -634,7 +633,7 @@ const PublicCatalog = () => {
               <button
                 type="button"
                 onClick={handleLogin}
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-200/20 bg-[linear-gradient(180deg,rgb(124_58_237/0.22),rgb(3_8_22/0.78))] text-cyan-50 shadow-[inset_0_0_18px_rgb(255_255_255/0.035),0_0_26px_-18px_rgb(124_58_237/0.9)] transition-all hover:-translate-y-0.5 hover:border-amber-200/30 hover:text-amber-100 sm:h-10 sm:w-10"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-orange-200/20 bg-[linear-gradient(180deg,rgb(36_17_8/0.9),rgb(5_3_2/0.84))] text-orange-50 shadow-[inset_0_0_18px_rgb(255_255_255/0.035),0_0_26px_-18px_rgb(245_158_11/0.9)] transition-all hover:-translate-y-0.5 hover:border-amber-200/30 hover:text-amber-100 sm:h-10 sm:w-10"
                 aria-label={isArabic ? 'تسجيل الدخول' : 'Login'}
               >
                 <UserRound className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
@@ -674,19 +673,19 @@ const PublicCatalog = () => {
         <div className="public-notice-overlay public-notice-overlay--service fixed inset-0 z-[90] flex items-center justify-center bg-[radial-gradient(circle_at_50%_15%,rgb(168_85_247/0.24),rgb(15_23_42/0.72)_48%,rgb(0_0_0/0.92))] px-4 backdrop-blur-md">
           <div
             dir="rtl"
-            className="public-notice-card public-notice-card--service ka-card-panel relative w-full max-w-[19.5rem] overflow-hidden rounded-[1.5rem] border border-cyan-200/20 text-right shadow-[0_30px_86px_-46px_rgb(124_58_237/0.95)] backdrop-blur-2xl"
+            className="public-notice-card public-notice-card--service service-notice-card ka-card-panel relative w-full max-w-[19.5rem] overflow-hidden rounded-[1.5rem] border border-orange-200/20 text-right shadow-[0_30px_86px_-46px_rgb(168_23_19/0.95)] backdrop-blur-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="service-notice-title"
             style={{ animation: 'page-fade-in 180ms ease-out both' }}
           >
             <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-[linear-gradient(90deg,transparent,#c084fc,#f472b6,#c084fc,transparent)]" />
-            <div className="pointer-events-none absolute -top-20 left-1/2 h-40 w-64 -translate-x-1/2 rounded-full bg-[color:rgb(124_58_237/0.2)] blur-3xl" />
+            <div className="pointer-events-none absolute -top-20 left-1/2 h-40 w-64 -translate-x-1/2 rounded-full bg-[color:rgb(168_23_19/0.2)] blur-3xl" />
 
             <button
               type="button"
               onClick={handleCloseServiceNotice}
-              className="absolute left-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.65)] bg-[color:rgb(var(--color-card-rgb)/0.72)] text-[var(--color-text-secondary)] shadow-sm transition-all hover:rotate-90 hover:border-[color:rgb(var(--color-primary-rgb)/0.35)] hover:text-[var(--color-primary)]"
+              className="service-notice-close absolute left-3 top-3 z-20 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.65)] bg-[color:rgb(var(--color-card-rgb)/0.72)] text-[var(--color-text-secondary)] shadow-sm transition-all hover:rotate-90 hover:border-[color:rgb(var(--color-primary-rgb)/0.35)] hover:text-[var(--color-primary)]"
               aria-label={isArabic ? 'إغلاق التنويه' : 'Close notice'}
             >
               <X className="h-4 w-4" />
@@ -701,11 +700,24 @@ const PublicCatalog = () => {
                 />
               </div>
 
-              <div className="mb-3 mt-1 text-center">
-                <span className="mx-auto grid h-11 w-11 place-items-center rounded-2xl border border-amber-300/25 bg-[linear-gradient(145deg,rgb(251_191_36/0.2),rgb(244_114_182/0.1))] text-amber-400 shadow-[0_14px_34px_-22px_rgb(245_158_11/0.9)]">
+              <div className="service-notice-dragon-visual" aria-hidden="true">
+                <span className="service-notice-fire-glow" />
+                <span className="service-notice-fire-embers" />
+                <img
+                  src={paymentWarningDragon}
+                  alt=""
+                  className="service-notice-dragon-art"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+              </div>
+
+              <div className="service-notice-title-block mb-3 -mt-1 text-center">
+                <span className="mx-auto grid h-9 w-9 place-items-center rounded-xl border border-amber-300/30 bg-amber-400/10 text-amber-300 shadow-[0_12px_28px_-20px_rgb(245_158_11/0.9)]">
                   <CircleAlert className="h-5.5 w-5.5" strokeWidth={2.1} />
                 </span>
-                <h2 id="service-notice-title" className="mt-2.5 text-lg font-black text-[var(--color-text)]">
+                <h2 id="service-notice-title" className="service-notice-title mt-2 text-lg font-black text-[var(--color-text)]">
                   تنبيه قبل الدفع
                 </h2>
               </div>
@@ -720,8 +732,8 @@ const PublicCatalog = () => {
                   </p>
                 </div>
 
-                <div className="flex gap-2.5 rounded-2xl border border-cyan-300/15 bg-[linear-gradient(135deg,rgb(124_58_237/0.1),rgb(var(--color-surface-rgb)/0.44))] p-3">
-                  <span className="public-notice-dot public-notice-dot--info grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-cyan-400/15 text-cyan-400">
+                <div className="flex gap-2.5 rounded-2xl border border-orange-300/15 bg-[linear-gradient(135deg,rgb(168_23_19/0.1),rgb(var(--color-surface-rgb)/0.44))] p-3">
+                  <span className="public-notice-dot public-notice-dot--info grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-orange-400/15 text-orange-400">
                     <Info className="h-3.5 w-3.5" />
                   </span>
                   <p className="public-notice-muted text-[0.75rem] font-bold leading-5 text-[var(--color-text-secondary)]">
@@ -733,7 +745,7 @@ const PublicCatalog = () => {
               <button
                 type="button"
                 onClick={handleCloseServiceNotice}
-                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-cyan-200/20 bg-[linear-gradient(135deg,#075a75,#9333ea_52%,#ec4899)] px-4 text-[0.82rem] font-black text-white shadow-[0_16px_36px_-22px_rgb(124_58_237/0.95)] transition-all hover:-translate-y-0.5 hover:brightness-110"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-orange-200/20 bg-[linear-gradient(135deg,#a81713,#c2410c_52%,#ffb52e)] px-4 text-[0.82rem] font-black text-[#1b0903] shadow-[0_16px_36px_-22px_rgb(168_23_19/0.95)] transition-all hover:-translate-y-0.5 hover:brightness-110"
               >
                 <Check className="h-4 w-4" strokeWidth={2.5} />
                 متابعة
@@ -744,69 +756,83 @@ const PublicCatalog = () => {
       )}
 
       {showWhatsAppNotice && (
-        <div className="public-notice-overlay public-notice-overlay--whatsapp fixed inset-0 z-[90] flex items-center justify-center bg-[radial-gradient(circle_at_top,rgb(37_211_102/0.18),rgb(124_58_237/0.24)_40%,rgb(0_0_0/0.88))] px-4 backdrop-blur-[4px]">
+        <div className="public-notice-overlay public-notice-overlay--whatsapp fixed inset-0 z-[90] flex items-center justify-center bg-[radial-gradient(circle_at_50%_15%,rgb(168_85_247/0.24),rgb(15_23_42/0.72)_48%,rgb(0_0_0/0.92))] px-4 backdrop-blur-md">
           <div
             dir="rtl"
-            className="public-notice-card public-notice-card--whatsapp ka-card-panel relative w-full max-w-[18.75rem] overflow-hidden rounded-[1.35rem] border border-emerald-300/20 text-right shadow-[0_26px_78px_-44px_rgb(37_211_102/0.88)] backdrop-blur-xl"
+            className="public-notice-card public-notice-card--whatsapp service-notice-card community-notice-card ka-card-panel relative w-full max-w-[19.5rem] overflow-hidden rounded-[1.5rem] border border-orange-200/20 text-right shadow-[0_30px_86px_-46px_rgb(168_23_19/0.95)] backdrop-blur-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="whatsapp-notice-title"
             style={{ animation: 'page-fade-in 180ms ease-out both' }}
           >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#25d366,#087f9b,#f0cf7a,transparent)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#a81713,#f97316,#ffb52e,transparent)]" />
             <div className="pointer-events-none absolute -top-16 left-1/2 h-24 w-44 -translate-x-1/2 rounded-full bg-[color:rgb(37_211_102/0.16)] blur-3xl" />
 
             <button
               type="button"
               onClick={handleCloseWhatsAppNotice}
-              className="absolute left-2.5 top-2.5 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-300/20 bg-[color:rgb(var(--color-card-rgb)/0.78)] text-[var(--color-text-secondary)] transition-all hover:-translate-y-0.5 hover:text-emerald-300"
+              className="service-notice-close absolute left-3 top-3 z-20 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.65)] bg-[color:rgb(var(--color-card-rgb)/0.72)] text-[var(--color-text-secondary)] shadow-sm transition-all hover:rotate-90 hover:border-[color:rgb(var(--color-primary-rgb)/0.35)] hover:text-[var(--color-primary)]"
               aria-label={isArabic ? 'إغلاق تنويه المجتمع' : 'Close community notice'}
             >
               <X className="h-4 w-4" />
             </button>
 
-            <div className="relative px-4 pb-4 pt-4">
-              <div dir="ltr" className="mb-3 flex justify-center pl-8">
+            <div className="relative px-4 pb-4 pt-3.5">
+              <div dir="ltr" className="flex h-8 justify-center pl-7">
                 <HeaderBrand
-                  className="scale-[0.74] justify-center"
-                  iconClassName="scale-[0.82]"
+                  className="origin-top scale-[0.58] justify-center"
+                  iconClassName="scale-[0.72]"
                   textClassName="text-center"
                 />
               </div>
 
-              <div className="mb-3 flex items-center justify-center gap-2">
-                <span className="h-px flex-1 bg-[linear-gradient(90deg,transparent,rgb(37_211_102/0.55))]" />
-                <h2 id="whatsapp-notice-title" className="shrink-0 bg-[linear-gradient(120deg,#25d366,#087f9b,#f0cf7a)] bg-clip-text text-base font-black leading-6 text-transparent">
-                  تنويه المجتمع
-                </h2>
-                <span className="h-px flex-1 bg-[linear-gradient(90deg,rgb(124_58_237/0.55),transparent)]" />
+              <div className="service-notice-dragon-visual" aria-hidden="true">
+                <span className="service-notice-fire-glow" />
+                <span className="service-notice-fire-embers" />
+                <img
+                  src={paymentWarningDragon}
+                  alt=""
+                  className="service-notice-dragon-art"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
               </div>
 
-              <div className="public-notice-body space-y-2.5 rounded-[1rem] border border-emerald-300/20 bg-emerald-950/20 p-3">
-                <div className="flex gap-2.5">
-                  <span className="public-notice-dot public-notice-dot--success mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400/20 text-emerald-300">
+              <div className="service-notice-title-block mb-3 -mt-1 text-center">
+                <span className="mx-auto grid h-9 w-9 place-items-center rounded-xl border border-amber-300/30 bg-amber-400/10 text-amber-300 shadow-[0_12px_28px_-20px_rgb(245_158_11/0.9)]">
+                  <MessageCircle className="h-5 w-5" strokeWidth={2.1} />
+                </span>
+                <h2 id="whatsapp-notice-title" className="service-notice-title mt-2 text-lg font-black leading-6 text-[var(--color-text)]">
+                  تنويه المجتمع
+                </h2>
+              </div>
+
+              <div className="public-notice-body space-y-2 rounded-2xl border border-amber-300/15 bg-[linear-gradient(135deg,rgb(245_158_11/0.1),rgb(var(--color-surface-rgb)/0.44))] p-3">
+                <div className="flex gap-2.5 rounded-xl border border-amber-300/10 bg-[rgb(14_7_4/0.22)] p-2.5">
+                  <span className="public-notice-dot public-notice-dot--success grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-amber-400/15 text-amber-300">
                     <MessageCircle className="h-3.5 w-3.5" />
                   </span>
-                  <p className="public-notice-text text-[0.78rem] font-extrabold leading-6 text-emerald-50">
+                  <p className="public-notice-text text-[0.76rem] font-extrabold leading-5 text-[var(--color-text)]">
                     عدم متابعتك لمجتمع الواتساب مسؤوليتك الشخصية
                   </p>
                 </div>
 
-                <div className="flex gap-2.5">
-                  <span className="public-notice-dot public-notice-dot--info mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-400/20 text-[0.62rem] font-black text-cyan-200">
+                <div className="flex gap-2.5 rounded-xl border border-orange-300/10 bg-[rgb(14_7_4/0.2)] p-2.5">
+                  <span className="public-notice-dot public-notice-dot--info grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-orange-400/15 text-[0.68rem] font-black text-orange-300">
                     i
                   </span>
-                  <p className="public-notice-muted text-[0.76rem] font-bold leading-6 text-cyan-50/80">
+                  <p className="public-notice-muted text-[0.75rem] font-bold leading-5 text-[var(--color-text-secondary)]">
                     واي اهمال في المتابعة تعرضك للمخاطر دون اي مسؤولية علينا
                   </p>
                 </div>
               </div>
 
               <a
-                href="https://whatsapp.com/channel/0029Vb5xkFpFMqrUmvTSil0Q"
+                href={WHATSAPP_CHANNEL_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,#128c7e,#25d366_58%,#087f9b)] px-4 text-sm font-black text-white shadow-[0_18px_38px_-24px_rgb(37_211_102/0.9)] transition-all hover:-translate-y-0.5 hover:brightness-105"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-orange-200/20 bg-[linear-gradient(135deg,#a81713,#c2410c_52%,#ffb52e)] px-4 text-[0.82rem] font-black text-[#1b0903] shadow-[0_16px_36px_-22px_rgb(168_23_19/0.95)] transition-all hover:-translate-y-0.5 hover:brightness-110"
               >
                 <MessageCircle className="h-4 w-4" />
                 مجتمع الواتساب
@@ -816,7 +842,7 @@ const PublicCatalog = () => {
               <button
                 type="button"
                 onClick={handleCloseWhatsAppNotice}
-                className="public-notice-secondary-button mt-2 inline-flex h-10 w-full items-center justify-center rounded-full border border-cyan-200/25 bg-[color:rgb(var(--color-card-rgb)/0.72)] px-4 text-sm font-black text-cyan-50 shadow-[0_16px_34px_-26px_rgb(124_58_237/0.9)] transition-all hover:-translate-y-0.5 hover:border-emerald-300/30 hover:text-emerald-100"
+                className="public-notice-secondary-button mt-2 inline-flex h-10 w-full items-center justify-center rounded-xl border border-orange-200/25 bg-[rgb(40_18_8/0.76)] px-4 text-[0.82rem] font-black text-orange-50 shadow-[0_16px_34px_-26px_rgb(168_23_19/0.9)] transition-all hover:-translate-y-0.5 hover:border-orange-300/30 hover:text-orange-100"
               >
                 موافق
               </button>
@@ -956,14 +982,14 @@ const PublicCatalog = () => {
               <button
                 type="button"
                 onClick={handleLogin}
-                className="group mx-auto block w-[21rem] max-w-full overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] text-start shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)] sm:w-[26rem]"
+                className="group mx-auto block w-full max-w-5xl overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] text-start shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)]"
                 aria-label={copy.targetTitle}
               >
                 <span className="block overflow-hidden bg-black">
                   <img
                     src={targetSalesImage}
                     alt={copy.targetTitle}
-                    className="block aspect-[2048/800] w-full object-cover transition-transform duration-500 group-hover:scale-[1.012]"
+                    className="block aspect-[2112/745] w-full object-contain transition-transform duration-500 group-hover:scale-[1.012]"
                     loading="lazy"
                     decoding="async"
                   />

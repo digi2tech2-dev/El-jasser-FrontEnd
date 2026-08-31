@@ -180,7 +180,7 @@ const sanitizeUser = (user) => {
   });
   return {
     ...safeUser,
-    avatar: resolveUserAvatar(safeUser, safeUser.name || safeUser.email || 'KA-CARD User'),
+    avatar: resolveUserAvatar(safeUser, safeUser.name || safeUser.email || 'Dra90n User'),
     coins: walletSummary.walletBalance,
     walletBalance: walletSummary.walletBalance,
     balance: walletSummary.walletBalance,
@@ -860,7 +860,7 @@ const mockApi = {
         signupMethod: normalizeSignupMethod(userData.signupMethod || 'email'),
         approvedAt: null,
         rejectedAt: null,
-        avatar: resolveUserAvatar(userData, userData.name || userData.username || userData.email || 'KA-CARD User')
+        avatar: resolveUserAvatar(userData, userData.name || userData.username || userData.email || 'Dra90n User')
       };
       delete newUser.password;
       

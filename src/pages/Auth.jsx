@@ -18,7 +18,6 @@ import Button, { cn } from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
 import ThemeToggle from '../components/ui/ThemeToggle';
-import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import OtpInput from '../components/account/OtpInput';
 import { useLanguage } from '../context/LanguageContext';
@@ -39,7 +38,7 @@ import {
   readReferralBridge,
   readReferralCodeFromSearch,
 } from '../utils/referralCode';
-import brandIconImage from '../assets/logo.svg';
+import brandIconImage from '../assets/logo.PNG';
 import styles from './Auth.module.css';
 
 const GoogleMark = () => (
@@ -635,14 +634,6 @@ const countryOptions = useMemo(() => {
         <span>{dir === 'rtl' ? 'العودة للرئيسية' : 'Back to home'}</span>
       </button>
 
-      <div className={styles.topControls} data-auth-no-sparkle>
-        <div className={styles.topControlsInner}>
-          <LanguageSwitcher
-            variant="glass"
-            className="h-8 min-w-[5.5rem] gap-2 rounded-full !border-0 !bg-transparent px-3 py-1 text-[0.62rem] tracking-[0.14em] sm:h-9 sm:min-w-[6rem] sm:text-[0.68rem]"
-          />
-        </div>
-      </div>
       <div className={styles.themeControl} data-auth-no-sparkle>
         <div className={styles.topControlsInner}>
           <ThemeToggle
@@ -664,13 +655,13 @@ const countryOptions = useMemo(() => {
             <div className={styles.brandIcon}>
               <img
                 src={brandIconImage}
-                alt="KA-CARD"
+                alt="Dra90n STORE"
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
               />
             </div>
-            <h1 className={styles.brandName}><span>KA</span>—CARD</h1>
+            <h1 className={styles.brandName}><span>Dra90n</span> STORE</h1>
             <div className={styles.brandDivider}><span /></div>
           </div>
 
@@ -1101,8 +1092,8 @@ const countryOptions = useMemo(() => {
         <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
           <p>
             {dir === 'rtl'
-              ? 'باستخدام KA-CARD، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
-              : 'By using KA-CARD, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
+              ? 'باستخدام Dra90n STORE، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
+              : 'By using Dra90n STORE, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
           </p>
           <p>
             {dir === 'rtl'

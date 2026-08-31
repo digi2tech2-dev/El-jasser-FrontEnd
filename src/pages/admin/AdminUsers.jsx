@@ -828,7 +828,7 @@ const AdminUsers = () => {
           <Card key={entry.id} variant="elevated" className="overflow-hidden border-[color:rgb(var(--color-primary-rgb)/0.16)] bg-[linear-gradient(145deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-surface-rgb)/0.66))] p-2.5 shadow-[0_18px_42px_-36px_rgb(var(--color-primary-rgb)/0.28)]">
             <div className="flex items-start gap-2.5">
               <img
-                src={resolveUserAvatar(entry, entry.name || entry.email || 'KA-CARD User')}
+                src={resolveUserAvatar(entry, entry.name || entry.email || 'Dra90n User')}
                 alt={entry.name}
                 className="h-9 w-9 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.22)] object-cover shadow-[0_14px_28px_-24px_rgb(0_0_0/0.82)]"
               />
@@ -916,7 +916,7 @@ const AdminUsers = () => {
                 <TableCell className={`${compactTableCellClassName} rounded-s-xl py-2`}>
                   <div className="flex items-center gap-2.5">
                     <img
-                      src={resolveUserAvatar(entry, entry.name || entry.email || 'KA-CARD User')}
+                src={resolveUserAvatar(entry, entry.name || entry.email || 'Dra90n User')}
                       alt={entry.name}
                       className="h-9 w-9 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.22)] object-cover shadow-[0_14px_28px_-24px_rgb(0_0_0/0.84)]"
                     />
@@ -1015,7 +1015,7 @@ const AdminUsers = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex items-center gap-2.5">
                 <img
-                  src={resolveUserAvatar(selectedUser, selectedUser?.name || selectedUser?.email || 'KA-CARD User')}
+                  src={resolveUserAvatar(selectedUser, selectedUser?.name || selectedUser?.email || 'Dra90n User')}
                   alt={selectedUser?.name}
                   className="h-12 w-12 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] object-cover"
                 />

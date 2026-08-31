@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Boxes, Edit3, Plus, Trash2 } from 'lucide-react';
 import { resolveImageUrl } from '../../utils/imageUrl';
-import coinsImage from '../../assets/logo.svg';
+import coinsImage from '../../assets/logo.PNG';
 import Button, { cn } from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
@@ -177,7 +177,7 @@ const AdminProducts = ({ products, paymentMethods, onAdd, onUpdate, onDelete }) 
           >
             <div className="relative h-28 overflow-hidden">
               {product.image ? (
-                <img src={resolveImageUrl(product.image)} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src={resolveImageUrl(product.image)} alt={product.name} className="h-full w-full object-contain transition duration-300 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-[color:rgb(var(--color-surface-rgb)/0.78)] text-[var(--color-primary)]">
                   <img src={coinsImage} alt="عملات" className="h-14 w-14 object-contain" />
