@@ -23,6 +23,7 @@ import {
   Share2,
   ReceiptText,
   SlidersHorizontal,
+  Sparkles,
   Target,
   Truck,
   UserCog,
@@ -39,7 +40,7 @@ import HeaderBrand from './HeaderBrand';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
-import dragonLogo from '../../assets/logo.PNG';
+import dragonLogo from '../../assets/logo.webp';
 
 const ADMIN_NAV_ROLES = ['admin', 'super_admin', ...SUPERVISOR_ROLES];
 
@@ -172,7 +173,6 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
       roles: ['customer', 'admin', ...SUPERVISOR_ROLES],
       visible: (currentUser) => currentUser?.isApiEnabled === true,
     },
-    { icon: Code2, label: dir === 'rtl' ? 'تم الإنشاء بواسطة' : 'Created By', path: '/account/created-by', roles: ['customer'] },
     { icon: UsersRound, label: t('sidebar.users'), path: '/admin/users', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_USERS, section: 'admin' },
     { icon: Share2, label: dir === 'rtl' ? 'أرباح كود الإحالة' : 'Referral Earnings', path: '/admin/referrals', roles: ADMIN_NAV_ROLES, section: 'admin' },
     { icon: UserCog, label: t('sidebar.supervisors'), path: '/admin/supervisors', roles: ['admin'], section: 'admin' },
@@ -207,7 +207,8 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
       roles: ['customer', ...SUPERVISOR_ROLES],
       onClick: handleContactClick,
     },
-    { icon: SlidersHorizontal, label: t('sidebar.settings'), path: '/settings', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] }
+    { icon: SlidersHorizontal, label: t('sidebar.settings'), path: '/settings', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
+    { icon: Sparkles, label: dir === 'rtl' ? 'تم الإنشاء بواسطة' : 'Created By', path: '/account/created-by', roles: ['customer'] },
   ];
 
   const filteredNavItems = navItems.filter((item) => (

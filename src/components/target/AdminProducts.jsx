@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Boxes, Edit3, Plus, Trash2 } from 'lucide-react';
 import { resolveImageUrl } from '../../utils/imageUrl';
-import coinsImage from '../../assets/logo.PNG';
+import coinsImage from '../../assets/logo.webp';
 import Button, { cn } from '../ui/Button';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';

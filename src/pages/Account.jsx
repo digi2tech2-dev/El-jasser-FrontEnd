@@ -708,13 +708,6 @@ const Account = () => {
               error={errors.fullName}
               placeholder={isEnglish ? 'Enter full name' : 'أدخل الاسم الكامل'}
             />
-            <Input
-              label={text.username}
-              value={form.username}
-              onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
-              error={errors.username}
-              placeholder={isEnglish ? 'Optional username' : 'اسم عرض اختياري'}
-            />
           </div>
         </Card>
         <div className="mt-3 flex justify-end">

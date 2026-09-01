@@ -24,11 +24,15 @@ export const detectLitePerformanceMode = () => {
     && Number.isFinite(androidMajorVersion)
     && androidMajorVersion <= 10;
 
+  // Small screens benefit from the lighter visual path even on newer phones:
+  // large backdrops, filters, and animated shadows are disproportionately
+  // expensive on mobile GPUs and make scrolling feel sluggish.
   return reducedMotion
     || constrainedConnection
-    || (isCompactViewport && legacyAndroid)
-    || (isCompactViewport && isAndroid && (constrainedMemory || constrainedCpu))
-    || (isCompactViewport && constrainedMemory && constrainedCpu);
+    || isCompactViewport
+    || legacyAndroid
+    || constrainedMemory
+    || constrainedCpu;
 };
 
 export const applyPerformanceMode = () => {

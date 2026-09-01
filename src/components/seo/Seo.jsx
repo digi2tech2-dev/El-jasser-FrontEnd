@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.png?v=dra90n-store';
+const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.webp?v=dra90n-store';
 
 const upsertMeta = (selector, createAttributes, valueAttribute, value) => {
   if (typeof document === 'undefined' || !value) return;

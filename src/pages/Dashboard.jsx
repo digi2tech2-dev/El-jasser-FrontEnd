@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ShieldCheck } from 'lucide-react';
@@ -15,7 +16,8 @@ import slideTwoHeroImage from '../assets/slide-2.jpg';
 import slideThreeHeroImage from '../assets/slide-3.jpg';
 import slideFourHeroImage from '../assets/slide-4.jpg';
 import targetBannerImage from '../assets/تارجت.jpg';
-import paymentWarningDragon from '../assets/payment-warning-dragon.webp';
+import paymentWarningDragon from '../assets/payment-warning-dragon-lite.webp';
+import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import {
   createStorefrontCategories,
   createStorefrontProducts,
@@ -48,15 +50,7 @@ const Dashboard = () => {
     }
   }, [user?.email, user?.id, user?._id, user?.username]);
 
-  useEffect(() => {
-    if (!showWelcomeDragon || typeof document === 'undefined') return undefined;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    window.scrollTo({ top: 0, behavior: 'auto' });
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [showWelcomeDragon]);
+  useBodyScrollLock(showWelcomeDragon);
 
   useEffect(() => {
     if (refreshProfile) refreshProfile();
@@ -190,27 +184,36 @@ const Dashboard = () => {
     navigate(`/orders/${encodeURIComponent(orderId)}`);
   }, [navigate]);
 
+  const welcomeOverlay = showWelcomeDragon ? (
+    <div
+      className="dashboard-welcome-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dashboard-welcome-title"
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+      onClick={() => setShowWelcomeDragon(false)}
+    >
+      <div className="dashboard-welcome-card" onClick={(event) => event.stopPropagation()}>
+        <span className="dashboard-welcome-fire-glow" aria-hidden="true" />
+        <span className="dashboard-welcome-embers" aria-hidden="true" />
+        <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
+          <img src={paymentWarningDragon} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
+        </div>
+        <div className="dashboard-welcome-content">
+          <span className="dashboard-welcome-kicker">DRA90N STORE</span>
+          <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في DRA90N' : 'Welcome to DRA90N'}</h1>
+          <p>{language === 'ar' ? 'استعد لتجربة شحن نارية وسريعة.' : 'Get ready for a fast, fiery top-up experience.'}</p>
+          <button type="button" onClick={() => setShowWelcomeDragon(false)} className="dashboard-welcome-button">
+            {language === 'ar' ? 'ابدأ الآن' : 'Start now'}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className="space-y-5 pb-5 sm:space-y-6">
-      {showWelcomeDragon ? (
-        <div className="dashboard-welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="dashboard-welcome-title" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <div className="dashboard-welcome-card">
-            <span className="dashboard-welcome-fire-glow" aria-hidden="true" />
-            <span className="dashboard-welcome-embers" aria-hidden="true" />
-            <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
-              <img src={paymentWarningDragon} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
-            </div>
-            <div className="dashboard-welcome-content">
-              <span className="dashboard-welcome-kicker">DRA90N STORE</span>
-              <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في DRA90N' : 'Welcome to DRA90N'}</h1>
-              <p>{language === 'ar' ? 'استعد لتجربة شحن نارية وسريعة.' : 'Get ready for a fast, fiery top-up experience.'}</p>
-              <button type="button" onClick={() => setShowWelcomeDragon(false)} className="dashboard-welcome-button">
-                {language === 'ar' ? 'ابدأ الآن' : 'Start now'}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {typeof document !== 'undefined' && welcomeOverlay ? createPortal(welcomeOverlay, document.body) : null}
 
       {!isTwoFactorEnabled ? (
         <section className="group relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(120deg,rgb(16_185_129/0.08),rgb(var(--color-card-rgb)/0.72)_48%,rgb(56_189_248/0.07))] p-2 shadow-[0_16px_40px_-34px_rgb(16_185_129/0.72)] backdrop-blur-xl sm:p-2.5">

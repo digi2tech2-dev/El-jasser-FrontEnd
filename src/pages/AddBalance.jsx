@@ -18,7 +18,7 @@ import useSystemStore from '../store/useSystemStore';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { formatWalletNumber } from '../utils/storefront';
 import { getActivePaymentGroups } from '../utils/paymentSettings';
-import dragonLogo from '../assets/logo.PNG';
+import dragonLogo from '../assets/logo.webp';
 
 const getMethodIcon = (method) => {
   const token = `${method?.type || ''} ${method?.id || ''} ${method?.name || ''}`.toLowerCase();

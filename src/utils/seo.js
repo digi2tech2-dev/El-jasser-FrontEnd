@@ -2,7 +2,7 @@ import resolveImageUrl from './imageUrl';
 
 const STORE_NAME = 'Dra90n STORE';
 const DEFAULT_DESCRIPTION = 'اشحن ألعابك وتطبيقاتك وبطاقاتك الرقمية فورًا بأسعار منافسة وعروض قوية مع Dra90n STORE — سرعة وأمان ودعم متواصل.';
-const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.png?v=dra90n-store';
+const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.webp?v=dra90n-store';
 
 const SEARCH_PHRASES = [
   'شحن تطبيقات دردشة صوتية',

@@ -45,7 +45,7 @@ import slideTwoImage from '../assets/slide-2.jpg';
 import slideThreeImage from '../assets/slide-3.jpg';
 import slideFourImage from '../assets/slide-4.jpg';
 import targetSalesImage from '../assets/تارجت.jpg';
-import paymentWarningDragon from '../assets/payment-warning-dragon.webp';
+import paymentWarningDragon from '../assets/payment-warning-dragon-lite.webp';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
@@ -544,7 +544,7 @@ const PublicCatalog = () => {
   );
 
   const seoImage = useMemo(
-    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/dra90n-og.png?v=dra90n-store'),
+    () => toAbsoluteUrl(storefrontProducts.find((product) => product?.image)?.image || '/dra90n-og.webp?v=dra90n-store'),
     [storefrontProducts]
   );
 

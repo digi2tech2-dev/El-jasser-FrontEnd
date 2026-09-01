@@ -11,8 +11,8 @@ import apiClient from '../../services/client';
 import { useToast } from '../ui/Toast';
 import { useLanguage } from '../../context/LanguageContext';
 import { resolveImageUrl } from '../../utils/imageUrl';
-import brandLogoDark from '../../assets/logo.PNG';
-import brandLogoLight from '../../assets/logo.PNG';
+import brandLogoDark from '../../assets/logo.webp';
+import brandLogoLight from '../../assets/logo.webp';
 import {
   calculateProductPrice,
   formatCurrencyAmount,
@@ -44,6 +44,7 @@ const getCopy = (language = 'ar') => (
         purchaseSummary: 'Purchase summary',
         usdEquivalent: 'USD equivalent',
         usdSettlementNote: 'Base platform price in USD',
+        shippingNotice: 'Shipping is completed within a few seconds',
         quantity: 'Quantity',
         quantityPlaceholder: 'Enter quantity',
         minQuantity: 'Min',
@@ -86,6 +87,7 @@ const getCopy = (language = 'ar') => (
         purchaseSummary: 'ملخص الشراء',
         usdEquivalent: 'المعادل بالدولار',
         usdSettlementNote: 'السعر الأساسي للمنصة بالدولار',
+        shippingNotice: 'الشحن يتم خلال ثواني معدوده',
         quantity: 'الكمية',
         quantityPlaceholder: 'أدخل الكمية',
         minQuantity: 'أقل كمية',
@@ -143,7 +145,7 @@ const ProductImage = ({ product }) => {
     return <img src={resolveImageUrl(product.image)} alt={product?.name || ''} onError={() => setImageFailed(true)} />;
   }
 
-  return <Package className="h-12 w-12" strokeWidth={1.8} />;
+  return <img src={brandLogoDark} alt="Dra90n STORE" className="purchase-dialog-fallback-logo" />;
 };
 
 const SummaryCell = ({ label, value, icon, onClick, title }) => {
@@ -799,7 +801,7 @@ const ProductPurchaseDialog = ({
         initial={{ opacity: 0, y: 28, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.18 }}
-        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : ''}`}
+        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : (successOrder ? '' : 'purchase-dialog-card--reference')}`}
       >
         <div className="purchase-dialog-grid" />
         <button type="button" className="purchase-dialog-close" onClick={onClose} aria-label="Close">
@@ -960,13 +962,13 @@ const ProductPurchaseDialog = ({
               </div>
             </div>
 
-            {productDescription ? (
+            {productDescription || copy.shippingNotice ? (
               <section
                 className="purchase-dialog-description"
                 aria-label={language === 'en' ? 'Product description' : 'وصف المنتج'}
               >
                 <FileText className="purchase-dialog-description-icon h-4 w-4" aria-hidden="true" />
-                <p>{productDescription}</p>
+                <p>{productDescription || copy.shippingNotice}</p>
               </section>
             ) : null}
 
@@ -1001,6 +1003,7 @@ const ProductPurchaseDialog = ({
               </div>
               <div className="ppd-gold-divider" />
               <div className="ppd-gold-total">
+                <WalletCards className="ppd-gold-total-icon" aria-hidden="true" />
                 <span className="ppd-gold-label">{copy.total}</span>
                 <strong className="ppd-gold-price" dir="ltr">{formattedTotalPrice}</strong>
                 {shouldShowUsdEquivalent ? (
@@ -1014,7 +1017,9 @@ const ProductPurchaseDialog = ({
                 <span className="purchase-dialog-field-label"><UserRound className="h-4 w-4" />{primaryOrderFieldLabel}</span>
                 <div className={primaryOrderField?.isVerifiable === true ? 'grid grid-cols-[minmax(0,1fr)_auto] gap-2' : ''}>
                   <div className="purchase-dialog-input-shell">
-                    <UserRound className="purchase-dialog-input-icon h-4 w-4" />
+                    <span className="purchase-dialog-input-badge" aria-hidden="true">
+                      <UserRound className="h-4 w-4" />
+                    </span>
                     <input
                       type="text"
                       value={userId}

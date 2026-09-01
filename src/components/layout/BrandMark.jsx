@@ -1,8 +1,8 @@
 import React from 'react';
 import { cn } from '../ui/Button';
-import brandIconImage from '../../assets/logo.PNG';
+import brandIconImage from '../../assets/logo.webp';
 // The new dragon logo is used consistently in both themes.
-import brandIconLightImage from '../../assets/logo.PNG';
+import brandIconLightImage from '../../assets/logo.webp';
 import { useTheme } from '../../context/ThemeContext';
 
 const stylesBySize = {
