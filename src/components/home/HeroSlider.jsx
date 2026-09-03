@@ -10,11 +10,11 @@ const HeroSlider = ({ slides }) => {
   const performanceLite = isLitePerformanceMode();
   const isArabic = (i18n.resolvedLanguage || i18n.language || 'ar').toLowerCase().startsWith('ar');
   const verseText = isArabic
-    ? 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ ﴿وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا﴾ صَدَقَ اللَّهُ الْعَظِيمُ'
+    ? 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ ﴿قُلْ إِنَّ رَبِّي يَبْسُطُ الرِّزْقَ لِمَنْ يَشَاءُ مِنْ عِبَادِهِ وَيَقْدِرُ لَهُ وَمَا أَنْفَقْتُمْ مِنْ شَيْءٍ فَهُوَ يُخْلِفُهُ وَهُوَ خَيْرُ الرَّازِقِينَ﴾ صَدَقَ اللَّهُ الْعَظِيمُ'
     : 'In the name of Allah, the Most Gracious, the Most Merciful. Do not consume one another’s wealth unjustly, but only through trade by mutual consent.';
 
   useEffect(() => {
-    if (!hasMultipleSlides || performanceLite) return undefined;
+    if (!hasMultipleSlides) return undefined;
 
     const timer = window.setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
