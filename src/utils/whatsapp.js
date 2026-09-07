@@ -1,5 +1,6 @@
 const SUPPORT_PHONE_NUMBER = '01060682018';
 const SUPPORT_WHATSAPP_NUMBER = '01144558644';
+const SUPPORT_WHATSAPP_NUMBER_2 = '+96597178814';
 const SUPPORT_CONTACTS = Object.freeze([
   {
     id: 'phone',
@@ -14,6 +15,13 @@ const SUPPORT_CONTACTS = Object.freeze([
     nameAr: 'دعم دراجون',
     nameEn: 'Dra90n Support',
     number: SUPPORT_WHATSAPP_NUMBER,
+  },
+  {
+    id: 'whatsapp-2',
+    type: 'whatsapp',
+    nameAr: 'دعم دراجون 2',
+    nameEn: 'Dra90n Support 2',
+    number: SUPPORT_WHATSAPP_NUMBER_2,
   },
 ]);
 const FALLBACK_WHATSAPP_NUMBER = SUPPORT_WHATSAPP_NUMBER;
