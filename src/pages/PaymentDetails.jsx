@@ -23,7 +23,10 @@ const isVodafoneCashMethod = (method) => {
   return token.includes('vodafone') || token.includes('فودافون');
 };
 
-const requiresTransactionNumber = (_method) => false;
+const requiresTransactionNumber = (method) => {
+  const type = normalizeMethodType(method?.type);
+  return ['mobile_wallet', 'e_wallet', 'ewallet', 'electronic_wallet'].includes(type);
+};
 
 const getReceiverDestination = (method) => {
   const accountNumber = String(method?.accountNumber || '').trim();
@@ -72,14 +75,6 @@ const FieldCompletionBadge = ({ complete }) => (
 
 const getSenderDetailRequirement = (method) => {
   const type = normalizeMethodType(method?.type);
-  if ((type === 'mobile_wallet' || type === 'e_wallet' || type === 'ewallet') && isVodafoneCashMethod(method)) {
-    return {
-      field: 'senderWalletNumber',
-      label: 'رقم العملية',
-      placeholder: 'أدخل رقم العملية',
-      validationMessage: 'يرجى إدخال رقم العملية',
-    };
-  }
 
   if (type === 'usdt' || type === 'crypto') {
     return {
