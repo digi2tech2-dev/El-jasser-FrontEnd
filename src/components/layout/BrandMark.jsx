@@ -1,8 +1,6 @@
 import React from 'react';
 import { cn } from '../ui/Button';
-import brandIconImage from '../../assets/logo.webp';
-// The new dragon logo is used consistently in both themes.
-import brandIconLightImage from '../../assets/logo.webp';
+import brandIconImage from '../../assets/elgny.PNG';
 import { useTheme } from '../../context/ThemeContext';
 
 const stylesBySize = {
@@ -41,7 +39,7 @@ const BrandMark = ({
   titleClassName,
   captionClassName,
 }) => {
-  const { isDark } = useTheme();
+  useTheme();
   const styles = stylesBySize[size] || stylesBySize.md;
   const isIconEnd = iconPosition === 'end';
 
@@ -49,8 +47,8 @@ const BrandMark = ({
     <div className={cn('flex items-center', isIconEnd && 'flex-row-reverse', styles.wrapper, className)}>
       <div className={cn('relative overflow-hidden', styles.iconShell)}>
         <img
-          src={isDark ? brandIconImage : brandIconLightImage}
-          alt="Dra90n STORE"
+          src={brandIconImage}
+          alt="El-Jasser Card"
           loading="eager"
           decoding="async"
           className="relative h-full w-full object-contain"
@@ -67,7 +65,7 @@ const BrandMark = ({
             )}
           >
             <span className="bg-[linear-gradient(110deg,#ffd36a_0%,#f59e0b_42%,#c2410c_100%)] bg-clip-text text-transparent">
-              Dra90n
+              El-Jasser
             </span>
             <span className="mx-1 text-[color:rgb(var(--color-text-secondary)/0.5)]">·</span>
             <span className="text-[color:rgb(var(--color-text-secondary)/0.86)]">STORE</span>

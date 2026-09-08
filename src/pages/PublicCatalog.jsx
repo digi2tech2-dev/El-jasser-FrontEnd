@@ -45,12 +45,12 @@ import slideTwoImage from '../assets/slide-2.jpg';
 import slideThreeImage from '../assets/slide-3.jpg';
 import slideFourImage from '../assets/slide-4.jpg';
 import targetSalesImage from '../assets/تارجت.jpg';
-import paymentWarningDragon from '../assets/payment-warning-dragon-lite.webp';
+import genieArtwork from '../assets/elgny.PNG';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
-const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029VbDq1UwDTkK4AeRqT02c';
+const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDq1UwDTkK4AeRqT02c';
 const PUBLIC_NOTICES_SEEN_KEY = 'ka-card-public-notices-seen-v1';
 const normalizeCategoryKey = (value) => String(value || '').trim().toLowerCase();
 
@@ -982,23 +982,23 @@ const PublicCatalog = () => {
               <button
                 type="button"
                 onClick={handleLogin}
-                className="group mx-auto block w-full max-w-5xl overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] text-start shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)]"
+                className="group relative mx-auto block w-full max-w-5xl overflow-hidden rounded-[1.25rem] border border-[color:rgb(var(--color-primary-rgb)/0.35)] bg-[var(--color-card)] text-start shadow-[0_20px_50px_-25px_rgb(var(--color-primary-rgb)/0.8)] transition-all duration-300 hover:-translate-y-1 hover:border-[color:rgb(var(--color-primary-rgb)/0.6)] hover:shadow-[0_25px_60px_-20px_rgb(var(--color-primary-rgb)/0.95)]"
                 aria-label={copy.targetTitle}
               >
-                <span className="block overflow-hidden bg-black">
+                <div className="relative aspect-[1280/485] w-full overflow-hidden">
                   <img
                     src={targetSalesImage}
                     alt={copy.targetTitle}
-                    className="block aspect-[2112/745] w-full object-contain transition-transform duration-500 group-hover:scale-[1.012]"
+                    className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
                     loading="lazy"
                     decoding="async"
                   />
-                </span>
-                <span className="block border-t border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-primary-rgb)/0.08))] px-3 py-1.5 text-center">
-                  <span className="text-xs font-extrabold text-[var(--color-text)] sm:text-sm">
-                    {copy.targetTitle}
-                  </span>
-                </span>
+                  <div className="pointer-events-none absolute bottom-[10%] left-[23.5%] flex h-[19%] w-[35.5%] items-center justify-center">
+                    <span className="text-[clamp(0.75rem,2.5vw,1.25rem)] font-black tracking-wider text-[#ffe58f] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-transform duration-300 group-hover:scale-105">
+                      {copy.targetTitle}
+                    </span>
+                  </div>
+                </div>
               </button>
             </div>
           )}

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.webp?v=dra90n-store';
+const DEFAULT_SOCIAL_IMAGE = '/jasser-card-mark.svg';
 
 const upsertMeta = (selector, createAttributes, valueAttribute, value) => {
   if (typeof document === 'undefined' || !value) return;
@@ -53,7 +53,7 @@ const Seo = ({
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
 
-    const safeTitle = title || 'Dra90n STORE';
+    const safeTitle = title || 'El-Jasser Card';
     const socialImage = image || DEFAULT_SOCIAL_IMAGE;
     document.title = safeTitle;
     document.documentElement.lang = language === 'ar' ? 'ar' : 'en';
@@ -64,7 +64,7 @@ const Seo = ({
     upsertMeta('meta[name="robots"]', { name: 'robots' }, 'content', 'index, follow, max-image-preview:large');
     upsertMeta('meta[property="og:title"]', { property: 'og:title' }, 'content', safeTitle);
     upsertMeta('meta[property="og:description"]', { property: 'og:description' }, 'content', description);
-    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', 'Dra90n STORE');
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', 'El-Jasser Card');
     upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'content', 'website');
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale' }, 'content', language === 'ar' ? 'ar_EG' : 'en_US');
     upsertMeta('meta[property="og:locale:alternate"]', { property: 'og:locale:alternate' }, 'content', language === 'ar' ? 'en_US' : 'ar_EG');

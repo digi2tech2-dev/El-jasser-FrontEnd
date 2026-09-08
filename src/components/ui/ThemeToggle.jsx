@@ -29,7 +29,11 @@ const ThemeToggle = ({ className, compact = false, variant = 'default' }) => {
         aria-label={isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الغامق'}
         title={isDark ? 'الوضع الفاتح' : 'الوضع الغامق'}
       >
-        {isDark ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+        {isDark ? (
+          <Sun className="h-4.5 w-4.5 text-[#d9a62e] drop-shadow-[0_0_8px_rgb(217_166_46/0.55)]" />
+        ) : (
+          <Moon className="h-4.5 w-4.5 text-[#37c9e9] drop-shadow-[0_0_8px_rgb(55_201_233/0.5)]" />
+        )}
       </button>
     );
   }

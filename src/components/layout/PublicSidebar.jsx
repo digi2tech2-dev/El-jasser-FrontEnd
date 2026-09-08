@@ -11,7 +11,7 @@ import {
   Code2,
 } from 'lucide-react';
 import { cn } from '../ui/Button';
-import dragonLogo from '../../assets/logo.webp';
+import dragonLogo from '../../assets/elgny.PNG';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4.5 w-4.5 shrink-0">
@@ -135,11 +135,11 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
               type="button"
               onClick={onHome}
               className="mb-1 flex w-full items-center justify-center rounded-[24px] transition-all hover:-translate-y-0.5"
-              aria-label="Dra90n STORE"
+              aria-label="El-Jasser Card"
             >
               <img
                 src={dragonLogo}
-                alt="Dra90n STORE"
+                alt="El-Jasser Card"
                 className="ka-sidebar-dragon-logo h-auto w-[min(9rem,64%)] object-contain drop-shadow-[0_12px_24px_rgba(168,23,19,0.42)]"
                 loading="eager"
                 decoding="async"
@@ -170,7 +170,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
 
             <div className="ka-sidebar-copyright mt-auto" dir="ltr">
               <span>© 2026</span>
-              <strong>Dra90n STORE</strong>
+              <strong>El-Jasser Card</strong>
             </div>
           </div>
         </div>

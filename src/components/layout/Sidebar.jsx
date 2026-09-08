@@ -40,7 +40,7 @@ import HeaderBrand from './HeaderBrand';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
-import dragonLogo from '../../assets/logo.webp';
+import dragonLogo from '../../assets/elgny.PNG';
 
 const ADMIN_NAV_ROLES = ['admin', 'super_admin', ...SUPERVISOR_ROLES];
 
@@ -362,11 +362,11 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
                   type="button"
                   onClick={() => navigate(getDefaultRouteForRole(user?.role))}
                   className="flex w-full items-center justify-center rounded-[24px] transition-all hover:-translate-y-0.5"
-                  aria-label="Dra90n STORE"
+                  aria-label="El-Jasser Card"
                 >
                   <img
                     src={dragonLogo}
-                    alt="Dra90n STORE"
+                    alt="El-Jasser Card"
                     className="ka-sidebar-dragon-logo h-auto w-[min(9rem,64%)] object-contain drop-shadow-[0_12px_24px_rgba(168,23,19,0.42)]"
                     loading="eager"
                     decoding="async"
@@ -419,7 +419,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
                       <button
                         type="button"
                         onClick={handleLogoutClick}
-                        className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-400/25 bg-rose-500/10 text-rose-500 transition hover:border-rose-400/45 hover:bg-rose-500/16"
+                        className="ka-sidebar-account-logout grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-400/25 bg-rose-500/10 text-rose-500 transition hover:border-rose-400/45 hover:bg-rose-500/16"
                         aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
                         title={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
                       >
@@ -460,7 +460,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
 
             <div className="ka-sidebar-copyright mt-auto" dir="ltr">
               <span>© 2026</span>
-              <strong>Dra90n STORE</strong>
+              <strong>El-Jasser Card</strong>
             </div>
           </div>
 

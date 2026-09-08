@@ -95,7 +95,7 @@ const BestSellingSection = ({
             <ShoppingBag className="h-4 w-4" strokeWidth={2.2} />
           </span>
           <div>
-            <span className="best-selling-kicker">{isArabic ? 'مختارات Dra90n' : 'Dra90n picks'}</span>
+            <span className="best-selling-kicker">{isArabic ? 'مختارات الجاسر كارد' : 'El-Jasser picks'}</span>
             <h2 id={id} className="best-selling-title">
             {title}
             </h2>

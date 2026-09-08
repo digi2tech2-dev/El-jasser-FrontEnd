@@ -4,7 +4,7 @@ import { buildWhatsAppLink } from '../../utils/whatsapp';
 
 const ENGINEERS_WHATSAPP_URL = buildWhatsAppLink({
   number: '01019603238',
-  message: 'مرحبًا، أريد تصميم موقع مشابه لـ Dra90n STORE.',
+  message: 'مرحبًا، أريد تصميم موقع مشابه لـ El-Jasser Card.',
 });
 
 const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true }) => (
@@ -15,7 +15,7 @@ const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true }) => (
       <div className="relative flex flex-col items-center gap-3 text-center lg:flex-row lg:justify-between lg:text-start">
         <div className="space-y-1.5 text-center lg:text-start">
           <p className="text-[0.82rem] font-black tracking-[0.04em] text-[var(--color-text)] sm:text-sm">
-            © 2026 Dra90n STORE
+            © 2026 El-Jasser Card
           </p>
           <p className="mx-auto max-w-xl text-[0.65rem] font-semibold leading-5 text-[var(--color-text-secondary)] lg:mx-0 sm:text-[0.72rem]">
             {isArabic

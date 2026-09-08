@@ -11,7 +11,7 @@ import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { buildPhoneLink, buildWhatsAppLink, getAdminWhatsAppNumber, getSupportContacts } from '../utils/whatsapp';
-import brandIconImage from '../assets/logo.webp';
+import brandIconImage from '../assets/elgny.PNG';
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -163,7 +163,7 @@ const AboutUsPage = () => {
                     <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(135deg,rgba(245,158,11,0.18),rgba(194,65,12,0.12),rgba(168,23,19,0.13))]" />
                     <img
                       src={brandIconImage}
-                      alt="Dra90n STORE"
+                      alt="El-Jasser Card"
                       loading="eager"
                       decoding="async"
                       className="relative h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(245,158,11,0.22)]"
@@ -172,7 +172,7 @@ const AboutUsPage = () => {
                   <div dir="ltr" className="text-center">
                     <p className="font-['Orbitron'] text-[1.15rem] font-black leading-none tracking-[0.08em] sm:text-[1.35rem]">
                       <span className="bg-[linear-gradient(120deg,#0f172a_0%,#087f9b_34%,#f59e0b_70%,#087f9b_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fff7d6_0%,#f0cf7a_30%,#42d7e9_66%,#a78bfa_100%)]">
-                        Dra90n
+                        El-Jasser Card
                       </span>
                       <span className="mx-1 text-orange-400">·</span>
                       <span className="bg-[linear-gradient(120deg,#fff3c4_0%,#f59e0b_38%,#a81713_100%)] bg-clip-text text-transparent">
@@ -221,7 +221,7 @@ const AboutUsPage = () => {
                         key={contact.id || contact.number}
                         href={contact.type === 'phone'
                           ? buildPhoneLink(contact.number)
-                          : buildWhatsAppLink({ number: contact.number, message: isArabic ? 'مرحبًا، أحتاج إلى مساعدة من فريق دعم دراجون.' : 'Hello, I need help from Dra90n Support.' })}
+                          : buildWhatsAppLink({ number: contact.number, message: isArabic ? 'مرحبًا، أحتاج إلى مساعدة من فريق دعم الجاسر كارد.' : 'Hello, I need help from El-Jasser Card Support.' })}
                         target={contact.type === 'phone' ? undefined : '_blank'}
                         rel={contact.type === 'phone' ? undefined : 'noreferrer'}
                         className={`inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 text-xs font-extrabold text-white shadow-[0_18px_34px_-24px_rgba(34,197,94,0.95)] transition-all hover:-translate-y-0.5 ${contact.type === 'phone' ? 'border-[color:rgb(var(--color-primary-rgb)/0.45)] bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-hover))]' : 'border-emerald-300/45 bg-[linear-gradient(135deg,#20c66b,#128c7e)]'}`}

@@ -1,26 +1,26 @@
-const SUPPORT_PHONE_NUMBER = '01060682018';
-const SUPPORT_WHATSAPP_NUMBER = '01144558644';
-const SUPPORT_WHATSAPP_NUMBER_2 = '+96597178814';
+const SUPPORT_PHONE_NUMBER = '01092301323';
+const SUPPORT_WHATSAPP_NUMBER = '01201111390';
+const SUPPORT_WHATSAPP_NUMBER_2 = '01270347430';
 const SUPPORT_CONTACTS = Object.freeze([
   {
     id: 'phone',
     type: 'phone',
-    nameAr: 'دعم دراجون',
-    nameEn: 'Dra90n Support',
+    nameAr: 'عمو المدير',
+    nameEn: 'Manager',
     number: SUPPORT_PHONE_NUMBER,
   },
   {
     id: 'whatsapp',
     type: 'whatsapp',
-    nameAr: 'دعم دراجون',
-    nameEn: 'Dra90n Support',
+    nameAr: 'نائب المدير',
+    nameEn: 'Deputy Manager',
     number: SUPPORT_WHATSAPP_NUMBER,
   },
   {
     id: 'whatsapp-2',
     type: 'whatsapp',
-    nameAr: 'دعم دراجون 2',
-    nameEn: 'Dra90n Support 2',
+    nameAr: 'خدمة عملاء',
+    nameEn: 'Customer Service',
     number: SUPPORT_WHATSAPP_NUMBER_2,
   },
 ]);

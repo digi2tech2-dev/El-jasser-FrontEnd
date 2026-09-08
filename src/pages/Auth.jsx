@@ -38,7 +38,7 @@ import {
   readReferralBridge,
   readReferralCodeFromSearch,
 } from '../utils/referralCode';
-import brandIconImage from '../assets/logo.webp';
+import brandIconImage from '../assets/elgny.PNG';
 import styles from './Auth.module.css';
 
 const GoogleMark = () => (
@@ -655,13 +655,13 @@ const countryOptions = useMemo(() => {
             <div className={styles.brandIcon}>
               <img
                 src={brandIconImage}
-                alt="Dra90n STORE"
+                alt="El-Jasser Card"
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
               />
             </div>
-            <h1 className={styles.brandName}><span>Dra90n</span> STORE</h1>
+            <h1 className={styles.brandName}><span>El-Jasser</span> CARD</h1>
             <div className={styles.brandDivider}><span /></div>
           </div>
 
@@ -1092,8 +1092,8 @@ const countryOptions = useMemo(() => {
         <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
           <p>
             {dir === 'rtl'
-              ? 'باستخدام Dra90n STORE، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
-              : 'By using Dra90n STORE, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
+              ? 'باستخدام El-Jasser Card، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
+              : 'By using El-Jasser Card, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
           </p>
           <p>
             {dir === 'rtl'

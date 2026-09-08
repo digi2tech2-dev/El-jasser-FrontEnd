@@ -16,7 +16,7 @@ import slideTwoHeroImage from '../assets/slide-2.jpg';
 import slideThreeHeroImage from '../assets/slide-3.jpg';
 import slideFourHeroImage from '../assets/slide-4.jpg';
 import targetBannerImage from '../assets/تارجت.jpg';
-import paymentWarningDragon from '../assets/payment-warning-dragon-lite.webp';
+import genieArtwork from '../assets/elgny.PNG';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import {
   createStorefrontCategories,
@@ -31,7 +31,7 @@ const Dashboard = () => {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showWelcomeDragon, setShowWelcomeDragon] = useState(false);
+  const [showWelcomeGenie, setShowWelcomeGenie] = useState(false);
   const language = getStorefrontLanguage(i18n);
   const isTwoFactorEnabled = Boolean(user?.twoFactorEnabled ?? user?.isTwoFactorEnabled);
   const isCustomerUser = String(user?.role || '').trim().toLowerCase() === 'customer';
@@ -40,17 +40,17 @@ const Dashboard = () => {
     const userKey = String(user?.id || user?._id || user?.email || user?.username || '').trim();
     if (!userKey || typeof window === 'undefined') return;
 
-    const storageKey = `dra90n:dashboard-welcome:v1:${userKey}`;
+    const storageKey = `el-jasser-card:dashboard-welcome:v1:${userKey}`;
     try {
       if (window.localStorage.getItem(storageKey)) return;
       window.localStorage.setItem(storageKey, 'seen');
-      setShowWelcomeDragon(true);
+      setShowWelcomeGenie(true);
     } catch {
-      setShowWelcomeDragon(true);
+      setShowWelcomeGenie(true);
     }
   }, [user?.email, user?.id, user?._id, user?.username]);
 
-  useBodyScrollLock(showWelcomeDragon);
+  useBodyScrollLock(showWelcomeGenie);
 
   useEffect(() => {
     if (refreshProfile) refreshProfile();
@@ -76,7 +76,7 @@ const Dashboard = () => {
     };
   }, [loadProducts]);
 
-  const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDau0q0G0XdNPUJjN1F';
+  const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDq1UwDTkK4AeRqT02c';
   const heroSlides = useMemo(() => ([
     { id: 'landing-slide-1', image: slideOneHeroImage, title: '' },
     { id: 'landing-slide-2', image: slideTwoHeroImage, title: '', href: slideTwoUrl },
@@ -184,26 +184,25 @@ const Dashboard = () => {
     navigate(`/orders/${encodeURIComponent(orderId)}`);
   }, [navigate]);
 
-  const welcomeOverlay = showWelcomeDragon ? (
+  const welcomeOverlay = showWelcomeGenie ? (
     <div
       className="dashboard-welcome-overlay"
       role="dialog"
       aria-modal="true"
       aria-labelledby="dashboard-welcome-title"
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      onClick={() => setShowWelcomeDragon(false)}
+      onClick={() => setShowWelcomeGenie(false)}
     >
       <div className="dashboard-welcome-card" onClick={(event) => event.stopPropagation()}>
         <span className="dashboard-welcome-fire-glow" aria-hidden="true" />
-        <span className="dashboard-welcome-embers" aria-hidden="true" />
         <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
-          <img src={paymentWarningDragon} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
+          <img src={genieArtwork} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
         </div>
         <div className="dashboard-welcome-content">
-          <span className="dashboard-welcome-kicker">DRA90N STORE</span>
-          <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في DRA90N' : 'Welcome to DRA90N'}</h1>
-          <p>{language === 'ar' ? 'استعد لتجربة شحن نارية وسريعة.' : 'Get ready for a fast, fiery top-up experience.'}</p>
-          <button type="button" onClick={() => setShowWelcomeDragon(false)} className="dashboard-welcome-button">
+          <span className="dashboard-welcome-kicker">EL-JASSER CARD</span>
+          <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في الجاسر كارد' : 'Welcome to El-Jasser Card'}</h1>
+          <p>{language === 'ar' ? 'كل خدماتك الرقمية تبدأ من هنا.' : 'Your digital services start here.'}</p>
+          <button type="button" onClick={() => setShowWelcomeGenie(false)} className="dashboard-welcome-button">
             {language === 'ar' ? 'ابدأ الآن' : 'Start now'}
           </button>
         </div>
@@ -216,19 +215,18 @@ const Dashboard = () => {
       {typeof document !== 'undefined' && welcomeOverlay ? createPortal(welcomeOverlay, document.body) : null}
 
       {!isTwoFactorEnabled ? (
-        <section className="group relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(120deg,rgb(16_185_129/0.08),rgb(var(--color-card-rgb)/0.72)_48%,rgb(56_189_248/0.07))] p-2 shadow-[0_16px_40px_-34px_rgb(16_185_129/0.72)] backdrop-blur-xl sm:p-2.5">
-          <span className="pointer-events-none absolute -start-8 -top-10 h-24 w-24 rounded-full bg-emerald-400/10 blur-2xl" />
-          <div className="relative flex items-center justify-between gap-2.5">
-            <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-              <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-emerald-300/25 bg-[linear-gradient(145deg,rgb(16_185_129/0.18),rgb(56_189_248/0.12))] text-emerald-500 shadow-[inset_0_1px_0_rgb(255_255_255/0.16)] sm:h-10 sm:w-10">
-                <span className="absolute end-0 top-0 h-2 w-2 -translate-y-1/4 translate-x-1/4 rounded-full border-2 border-[rgb(var(--color-card-rgb))] bg-emerald-400" />
-                <ShieldCheck className="h-4.5 w-4.5 sm:h-5 sm:w-5" strokeWidth={2.2} />
+        <section className="group relative z-20 mx-auto w-full max-w-lg overflow-hidden rounded-lg border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[linear-gradient(120deg,rgb(var(--color-primary-rgb)/0.09),rgb(var(--color-card-rgb)/0.82)_52%,rgb(var(--color-secondary-rgb)/0.08))] p-1 shadow-[0_10px_22px_-20px_rgb(var(--color-primary-rgb)/0.7)] backdrop-blur-xl sm:p-1.5">
+          <div className="relative flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <span className="relative grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[color:rgb(var(--color-primary-rgb)/0.3)] bg-[linear-gradient(145deg,rgb(var(--color-primary-rgb)/0.16),rgb(var(--color-secondary-rgb)/0.12))] text-[var(--color-primary)] shadow-[inset_0_1px_0_rgb(255_255_255/0.14)] sm:h-7 sm:w-7">
+                <span className="absolute end-0 top-0 h-1 w-1 -translate-y-1/4 translate-x-1/4 rounded-full border border-[rgb(var(--color-card-rgb))] bg-[var(--color-secondary)]" />
+                <ShieldCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2.2} />
               </span>
               <div className="min-w-0 leading-tight">
-                <p className="truncate text-[0.75rem] font-bold text-[var(--color-text)] sm:text-[0.84rem]">
+                <p className="truncate text-[0.61rem] font-bold text-[var(--color-text)] sm:text-[0.67rem]">
                   {language === 'ar' ? 'حماية إضافية لحسابك' : 'Extra protection for your account'}
                 </p>
-                <p className="mt-0.5 truncate text-[0.64rem] font-medium text-[var(--color-text-secondary)] sm:text-[0.71rem]">
+                <p className="mt-0.5 truncate text-[0.5rem] font-medium text-[var(--color-text-secondary)] sm:text-[0.56rem]">
                   {language === 'ar' ? 'فعّل المصادقة الثنائية في أقل من دقيقة.' : 'Enable two-factor authentication in under a minute.'}
                 </p>
               </div>
@@ -236,7 +234,7 @@ const Dashboard = () => {
 
             <Link
               to="/account-security"
-              className="inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-2.5 text-[0.66rem] font-extrabold text-emerald-500 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400/40 hover:bg-emerald-500/16 hover:shadow-[0_10px_24px_-16px_rgb(16_185_129/0.9)] sm:h-9 sm:px-3 sm:text-[0.73rem]"
+              className="inline-flex h-6 shrink-0 items-center justify-center gap-0.5 rounded-md border border-[color:rgb(var(--color-secondary-rgb)/0.34)] bg-[color:rgb(var(--color-secondary-rgb)/0.1)] px-1.5 text-[0.52rem] font-extrabold text-[var(--color-secondary)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-secondary-rgb)/0.55)] hover:bg-[color:rgb(var(--color-secondary-rgb)/0.16)] hover:shadow-[0_8px_18px_-14px_rgb(var(--color-secondary-rgb)/0.8)] sm:h-7 sm:px-2 sm:text-[0.58rem]"
             >
               <span>{language === 'ar' ? 'تفعيل الحماية' : 'Protect now'}</span>
               <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.4} />
@@ -264,22 +262,23 @@ const Dashboard = () => {
         <div className="mx-auto w-full max-w-5xl px-0.5 sm:px-2">
           <Link
             to="/buy-target"
-            className="group mx-auto block w-full max-w-5xl overflow-hidden rounded-[1rem] border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-card-rgb)/0.76)] shadow-[0_18px_42px_-30px_rgb(var(--color-primary-rgb)/0.82),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.46)] hover:shadow-[0_22px_48px_-30px_rgb(var(--color-primary-rgb)/0.9)]"
+            className="group relative mx-auto block w-full max-w-5xl overflow-hidden rounded-[1.25rem] border border-[color:rgb(var(--color-primary-rgb)/0.35)] bg-[var(--color-card)] shadow-[0_20px_50px_-25px_rgb(var(--color-primary-rgb)/0.8)] transition-all duration-300 hover:-translate-y-1 hover:border-[color:rgb(var(--color-primary-rgb)/0.6)] hover:shadow-[0_25px_60px_-20px_rgb(var(--color-primary-rgb)/0.95)]"
             aria-label={language === 'ar' ? 'بيع تارجت' : 'Sell Target'}
           >
-            <span className="block overflow-hidden bg-black">
+            <div className="relative aspect-[1280/485] w-full overflow-hidden">
               <img
                 src={targetBannerImage}
                 alt={language === 'ar' ? 'بيع تارجت' : 'Sell Target'}
-                className="block aspect-[2112/745] w-full object-contain transition-transform duration-500 group-hover:scale-[1.012]"
+                className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
                 loading="lazy"
+                decoding="async"
               />
-            </span>
-            <span className="block border-t border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-primary-rgb)/0.08))] px-3 py-1.5 text-center">
-              <span className="text-xs font-extrabold text-[var(--color-text)] sm:text-sm">
-                {language === 'ar' ? 'بيع تارجت' : 'Sell Target'}
-              </span>
-            </span>
+              <div className="pointer-events-none absolute bottom-[10%] left-[23.5%] flex h-[19%] w-[35.5%] items-center justify-center">
+                <span className="text-[clamp(0.75rem,2.5vw,1.25rem)] font-black tracking-wider text-[#ffe58f] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-transform duration-300 group-hover:scale-105">
+                  {language === 'ar' ? 'بيع التارجت' : 'Sell Target'}
+                </span>
+              </div>
+            </div>
           </Link>
         </div>
       ) : null}

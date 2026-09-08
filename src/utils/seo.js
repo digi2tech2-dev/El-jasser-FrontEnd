@@ -1,8 +1,8 @@
 import resolveImageUrl from './imageUrl';
 
-const STORE_NAME = 'Dra90n STORE';
+const STORE_NAME = 'El-Jasser Card';
 const DEFAULT_DESCRIPTION = 'اشحن ألعابك وتطبيقاتك وبطاقاتك الرقمية فورًا بأسعار منافسة وعروض قوية مع Dra90n STORE — سرعة وأمان ودعم متواصل.';
-const DEFAULT_SOCIAL_IMAGE = '/dra90n-og.webp?v=dra90n-store';
+const DEFAULT_SOCIAL_IMAGE = '/jasser-card-mark.svg';
 
 const SEARCH_PHRASES = [
   'شحن تطبيقات دردشة صوتية',
@@ -14,8 +14,8 @@ const SEARCH_PHRASES = [
   'اشتراكات رقمية',
   'بطاقات رقمية',
   'شحن منتجات رقمية',
-  'Dra90n STORE',
-  'Dragon Store',
+  'El-Jasser Card',
+  'الجاسر كارد',
 ];
 
 const cleanText = (value) => String(value || '')
@@ -142,7 +142,7 @@ export const buildStoreSeo = ({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: STORE_NAME,
-      alternateName: 'Dra90n STORE',
+      alternateName: 'El-Jasser Card',
       url: origin || canonicalUrl,
       logo: origin ? `${origin}${DEFAULT_SOCIAL_IMAGE}` : DEFAULT_SOCIAL_IMAGE,
       description: seoDescription,
@@ -151,7 +151,7 @@ export const buildStoreSeo = ({
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: STORE_NAME,
-      alternateName: 'Dra90n STORE',
+      alternateName: 'El-Jasser Card',
       url: origin || canonicalUrl,
       inLanguage: language === 'ar' ? 'ar-EG' : 'en',
     },

@@ -20,7 +20,7 @@ const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true
       isOpen={isOpen}
       onClose={onClose}
       size="xs"
-      title={isArabic ? 'تواصل مع فريق Dra90n STORE' : 'Contact the Dra90n STORE team'}
+      title={isArabic ? 'تواصل مع فريق El-Jasser' : 'Contact the El-Jasser team'}
     >
       <div dir={isArabic ? 'rtl' : 'ltr'} className="space-y-4">
         <div className="relative overflow-hidden rounded-[1.35rem] border border-[color:rgb(var(--color-primary-rgb)/0.22)] bg-[radial-gradient(circle_at_85%_0%,rgb(var(--color-primary-rgb)/0.25),transparent_42%),linear-gradient(135deg,rgb(var(--color-primary-rgb)/0.13),rgb(var(--color-card-rgb)/0.72))] p-4 shadow-[0_18px_38px_-28px_rgb(var(--color-primary-rgb)/0.85)]">
@@ -31,7 +31,7 @@ const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true
             </span>
             <div className="min-w-0">
               <p className="text-sm font-black text-[var(--color-text)]">
-                {isArabic ? 'دعم دراجون معك' : 'Dra90n Support is here'}
+                {isArabic ? 'دعم الجاسر معك' : 'El-Jasser Support is here'}
               </p>
               <p className="mt-1 text-xs font-semibold leading-5 text-[var(--color-text-secondary)]">
                 {isArabic ? 'اختر الطريقة الأنسب لك وسنساعدك فورًا' : 'Choose the channel that works best for you'}

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Building2,
+  Bot,
   ChevronLeft,
   ChevronRight,
   CreditCard,
@@ -18,7 +19,7 @@ import useSystemStore from '../store/useSystemStore';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { formatWalletNumber } from '../utils/storefront';
 import { getActivePaymentGroups } from '../utils/paymentSettings';
-import dragonLogo from '../assets/logo.webp';
+import dragonLogo from '../assets/elgny.PNG';
 
 const getMethodIcon = (method) => {
   const token = `${method?.type || ''} ${method?.id || ''} ${method?.name || ''}`.toLowerCase();
@@ -27,19 +28,19 @@ const getMethodIcon = (method) => {
   return CreditCard;
 };
 
-const PaymentMethodButton = ({ method, groupImage, onSelect, isRTL }) => {
+const PaymentMethodButton = ({ method, groupImage, onSelect }) => {
   const [imageFailed, setImageFailed] = useState(false);
-  const Icon = getMethodIcon(method);
-  const isGroupImage = Boolean(method?.image && groupImage && resolveImageUrl(method.image) === resolveImageUrl(groupImage));
-  const showImage = Boolean(method?.image) && !isGroupImage && !imageFailed;
+  const isVodafoneCash = /vodafone|فودافون/i.test(`${method?.name || ''} ${method?.id || ''}`);
+  const Icon = isVodafoneCash ? Bot : getMethodIcon(method);
+  const showImage = Boolean(method?.image) && !imageFailed;
 
   return (
     <button
       type="button"
       onClick={() => onSelect(method)}
-      className="wallet-payment-method-card group flex min-w-0 items-center gap-2.5 rounded-[1rem] border p-2.5 text-start transition-all"
+      className={`wallet-payment-method-card group flex min-w-0 flex-col items-center gap-2 rounded-[1rem] border p-2.5 text-center transition-all ${isVodafoneCash ? 'wallet-payment-method-card--vodafone' : ''}`}
     >
-      <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl border border-indigo-500/15 bg-indigo-500/[0.07] text-indigo-500">
+      <span className="grid h-28 w-full shrink-0 place-items-center overflow-hidden rounded-xl border border-indigo-500/15 bg-indigo-500/[0.07] text-indigo-500 sm:h-36">
         {showImage ? (
           <img
             src={resolveImageUrl(method.image)}
@@ -50,24 +51,27 @@ const PaymentMethodButton = ({ method, groupImage, onSelect, isRTL }) => {
             onError={() => setImageFailed(true)}
           />
         ) : (
-          <Icon className="h-5 w-5" />
+          <Icon className="h-10 w-10" aria-label={isVodafoneCash ? 'بوت فودافون كاش' : undefined} />
         )}
       </span>
-
-      <span className="block min-w-0 flex-1">
+      <span className="block min-w-0 max-w-full">
         <strong
           className="block whitespace-normal break-words text-xs font-black leading-4 text-[var(--color-text)]"
           title={method.name}
         >
-          {method.name}
+          {isVodafoneCash ? (
+            <>
+              <span className="inline-flex items-center justify-center gap-1.5">
+                {method.name}
+              </span>
+              <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-red-400/35 bg-red-500/10 px-2 py-0.5 text-[9px] font-bold text-red-400">
+                <Bot className="h-3 w-3" aria-hidden="true" />
+                <span>دفع اوتوماتك</span>
+              </span>
+            </>
+          ) : method.name}
         </strong>
-        <span className="mt-0.5 block truncate text-[9px] font-semibold text-[var(--color-text-secondary)]">
-          {method.description || (method.type === 'mobile_wallet'
-            ? (isRTL ? 'محفظة إلكترونية' : 'Mobile wallet')
-            : (isRTL ? 'وسيلة دفع آمنة' : 'Secure payment method'))}
-        </span>
       </span>
-      <ChevronLeft className="h-4 w-4 shrink-0 text-[var(--color-text-secondary)] transition-transform group-hover:-translate-x-0.5 group-hover:text-indigo-500" />
     </button>
   );
 };
@@ -164,7 +168,7 @@ const AddBalance = ({
   return (
     <div className={embedded ? 'w-full min-w-0 overflow-x-hidden pb-1' : 'min-h-full pb-6'} dir={dir}>
       <div className="mx-auto w-full min-w-0 max-w-3xl space-y-3 px-1 sm:space-y-4 sm:px-2">
-        <section className="wallet-topup-hero relative isolate overflow-hidden rounded-[1.55rem] border border-cyan-300/20 bg-[radial-gradient(22rem_circle_at_95%_-20%,rgb(244_114_208/0.42),transparent_48%),radial-gradient(18rem_circle_at_4%_115%,rgb(37_99_235/0.5),transparent_52%),linear-gradient(135deg,#10082b_0%,#24205c_38%,#075a75_70%,#b37a18_115%)] p-4 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_70px_-38px_rgb(109_40_217/0.95),0_18px_45px_-34px_rgb(192_38_211/0.9)] sm:p-5">
+        <section className="wallet-topup-hero relative isolate overflow-hidden rounded-[1.35rem] border border-[color:rgb(var(--color-primary-rgb)/0.38)] bg-[radial-gradient(22rem_circle_at_95%_-20%,rgb(var(--color-secondary-rgb)/0.26),transparent_48%),radial-gradient(18rem_circle_at_4%_115%,rgb(var(--color-primary-rgb)/0.3),transparent_52%),linear-gradient(135deg,#061426_0%,#0a2038_46%,#075a75_78%,#8b641c_125%)] p-4 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_70px_-38px_rgb(var(--color-primary-rgb)/0.8),0_18px_45px_-34px_rgb(var(--color-secondary-rgb)/0.62)] sm:p-5">
           <span className="pointer-events-none absolute -end-8 -top-12 -z-10 h-32 w-32 rounded-full border border-white/10 bg-white/8 blur-[1px]" />
           <span className="pointer-events-none absolute end-12 top-2 -z-10 h-20 w-20 rounded-full bg-amber-300/20 blur-3xl" />
           <span className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(255_255_255/0.025)_1px,transparent_1px),linear-gradient(180deg,rgb(255_255_255/0.025)_1px,transparent_1px)] bg-[length:28px_28px] [mask-image:linear-gradient(110deg,black,transparent_72%)]" />
@@ -172,28 +176,28 @@ const AddBalance = ({
 
           <div className="wallet-topup-hero-content relative z-10 flex items-center justify-between gap-3 sm:gap-5">
             <div className="min-w-0 flex-1">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/8 px-2 py-1 text-[0.62rem] font-black text-amber-100 backdrop-blur-md">
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-[color:rgb(var(--color-secondary-rgb)/0.32)] bg-[color:rgb(var(--color-secondary-rgb)/0.12)] px-2 py-1 text-[0.62rem] font-black text-[#ffe08a] backdrop-blur-md">
                 <Wallet className="h-3 w-3" />
                 {isRTL ? 'المحفظة' : 'Wallet'}
               </p>
               <h1 className="mt-2 text-lg font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgb(0_0_0/0.24)] sm:text-2xl">
                 {t('wallet.addBalance')}
               </h1>
-              <p className="mt-1 max-w-sm text-[0.68rem] font-semibold leading-5 text-cyan-100/75 sm:text-xs">
+              <p className="mt-1 max-w-sm text-[0.68rem] font-semibold leading-5 text-[#b9eff8]/80 sm:text-xs">
                 {isRTL ? 'اختر وسيلة الدفع المناسبة وأكمل البيانات' : 'Choose a payment method and complete the details'}
               </p>
             </div>
 
-            <div className="relative shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-[linear-gradient(145deg,rgb(255_255_255/0.14),rgb(255_255_255/0.06))] px-3 py-2.5 text-end shadow-[inset_0_1px_0_rgb(255_255_255/0.13),0_16px_35px_-26px_rgb(0_0_0/0.75)] backdrop-blur-xl sm:min-w-36 sm:px-4 sm:py-3">
-              <span className="pointer-events-none absolute -end-3 -top-5 h-14 w-14 rounded-full bg-amber-300/20 blur-xl" />
-              <span className="relative text-[0.58rem] font-bold text-cyan-100/70 sm:text-[0.65rem]">
+            <div className="relative shrink-0 overflow-hidden rounded-xl border border-[color:rgb(var(--color-secondary-rgb)/0.3)] bg-[linear-gradient(145deg,rgb(var(--color-card-rgb)/0.34),rgb(var(--color-primary-rgb)/0.12))] px-3 py-2.5 text-end shadow-[inset_0_1px_0_rgb(255_255_255/0.13),0_16px_35px_-26px_rgb(0_0_0/0.75)] backdrop-blur-xl sm:min-w-36 sm:px-4 sm:py-3">
+              <span className="pointer-events-none absolute -end-3 -top-5 h-14 w-14 rounded-full bg-[color:rgb(var(--color-secondary-rgb)/0.2)] blur-xl" />
+              <span className="relative text-[0.58rem] font-bold text-[#b9eff8]/75 sm:text-[0.65rem]">
                 {isRTL ? 'الرصيد الحالي' : 'Current balance'}
               </span>
               <div className="relative mt-1 flex items-baseline justify-end gap-1.5" dir="ltr">
                 <strong className="font-['Poppins'] text-xl font-extrabold tracking-tight text-white [font-variant-numeric:tabular-nums] sm:text-2xl">
                   {formatWalletNumber(currentBalance, false, { maximumFractionDigits: 3 })}
                 </strong>
-                <span className="rounded-md bg-white/12 px-1.5 py-0.5 font-['Poppins'] text-[0.58rem] font-extrabold text-amber-100 sm:text-[0.65rem]">{currentCurrency}</span>
+                <span className="rounded-md bg-[color:rgb(var(--color-secondary-rgb)/0.18)] px-1.5 py-0.5 font-['Poppins'] text-[0.58rem] font-extrabold text-[#ffe08a] sm:text-[0.65rem]">{currentCurrency}</span>
               </div>
             </div>
           </div>
