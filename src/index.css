@@ -5570,19 +5570,19 @@ html:not(.performance-lite) .page-route-loader__spinner {
 /* El-Jasser Card welcome: cinematic genie reveal without a container card. */
 .dashboard-welcome-overlay {
   background: radial-gradient(circle at 50% 78%, rgb(15 180 240 / .24), transparent 37%), radial-gradient(circle at 50% 30%, rgb(225 177 59 / .16), transparent 46%), linear-gradient(180deg, rgb(4 22 47 / .96), rgb(2 11 28 / .98));
+  cursor: pointer;
 }
-.dashboard-welcome-card { width: min(100%, 42rem); overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.dashboard-welcome-card { width: min(100%, 42rem); overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
 .dashboard-welcome-card::before { display: none; }
-.dashboard-welcome-dragon-stage { height: min(72vh, 40rem); overflow: visible; background: transparent; }
+.dashboard-welcome-dragon-stage { height: min(60vh, 34rem); overflow: visible; background: transparent; width: 100%; pointer-events: none; }
 .dashboard-welcome-dragon-stage::after { display: none; }
-.dashboard-welcome-dragon { bottom: -5.5rem; right: 50%; width: min(88vw, 33rem); filter: drop-shadow(0 22px 30px rgb(0 0 0 / .45)) drop-shadow(0 0 1rem rgb(29 209 246 / .38)); transform-origin: 50% 100%; }
+.dashboard-welcome-dragon { bottom: -4rem; right: 50%; width: min(88vw, 32rem); filter: drop-shadow(0 22px 30px rgb(0 0 0 / .45)) drop-shadow(0 0 1rem rgb(29 209 246 / .38)); transform-origin: 50% 100%; pointer-events: none; }
 @keyframes dashboard-welcome-genie-rise { from { transform: translate(50%, 62%) scale(.86); opacity: 0; } 70% { transform: translate(50%, -4%) scale(1.02); opacity: 1; } to { transform: translate(50%, 0) scale(1); opacity: 1; } }
-.dashboard-welcome-fire-glow { bottom: 3.8rem; top: auto; left: 50%; width: 18rem; height: 5rem; background: radial-gradient(ellipse, rgb(255 225 118 / .55), rgb(31 195 239 / .32) 39%, transparent 72%); transform: translateX(-50%); transform-origin: center; }
-.dashboard-welcome-content { padding: 0 1.25rem 1.3rem; }
+.dashboard-welcome-fire-glow { bottom: 3.8rem; top: auto; left: 50%; width: 18rem; height: 5rem; background: radial-gradient(ellipse, rgb(255 225 118 / .55), rgb(31 195 239 / .32) 39%, transparent 72%); transform: translateX(-50%); transform-origin: center; pointer-events: none; }
+.dashboard-welcome-content { padding: 0.5rem 1.25rem 0.75rem; width: 100%; pointer-events: none; }
 .dashboard-welcome-kicker { color: #ffe18a; background: rgb(16 180 224 / .12); }
 .dashboard-welcome-content h1 { color: #f6fdff; text-shadow: 0 0 1.5rem rgb(32 203 241 / .42); }
 .dashboard-welcome-content p { color: rgb(202 241 252 / .82); }
-.dashboard-welcome-button { color: #06223e; background: linear-gradient(105deg, #fff0a3, #dbaa31 45%, #28c5e7 100%); }
 
 /* El-Jasser Card — final cyan and gold visual system.  Kept at the end to
    retire the former fire/dragon overrides without altering components. */

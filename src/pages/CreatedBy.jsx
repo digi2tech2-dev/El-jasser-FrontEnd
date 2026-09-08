@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Code2, Menu, MessageCircle, Sparkles, UserRound, UsersRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Code2, Menu, MessageCircle, Sparkles, UserRound, UsersRound } from 'lucide-react';
 import Card from '../components/ui/Card';
 import { buttonClassName, cn } from '../components/ui/Button';
 import { useLanguage } from '../context/LanguageContext';
@@ -31,6 +31,13 @@ const CreatedBy = ({ inAccount = false }) => {
   useBodyScrollLock(!inAccount && isMenuOpen);
 
   const handleHome = useCallback(() => navigate('/'), [navigate]);
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
   const handleAbout = useCallback(() => navigate('/about-us'), [navigate]);
   const handleContact = useCallback(() => navigate('/public-contact-us'), [navigate]);
   const handleLogin = useCallback(() => navigate('/auth?mode=login'), [navigate]);
@@ -69,7 +76,16 @@ const CreatedBy = ({ inAccount = false }) => {
         <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
           <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
             <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
-              <div className="col-start-1 row-start-1 justify-self-start">
+              <div className="col-start-1 row-start-1 flex items-center gap-1 justify-self-start sm:gap-2">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] hover:text-[var(--color-primary)] sm:h-10 sm:w-10"
+                  aria-label={isArabic ? 'رجوع للخلف' : 'Back'}
+                  title={isArabic ? 'رجوع للخلف' : 'Back'}
+                >
+                  {isArabic ? <ArrowRight className="h-4 w-4 sm:h-4.5 sm:w-4.5" /> : <ArrowLeft className="h-4 w-4 sm:h-4.5 sm:w-4.5" />}
+                </button>
                 <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
               </div>
               <button type="button" onClick={handleHome} className="col-start-2 row-start-1 justify-self-center rounded-[20px] transition-all hover:-translate-y-0.5" aria-label={isArabic ? 'العودة للرئيسية' : 'Back to home'}>
@@ -105,6 +121,17 @@ const CreatedBy = ({ inAccount = false }) => {
       ) : null}
 
       <main className={`mx-auto w-full max-w-4xl space-y-5 px-3 ${inAccount ? 'py-0 sm:px-1' : 'py-4 sm:px-4 sm:py-6'}`}>
+        <div className="flex justify-start">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="group inline-flex h-10 items-center justify-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.7)] bg-[color:rgb(var(--color-card-rgb)/0.72)] px-4 text-sm font-extrabold text-[var(--color-text-secondary)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.32)] hover:text-[var(--color-primary)]"
+            aria-label={isArabic ? 'رجوع للخلف' : 'Back'}
+          >
+            {isArabic ? <ArrowRight className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" /> : <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />}
+            {isArabic ? 'رجوع للخلف' : 'Back'}
+          </button>
+        </div>
       <Card className="overflow-hidden rounded-[2rem] border border-[color:rgb(var(--color-border-rgb)/0.72)] bg-[linear-gradient(145deg,rgb(var(--color-card-rgb)/0.98),rgb(var(--color-surface-rgb)/0.9))] p-5 shadow-[0_26px_90px_-58px_rgba(20,24,35,0.16)] sm:p-7">
         <div className="flex flex-col items-center text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[1.35rem] border border-[color:rgb(var(--color-primary-rgb)/0.22)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] text-[var(--color-primary)]">

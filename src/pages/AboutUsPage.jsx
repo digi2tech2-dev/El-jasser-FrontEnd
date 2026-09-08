@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Home, Menu, MessageCircle, Phone, ShieldCheck, UserRound, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Home, Menu, MessageCircle, Phone, ShieldCheck, UserRound, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../store/useAuthStore';
 import ThemeToggle from '../components/ui/ThemeToggle';
@@ -47,6 +47,14 @@ const AboutUsPage = () => {
     navigate('/');
   }, [navigate]);
 
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
   const handleAbout = useCallback(() => {
     navigate('/about-us');
   }, [navigate]);
@@ -83,6 +91,15 @@ const AboutUsPage = () => {
         <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
           <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
             <div className="col-start-1 row-start-1 flex items-center gap-1 justify-self-start sm:gap-2">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] hover:text-[var(--color-primary)] sm:h-10 sm:w-10"
+                aria-label={isArabic ? 'رجوع للخلف' : 'Back'}
+                title={isArabic ? 'رجوع للخلف' : 'Back'}
+              >
+                {isArabic ? <ArrowRight className="h-4 w-4 sm:h-4.5 sm:w-4.5" /> : <ArrowLeft className="h-4 w-4 sm:h-4.5 sm:w-4.5" />}
+              </button>
               <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
             </div>
 
@@ -137,11 +154,12 @@ const AboutUsPage = () => {
         <div className="mx-auto mb-3 flex max-w-5xl justify-start">
           <button
             type="button"
-            onClick={handleHome}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.7)] bg-[color:rgb(var(--color-card-rgb)/0.72)] px-4 text-sm font-extrabold text-[var(--color-text-secondary)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.32)] hover:text-[var(--color-primary)]"
+            onClick={handleBack}
+            className="group inline-flex h-10 items-center justify-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.7)] bg-[color:rgb(var(--color-card-rgb)/0.72)] px-4 text-sm font-extrabold text-[var(--color-text-secondary)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.32)] hover:text-[var(--color-primary)]"
+            aria-label={isArabic ? 'رجوع للخلف' : 'Back'}
           >
-            <Home className="h-4 w-4" />
-            {isArabic ? 'العودة للرئيسية' : 'Back to home'}
+            {isArabic ? <ArrowRight className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" /> : <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />}
+            {isArabic ? 'رجوع للخلف' : 'Back'}
           </button>
         </div>
 
@@ -173,10 +191,6 @@ const AboutUsPage = () => {
                     <p className="font-['Orbitron'] text-[1.15rem] font-black leading-none tracking-[0.08em] sm:text-[1.35rem]">
                       <span className="bg-[linear-gradient(120deg,#0f172a_0%,#087f9b_34%,#f59e0b_70%,#087f9b_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fff7d6_0%,#f0cf7a_30%,#42d7e9_66%,#a78bfa_100%)]">
                         El-Jasser Card
-                      </span>
-                      <span className="mx-1 text-orange-400">·</span>
-                      <span className="bg-[linear-gradient(120deg,#fff3c4_0%,#f59e0b_38%,#a81713_100%)] bg-clip-text text-transparent">
-                        STORE
                       </span>
                     </p>
                   </div>

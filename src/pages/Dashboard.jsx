@@ -53,6 +53,17 @@ const Dashboard = () => {
   useBodyScrollLock(showWelcomeGenie);
 
   useEffect(() => {
+    if (!showWelcomeGenie) return undefined;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setShowWelcomeGenie(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showWelcomeGenie]);
+
+  useEffect(() => {
     if (refreshProfile) refreshProfile();
   }, [refreshProfile]);
 
@@ -193,18 +204,15 @@ const Dashboard = () => {
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       onClick={() => setShowWelcomeGenie(false)}
     >
-      <div className="dashboard-welcome-card" onClick={(event) => event.stopPropagation()}>
+      <div className="dashboard-welcome-card">
         <span className="dashboard-welcome-fire-glow" aria-hidden="true" />
-        <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
-          <img src={genieArtwork} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
-        </div>
         <div className="dashboard-welcome-content">
           <span className="dashboard-welcome-kicker">EL-JASSER CARD</span>
           <h1 id="dashboard-welcome-title">{language === 'ar' ? 'مرحبًا بك في الجاسر كارد' : 'Welcome to El-Jasser Card'}</h1>
           <p>{language === 'ar' ? 'كل خدماتك الرقمية تبدأ من هنا.' : 'Your digital services start here.'}</p>
-          <button type="button" onClick={() => setShowWelcomeGenie(false)} className="dashboard-welcome-button">
-            {language === 'ar' ? 'ابدأ الآن' : 'Start now'}
-          </button>
+        </div>
+        <div className="dashboard-welcome-dragon-stage" aria-hidden="true">
+          <img src={genieArtwork} alt="" className="dashboard-welcome-dragon" decoding="async" fetchPriority="high" />
         </div>
       </div>
     </div>

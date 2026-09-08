@@ -68,7 +68,7 @@ const BrandMark = ({
               El-Jasser
             </span>
             <span className="mx-1 text-[color:rgb(var(--color-text-secondary)/0.5)]">·</span>
-            <span className="text-[color:rgb(var(--color-text-secondary)/0.86)]">STORE</span>
+            <span className="text-[color:rgb(var(--color-text-secondary)/0.86)]">CARD</span>
           </p>
         </div>
       )}

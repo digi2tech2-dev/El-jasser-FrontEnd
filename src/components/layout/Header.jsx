@@ -207,7 +207,7 @@ const Header = ({ toggleSidebar }) => {
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="inline-flex -translate-x-24 scale-[1.2] items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+              className="inline-flex scale-[1.2] items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
             >
               <img
                 src={headerBrandImage}
