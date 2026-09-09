@@ -1,8 +1,8 @@
 import resolveImageUrl from './imageUrl';
 
-const STORE_NAME = 'El-Jasser Card';
-const DEFAULT_DESCRIPTION = 'اشحن ألعابك وتطبيقاتك وبطاقاتك الرقمية فورًا بأسعار منافسة وعروض قوية مع Dra90n STORE — سرعة وأمان ودعم متواصل.';
-const DEFAULT_SOCIAL_IMAGE = '/jasser-card-mark.svg';
+const STORE_NAME = 'El-Jasser';
+const DEFAULT_DESCRIPTION = 'اشحن ألعابك وتطبيقاتك وبطاقاتك الرقمية فورًا بأسعار منافسة وعروض قوية مع El-Jasser — سرعة وأمان ودعم متواصل.';
+const DEFAULT_SOCIAL_IMAGE = '/el-jasser-og.jpg';
 
 const SEARCH_PHRASES = [
   'شحن تطبيقات دردشة صوتية',
@@ -14,8 +14,8 @@ const SEARCH_PHRASES = [
   'اشتراكات رقمية',
   'بطاقات رقمية',
   'شحن منتجات رقمية',
-  'El-Jasser Card',
-  'الجاسر كارد',
+  'El-Jasser',
+  'الجاسر',
 ];
 
 const cleanText = (value) => String(value || '')
@@ -57,8 +57,8 @@ export const getProductSeoDescription = (product, language = 'ar') => {
   const productName = getProductSeoName(product, language);
   const description = cleanText(product?.displayDescription || product?.descriptionAr || product?.description);
   const fallback = language === 'ar'
-    ? `شحن ${productName} عبر Dra90n STORE ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
-    : `Top up ${productName} through Dra90n STORE for voice chat apps, games, subscriptions, and digital products.`;
+    ? `شحن ${productName} عبر El-Jasser ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
+    : `Top up ${productName} through El-Jasser for voice chat apps, games, subscriptions, and digital products.`;
 
   return truncateText(description || fallback, 220);
 };
@@ -170,7 +170,7 @@ export const buildStoreSeo = ({
     jsonLd.push({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      name: language === 'ar' ? 'منتجات Dra90n STORE' : 'Dra90n STORE Products',
+      name: language === 'ar' ? `منتجات ${STORE_NAME}` : `${STORE_NAME} Products`,
       description: seoDescription,
       itemListElement: productList,
     });

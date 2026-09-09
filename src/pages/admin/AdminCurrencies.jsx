@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import worldCountries from 'world-countries';
+import worldCountries from '../../data/countries-slim.json';
 import {
   AlertTriangle,
   CircleDollarSign,

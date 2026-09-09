@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
-    assetsInclude: ['**/*.PNG'],
+    assetsInclude: ['**/*.PNG', '**/*.webp'],
     define: {
       'process.env.VITE_API_BASE_URL': JSON.stringify(env.VITE_API_BASE_URL),
       'process.env.VITE_APP_ENV': JSON.stringify(env.VITE_APP_ENV || mode),
@@ -23,6 +23,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
+      target: 'es2020',
+      cssCodeSplit: true,
+      assetsInlineLimit: 4096, // inline assets < 4KB
+      minify: 'esbuild',
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -32,7 +36,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('framer-motion')) return 'motion-vendor';
             if (id.includes('i18next')) return 'i18n-vendor';
             if (id.includes('zustand')) return 'state-vendor';
-            if (id.includes('lucide-react')) return undefined;
+            if (id.includes('lucide-react')) return 'icons-vendor';
             if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
             if (id.includes('axios')) return 'http-vendor';
             if (id.includes('clsx') || id.includes('tailwind-merge')) return 'ui-vendor';

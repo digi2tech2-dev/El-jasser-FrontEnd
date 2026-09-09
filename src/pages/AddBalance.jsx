@@ -19,7 +19,7 @@ import useSystemStore from '../store/useSystemStore';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { formatWalletNumber } from '../utils/storefront';
 import { getActivePaymentGroups } from '../utils/paymentSettings';
-import dragonLogo from '../assets/elgny.PNG';
+import dragonLogo from '../assets/elgny.webp';
 
 const getMethodIcon = (method) => {
   const token = `${method?.type || ''} ${method?.id || ''} ${method?.name || ''}`.toLowerCase();

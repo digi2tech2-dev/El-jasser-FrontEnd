@@ -11,7 +11,7 @@ import {
   Code2,
 } from 'lucide-react';
 import { cn } from '../ui/Button';
-import dragonLogo from '../../assets/elgny.PNG';
+import dragonLogo from '../../assets/elgny.webp';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4.5 w-4.5 shrink-0">

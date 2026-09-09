@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '../ui/Button';
-import brandIconImage from '../../assets/elgny.PNG';
+import brandIconImage from '../../assets/elgny.webp';
 import { useTheme } from '../../context/ThemeContext';
 
 const stylesBySize = {

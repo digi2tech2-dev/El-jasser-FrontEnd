@@ -40,12 +40,12 @@ import {
 } from '../utils/storefront';
 import { buildStoreSeo, toAbsoluteUrl } from '../utils/seo';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
-import slideOneImage from '../assets/slide-1.jpg';
-import slideTwoImage from '../assets/slide-2.jpg';
-import slideThreeImage from '../assets/slide-3.jpg';
-import slideFourImage from '../assets/slide-4.jpg';
-import targetSalesImage from '../assets/تارجت.jpg';
-import genieArtwork from '../assets/elgny.PNG';
+import slideOneImage from '../assets/slide-1.webp';
+import slideTwoImage from '../assets/slide-2.webp';
+import slideThreeImage from '../assets/slide-3.webp';
+import slideFourImage from '../assets/slide-4.webp';
+import targetSalesImage from '../assets/target-banner.webp';
+import genieArtwork from '../assets/elgny.webp';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
@@ -993,11 +993,6 @@ const PublicCatalog = () => {
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="pointer-events-none absolute bottom-[10%] left-[23.5%] flex h-[19%] w-[35.5%] items-center justify-center">
-                    <span className="text-[clamp(0.75rem,2.5vw,1.25rem)] font-black tracking-wider text-[#ffe58f] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-transform duration-300 group-hover:scale-105">
-                      {copy.targetTitle}
-                    </span>
-                  </div>
                 </div>
               </button>
             </div>

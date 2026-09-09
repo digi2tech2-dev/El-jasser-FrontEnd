@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const DEFAULT_SOCIAL_IMAGE = '/jasser-card-mark.svg';
+const DEFAULT_SOCIAL_IMAGE = '/el-jasser-og.jpg';
 
 const upsertMeta = (selector, createAttributes, valueAttribute, value) => {
   if (typeof document === 'undefined' || !value) return;
@@ -53,7 +53,7 @@ const Seo = ({
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
 
-    const safeTitle = title || 'El-Jasser Card';
+    const safeTitle = title || 'El-Jasser';
     const socialImage = image || DEFAULT_SOCIAL_IMAGE;
     document.title = safeTitle;
     document.documentElement.lang = language === 'ar' ? 'ar' : 'en';
@@ -64,7 +64,7 @@ const Seo = ({
     upsertMeta('meta[name="robots"]', { name: 'robots' }, 'content', 'index, follow, max-image-preview:large');
     upsertMeta('meta[property="og:title"]', { property: 'og:title' }, 'content', safeTitle);
     upsertMeta('meta[property="og:description"]', { property: 'og:description' }, 'content', description);
-    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', 'El-Jasser Card');
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', 'El-Jasser');
     upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'content', 'website');
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale' }, 'content', language === 'ar' ? 'ar_EG' : 'en_US');
     upsertMeta('meta[property="og:locale:alternate"]', { property: 'og:locale:alternate' }, 'content', language === 'ar' ? 'en_US' : 'ar_EG');
@@ -78,12 +78,12 @@ const Seo = ({
     }
 
     upsertMeta('meta[property="og:image"]', { property: 'og:image' }, 'content', socialImage);
-    upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type' }, 'content', 'image/png');
-    upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width' }, 'content', '1240');
-    upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height' }, 'content', '1268');
-    upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt' }, 'content', 'شعار Dra90n STORE لشحن الألعاب والتطبيقات');
+    upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type' }, 'content', 'image/jpeg');
+    upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width' }, 'content', '1200');
+    upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height' }, 'content', '800');
+    upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt' }, 'content', 'El-Jasser - متجرك الرقمي لشحن الألعاب والتطبيقات');
     upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, 'content', socialImage);
-    upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt' }, 'content', 'شعار Dra90n STORE لشحن الألعاب والتطبيقات');
+    upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt' }, 'content', 'El-Jasser - متجرك الرقمي لشحن الألعاب والتطبيقات');
 
     removeManagedJsonLd();
     (Array.isArray(jsonLd) ? jsonLd : []).filter(Boolean).forEach((item) => {

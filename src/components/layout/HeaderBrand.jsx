@@ -1,7 +1,7 @@
 import React from 'react';
 import BrandMark from './BrandMark';
 import { cn } from '../ui/Button';
-import headerBrandImage from '../../assets/El-Jasser card.PNG';
+import headerBrandImage from '../../assets/el-jasser-card.webp';
 
 const HeaderBrand = ({ className, iconClassName, textClassName, imageOnly = false }) => (
   <span dir="ltr" className={cn('inline-flex items-center gap-1.5 rounded-[14px] sm:gap-2.5', className)}>

@@ -5584,6 +5584,65 @@ html:not(.performance-lite) .page-route-loader__spinner {
 .dashboard-welcome-content h1 { color: #f6fdff; text-shadow: 0 0 1.5rem rgb(32 203 241 / .42); }
 .dashboard-welcome-content p { color: rgb(202 241 252 / .82); }
 
+/* ── Tablet (≥ 640px) ── */
+@media (min-width: 640px) {
+  .dashboard-welcome-card { width: min(100%, 54rem); }
+  .dashboard-welcome-dragon-stage { height: min(65vh, 40rem); }
+  .dashboard-welcome-dragon { width: min(80vw, 38rem); bottom: -5rem; }
+  .dashboard-welcome-fire-glow { width: 22rem; height: 6rem; bottom: 5rem; }
+  .dashboard-welcome-content { padding: 0.75rem 2rem 1rem; }
+  .dashboard-welcome-content h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+  .dashboard-welcome-content p { font-size: 0.9rem; }
+  .dashboard-welcome-kicker { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+}
+
+/* ── Desktop (≥ 1024px) — two-column layout: text left, genie right ── */
+@media (min-width: 1024px) {
+  .dashboard-welcome-overlay {
+    background: radial-gradient(circle at 65% 70%, rgb(15 180 240 / .26), transparent 38%), radial-gradient(circle at 35% 25%, rgb(225 177 59 / .18), transparent 48%), linear-gradient(180deg, rgb(4 22 47 / .97), rgb(2 11 28 / .99));
+  }
+  .dashboard-welcome-card {
+    width: min(100%, 80rem);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 4rem;
+  }
+  .dashboard-welcome-content {
+    flex: 0 0 auto;
+    width: 44%;
+    padding: 2rem 2rem 2rem 0;
+    text-align: right;
+    pointer-events: none;
+  }
+  .dashboard-welcome-content h1 { font-size: clamp(2.2rem, 3.5vw, 3.2rem); margin-top: 0.75rem; }
+  .dashboard-welcome-content p { font-size: 1rem; margin-top: 0.5rem; }
+  .dashboard-welcome-kicker { font-size: 0.72rem; padding: 0.32rem 0.9rem; }
+  .dashboard-welcome-dragon-stage {
+    flex: 0 0 auto;
+    width: 50%;
+    height: min(85vh, 46rem);
+    position: relative;
+  }
+  .dashboard-welcome-dragon {
+    width: min(52vw, 36rem);
+    bottom: -6rem;
+    right: 50%;
+  }
+  .dashboard-welcome-fire-glow {
+    width: 26rem;
+    height: 7rem;
+    bottom: 7rem;
+    left: 50%;
+  }
+  @keyframes dashboard-welcome-genie-rise {
+    from { transform: translate(50%, 58%) scale(.84); opacity: 0; }
+    70% { transform: translate(50%, -3%) scale(1.02); opacity: 1; }
+    to { transform: translate(50%, 0) scale(1); opacity: 1; }
+  }
+}
+
 /* El-Jasser Card — final cyan and gold visual system.  Kept at the end to
    retire the former fire/dragon overrides without altering components. */
 :root:not(.dark) body {

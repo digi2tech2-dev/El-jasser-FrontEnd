@@ -6,7 +6,7 @@ import useAuthStore from '../../store/useAuthStore';
 import useNotificationStore from '../../store/useNotificationStore';
 import { useLanguage } from '../../context/LanguageContext';
 import ThemeToggle from '../ui/ThemeToggle';
-import headerBrandImage from '../../assets/El-Jasser card.PNG';
+import headerBrandImage from '../../assets/el-jasser-card.webp';
 import { formatWalletAmount } from '../../utils/storefront';
 import { getDefaultRouteForRole, isAdminRole, isSupervisorRole } from '../../utils/authRoles';
 import { cn } from '../ui/Button';

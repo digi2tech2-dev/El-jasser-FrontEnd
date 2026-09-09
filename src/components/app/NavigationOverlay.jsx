@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/elgny.PNG';
+import logo from '../../assets/elgny.webp';
 
 const NavigationOverlay = ({ active }) => (
   <div

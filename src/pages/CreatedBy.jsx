@@ -12,10 +12,10 @@ import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { buildWhatsAppLink } from '../utils/whatsapp';
-import digitechImage from '../assets/digitech-solutions.png';
-import ahmedImage from '../assets/WhatsApp Image 2026-03-26 at 7.18.08 AM.jpeg';
-import kareemImage from '../assets/WhatsApp Image 2026-03-26 at 7.18.08 AM (1).jpeg';
-import bahaaImage from '../assets/WhatsApp Image 2026-03-26 at 7.18.08 AM (2).jpeg';
+import digitechImage from '../assets/digitech-solutions.webp';
+import ahmedImage from '../assets/wa-photo-1.webp';
+import kareemImage from '../assets/wa-photo-2.webp';
+import bahaaImage from '../assets/wa-photo-3.webp';
 
 const CreatedBy = ({ inAccount = false }) => {
   const navigate = useNavigate();

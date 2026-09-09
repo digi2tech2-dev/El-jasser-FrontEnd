@@ -11,12 +11,12 @@ import CategoryCard from '../components/home/CategoryCard';
 import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import ProductPurchaseDialog from '../components/products/ProductPurchaseDialog';
-import slideOneHeroImage from '../assets/slide-1.jpg';
-import slideTwoHeroImage from '../assets/slide-2.jpg';
-import slideThreeHeroImage from '../assets/slide-3.jpg';
-import slideFourHeroImage from '../assets/slide-4.jpg';
-import targetBannerImage from '../assets/تارجت.jpg';
-import genieArtwork from '../assets/elgny.PNG';
+import slideOneHeroImage from '../assets/slide-1.webp';
+import slideTwoHeroImage from '../assets/slide-2.webp';
+import slideThreeHeroImage from '../assets/slide-3.webp';
+import slideFourHeroImage from '../assets/slide-4.webp';
+import targetBannerImage from '../assets/target-banner.webp';
+import genieArtwork from '../assets/elgny.webp';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import {
   createStorefrontCategories,
@@ -281,11 +281,6 @@ const Dashboard = () => {
                 loading="lazy"
                 decoding="async"
               />
-              <div className="pointer-events-none absolute bottom-[10%] left-[23.5%] flex h-[19%] w-[35.5%] items-center justify-center">
-                <span className="text-[clamp(0.75rem,2.5vw,1.25rem)] font-black tracking-wider text-[#ffe58f] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] transition-transform duration-300 group-hover:scale-105">
-                  {language === 'ar' ? 'بيع التارجت' : 'Sell Target'}
-                </span>
-              </div>
             </div>
           </Link>
         </div>

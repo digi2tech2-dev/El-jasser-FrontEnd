@@ -57,7 +57,7 @@ const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true
           <div className="grid gap-2.5">
           {contacts.map((contact) => (
             <button
-              key={contact.number}
+              key={contact.id || contact.number}
               type="button"
               onClick={() => openContact(contact)}
               aria-label={`${isArabic ? 'التواصل مع' : 'Contact'} ${isArabic ? contact.nameAr : contact.nameEn} ${contact.number}`}

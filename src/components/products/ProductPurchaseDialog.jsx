@@ -11,8 +11,8 @@ import apiClient from '../../services/client';
 import { useToast } from '../ui/Toast';
 import { useLanguage } from '../../context/LanguageContext';
 import { resolveImageUrl } from '../../utils/imageUrl';
-import brandLogoDark from '../../assets/elgny.PNG';
-import brandLogoLight from '../../assets/elgny.PNG';
+import brandLogoDark from '../../assets/elgny.webp';
+import brandLogoLight from '../../assets/elgny.webp';
 import {
   calculateProductPrice,
   formatCurrencyAmount,

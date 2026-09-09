@@ -11,7 +11,7 @@ import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { buildPhoneLink, buildWhatsAppLink, getAdminWhatsAppNumber, getSupportContacts } from '../utils/whatsapp';
-import brandIconImage from '../assets/elgny.PNG';
+import brandIconImage from '../assets/elgny.webp';
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
