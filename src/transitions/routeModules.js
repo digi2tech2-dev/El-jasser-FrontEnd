@@ -38,6 +38,7 @@ export const routeLoaders = {
   WalletTopupHistory: () => import('../pages/WalletTopupHistory'),
   PaymentDetails: () => import('../pages/PaymentDetails'),
   DeveloperApi: () => import('../pages/DeveloperApi'),
+  ApiDocs: () => import('../pages/ApiDocs'),
 };
 
 const publicPaths = new Set([
@@ -45,6 +46,7 @@ const publicPaths = new Set([
   '/catalog',
   '/about-us',
   '/created-by',
+  '/api-docs',
   '/public-contact-us',
   '/auth',
   '/login',
@@ -79,6 +81,7 @@ const routeMatchers = [
   [/^\/account\/?$/, routeLoaders.Account],
   [/^\/account\/created-by\/?$/, routeLoaders.CreatedBy],
   [/^\/created-by\/?$/, routeLoaders.CreatedBy],
+  [/^\/api-docs\/?$/, routeLoaders.ApiDocs],
   [/^\/contact-us\/?$/, routeLoaders.ContactUs],
   [/^\/buy-target\/?$/, routeLoaders.BuyTarget],
   [/^\/target-orders\/?$/, routeLoaders.TargetOrders],

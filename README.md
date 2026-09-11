@@ -172,6 +172,7 @@ Vite only exposes variables prefixed with `VITE_` to browser code through `impor
 | --- | --- | --- | --- | --- | --- |
 | `VITE_DATA_PROVIDER` | Optional | `mock` | Selects API provider | `mock` or `real` | Only `real` enables the Axios adapter. Any other value behaves like mock mode. |
 | `VITE_API_BASE_URL` | Required for real mode | `http://localhost:5000/api` | Backend API base URL and upload origin resolution | `https://api.example.com/api` | Include `/api` for this backend. `src/utils/imageUrl.js` strips a trailing `/api` to resolve `/uploads`. |
+| `VITE_B2B_API_BASE_URL` | Optional | derived from `VITE_API_BASE_URL` | Complete Canonical B2B URL displayed on `/api-docs` | `https://domain.com/client/api` | Set the complete `/client/api` URL. If absent, docs remove the normal `/api` suffix and append `/client/api` once. |
 | `VITE_PUBLIC_APP_URL` | Optional | hardcoded public-site fallback in source | Referral share links | `https://app.example.com` | Public URL only. Prefer setting this explicitly. |
 | `VITE_SITE_URL` | Optional | none | SEO canonical URL | `https://app.example.com` | Used before `VITE_PUBLIC_SITE_URL`. |
 | `VITE_PUBLIC_SITE_URL` | Optional | none | SEO canonical URL fallback | `https://app.example.com` | Public URL only. |
@@ -207,6 +208,7 @@ All routes are declared in `src/App.jsx`. Lazy route imports are registered in `
 | `/catalog` | `PublicCatalog` | Public | Alias for the public catalog. |
 | `/about-us` | `AboutUsPage` | Public | About page. |
 | `/created-by` | `CreatedBy` | Public | Creator/credits page. It also appears in customer navigation. |
+| `/api-docs` | `ApiDocs` | Public | Standalone LTR Canonical B2B API documentation; it does not use the authenticated application shell. |
 | `/public-contact-us` | `ContactUs` with `accountOnly` | Public | Public contact page variant. |
 | `/auth` | `Auth` | Public | Login/signup page. Query `mode=signup` starts registration. |
 | `/login` | `Auth` | Public | Login alias. |
@@ -551,7 +553,7 @@ The payment-details form calculates payment fees and payable amount. It supports
 
 ### Developer API
 
-`/developers/api` lets authenticated users manage API-token/settings through `/me/api-token/generate` and `/me/api-settings`. The route itself accepts shared authenticated roles; sidebar navigation only shows it when `user.isApiEnabled === true`.
+`/developers/api` lets authenticated users manage API-token/settings through `/me/api-token/generate` and `/me/api-settings`. The route itself accepts shared authenticated roles; sidebar navigation only shows it when `user.isApiEnabled === true`. Public Canonical B2B integration documentation is at `/api-docs`; it uses `VITE_B2B_API_BASE_URL` as the complete `/client/api` base, or derives that base safely from `VITE_API_BASE_URL`.
 
 ### Referral
 
