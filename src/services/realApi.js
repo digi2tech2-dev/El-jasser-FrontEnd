@@ -4006,13 +4006,26 @@ const realApi = {
       return normaliseTargetOrder(data?.order || data?.request || data);
     },
 
+    approveTargetRequest: async (id, proofFile) => {
+      if (!(proofFile instanceof File)) {
+        throw new Error('Admin payment proof image is required.');
+      }
+      const formData = new FormData();
+      formData.append('adminPaymentProof', proofFile);
+      const res = await http.patch(`/admin/targets/${id}/approve`, formData);
+      const data = unwrap(res);
+      return normaliseTargetOrder(data?.order || data?.request || data);
+    },
+
     updateStatus: async (id, status, payload = {}) => {
       const normalizedStatus = String(status || '').trim().toLowerCase();
-      const endpoint = normalizedStatus === 'approved' || normalizedStatus === 'done'
-        ? `/admin/targets/${id}/approve`
-        : normalizedStatus === 'rejected'
-          ? `/admin/targets/${id}/reject`
-          : null;
+      const endpoint = normalizedStatus === 'rejected'
+        ? `/admin/targets/${id}/reject`
+        : null;
+
+      if (normalizedStatus === 'approved' || normalizedStatus === 'approve' || normalizedStatus === 'done') {
+        throw new Error('Admin payment proof is required to approve a target request.');
+      }
 
       if (!endpoint && normalizedStatus !== 'pending') {
         throw new Error(`Unsupported target order status: ${status}`);

@@ -199,6 +199,15 @@ const useTargetStore = create((set, get) => ({
     }));
     return updated;
   },
+
+  approveTargetRequest: async (id, proofFile) => {
+    const updated = normalizeOrder(await apiClient.targetPurchases.approveTargetRequest(id, proofFile));
+    set((state) => ({
+      requests: state.requests.map((item) => (String(item.id) === String(id) ? { ...item, ...updated } : item)),
+      myRequests: state.myRequests.map((item) => (String(item.id) === String(id) ? { ...item, ...updated } : item)),
+    }));
+    return updated;
+  },
 }));
 
 export default useTargetStore;

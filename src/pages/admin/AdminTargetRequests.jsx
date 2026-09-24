@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowUpLeft, Boxes, CheckCircle2, ClipboardList, Target } from 'lucide-react';
+import { ArrowUpLeft, Boxes, CheckCircle2, ClipboardList, ImagePlus, Target } from 'lucide-react';
 import AdminOrdersTable from '../../components/target/AdminOrdersTable';
 import AdminProducts from '../../components/target/AdminProducts';
 import RejectionReasonModal from '../../components/target/RejectionReasonModal';
@@ -14,6 +14,73 @@ import { formatNumber } from '../../utils/intl';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { getTargetPaymentMethods } from '../../utils/paymentSettings';
 
+const AdminPaymentProofModal = ({ request, isSubmitting, onClose, onConfirm }) => {
+  const [proofFile, setProofFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    setProofFile(null);
+    setPreviewUrl('');
+  }, [request?.id]);
+
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  if (!request) return null;
+
+  const selectProof = (file) => {
+    if (!file) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setProofFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+  const appName = request.appNameSnapshot || request.productName || request.app?.name || 'طلب تارجت';
+  const customer = request.userName || request.customerName || request.userEmail || request.userId || '-';
+  const paymentMethod = request.paymentMethodName || request.paymentMethod || '-';
+  const paymentAccount = request.transferNumber || request.paymentAccount || '-';
+
+  return (
+    <Modal isOpen={Boolean(request)} onClose={isSubmitting ? undefined : onClose} title="تأكيد دفع قيمة التارجت" size="lg" className="z-[260]">
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (proofFile && !isSubmitting) onConfirm(proofFile);
+        }}
+      >
+        <div className="grid gap-2 rounded-2xl border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[color:rgb(var(--color-surface-rgb)/0.55)] p-3 text-sm sm:grid-cols-2">
+          <p><span className="text-[var(--color-text-secondary)]">العميل: </span><strong>{customer}</strong></p>
+          <p><span className="text-[var(--color-text-secondary)]">التطبيق: </span><strong>{appName}</strong></p>
+          <p><span className="text-[var(--color-text-secondary)]">كمية التارجت: </span><strong>{formatNumber(request.coinAmount || request.quantity, 'en-US')}</strong></p>
+          <p><span className="text-[var(--color-text-secondary)]">المبلغ المستحق: </span><strong>{formatNumber(request.totalPrice, 'en-US', { maximumFractionDigits: 2 })} EGP</strong></p>
+          <p><span className="text-[var(--color-text-secondary)]">طريقة الاستلام: </span><strong>{paymentMethod}</strong></p>
+          <p className="break-all"><span className="text-[var(--color-text-secondary)]">رقم/حساب التحويل: </span><strong>{paymentAccount}</strong></p>
+        </div>
+
+        <div>
+          <p className="mb-2 text-sm font-black text-[var(--color-text)]">إثبات تحويل المبلغ للمستخدم</p>
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[color:rgb(var(--color-primary-rgb)/0.45)] bg-[color:rgb(var(--color-primary-rgb)/0.06)] p-5 text-center">
+            <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={isSubmitting} onChange={(event) => selectProof(event.target.files?.[0])} />
+            <ImagePlus className="h-7 w-7 text-[var(--color-primary)]" />
+            <span className="text-sm font-bold text-[var(--color-primary)]">{proofFile ? proofFile.name : 'اختر صورة الإثبات'}</span>
+            <span className="text-xs text-[var(--color-text-secondary)]">JPG أو PNG أو WebP — صورة واحدة مطلوبة</span>
+          </label>
+          {previewUrl ? <img src={previewUrl} alt="معاينة إثبات دفع الموقع" className="mt-3 max-h-64 w-full rounded-2xl border border-[color:rgb(var(--color-border-rgb)/0.78)] object-contain" /> : null}
+        </div>
+
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" disabled={isSubmitting} onClick={onClose}>إلغاء</Button>
+          <Button type="submit" disabled={!proofFile || isSubmitting}>
+            <CheckCircle2 className="h-4 w-4" />
+            {isSubmitting ? 'جارٍ الحفظ...' : 'تأكيد الدفع وقبول الطلب'}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
 const AdminTargetRequests = () => {
   const {
     products,
@@ -24,11 +91,13 @@ const AdminTargetRequests = () => {
     loadApps,
     loadRequests,
     updateRequestStatus,
+    approveTargetRequest,
   } = useTargetStore();
   const { paymentSettings, loadPaymentSettings } = useSystemStore();
   const { user: actor } = useAuthStore();
   const { addToast } = useToast();
   const [rejectingRequest, setRejectingRequest] = useState(null);
+  const [approvingRequest, setApprovingRequest] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isRequestsPanelOpen, setIsRequestsPanelOpen] = useState(false);
   const [isStatusUpdating, setIsStatusUpdating] = useState(false);
@@ -68,11 +137,31 @@ const AdminTargetRequests = () => {
       return;
     }
 
+    if (['APPROVED', 'APPROVE', 'DONE'].includes(String(status).toUpperCase())) {
+      setApprovingRequest(requests.find((request) => String(request.id) === String(id)) || { id });
+      return;
+    }
+
     setIsStatusUpdating(true);
     try {
       const updated = await updateRequestStatus(id, status, { rejectionReason: '' });
       setSelectedRequest((current) => (String(current?.id) === String(id) ? { ...current, ...updated } : current));
       addToast('تم تحديث حالة طلب التارجت.', 'success');
+    } finally {
+      setIsStatusUpdating(false);
+    }
+  };
+
+  const handleConfirmApproval = async (proofFile) => {
+    if (!approvingRequest?.id || !proofFile) return;
+    setIsStatusUpdating(true);
+    try {
+      const updated = await approveTargetRequest(approvingRequest.id, proofFile);
+      setSelectedRequest((current) => (String(current?.id) === String(approvingRequest.id) ? { ...current, ...updated } : current));
+      setApprovingRequest(null);
+      addToast('تم تأكيد الدفع وقبول طلب التارجت.', 'success');
+    } catch (error) {
+      addToast(error?.message || 'تعذر تأكيد دفع طلب التارجت.', 'error');
     } finally {
       setIsStatusUpdating(false);
     }
@@ -215,6 +304,13 @@ const AdminTargetRequests = () => {
         isOpen={Boolean(rejectingRequest)}
         onClose={() => setRejectingRequest(null)}
         onConfirm={handleConfirmReject}
+      />
+
+      <AdminPaymentProofModal
+        request={approvingRequest}
+        isSubmitting={isStatusUpdating}
+        onClose={() => setApprovingRequest(null)}
+        onConfirm={handleConfirmApproval}
       />
 
       <TargetOrderDetailsModal

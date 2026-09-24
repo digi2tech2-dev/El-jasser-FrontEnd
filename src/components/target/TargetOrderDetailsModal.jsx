@@ -86,6 +86,7 @@ const TargetOrderDetailsModal = ({
   if (!order) return null;
 
   const proofUrl = resolveImageUrl(order.screenshotProof || order.proofImage || '');
+  const adminPaymentProofUrl = resolveImageUrl(order.adminPaymentProof || '');
   const status = normalizeTargetOrderStatus(order.status);
   const appName = order.appNameSnapshot || order.productName || order.app?.name || 'طلب تارجت';
   const accountId = order.senderId || order.transferFromId;
@@ -160,7 +161,7 @@ const TargetOrderDetailsModal = ({
         {proofUrl ? (
           <div className="rounded-[1.35rem] border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[color:rgb(var(--color-surface-rgb)/0.55)] p-3">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm font-bold text-[var(--color-text)]">إثبات التحويل</p>
+              <p className="text-sm font-bold text-[var(--color-text)]">إثبات تنفيذ/تحويل التارجت</p>
               <a
                 href={proofUrl}
                 target="_blank"
@@ -172,16 +173,36 @@ const TargetOrderDetailsModal = ({
             </div>
             <img
               src={proofUrl}
-              alt="إثبات التحويل"
+              alt="إثبات تنفيذ أو تحويل التارجت"
               className="max-h-[28rem] w-full rounded-[1rem] border border-[color:rgb(var(--color-border-rgb)/0.72)] object-contain"
             />
           </div>
         ) : (
           <div className="flex items-center gap-2 rounded-[1.35rem] border border-dashed border-[color:rgb(var(--color-border-rgb)/0.8)] p-4 text-sm text-[var(--color-text-secondary)]">
             <ImageIcon className="h-4 w-4" />
-            لا توجد صورة إثبات مرفقة.
+            لا توجد صورة إثبات لتنفيذ التارجت مرفقة.
           </div>
         )}
+
+        {adminPaymentProofUrl ? (
+          <div className="rounded-[1.35rem] border border-emerald-500/25 bg-emerald-500/[0.05] p-3">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-[var(--color-text)]">إثبات دفع الموقع</p>
+                {order.adminPaymentProofUploadedAt ? (
+                  <p className="mt-1 text-xs text-[var(--color-text-secondary)]">تم إرسال إثبات الدفع بتاريخ {formatDateTime(order.adminPaymentProofUploadedAt, 'en-US')}</p>
+                ) : null}
+              </div>
+              <a href={adminPaymentProofUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-[var(--color-primary)] hover:underline">فتح الصورة</a>
+            </div>
+            <img src={adminPaymentProofUrl} alt="إثبات دفع الموقع" className="max-h-[28rem] w-full rounded-[1rem] border border-[color:rgb(var(--color-border-rgb)/0.72)] object-contain" />
+          </div>
+        ) : status === 'APPROVED' ? (
+          <div className="flex items-center gap-2 rounded-[1.35rem] border border-dashed border-[color:rgb(var(--color-border-rgb)/0.8)] p-4 text-sm text-[var(--color-text-secondary)]">
+            <ImageIcon className="h-4 w-4" />
+            هذا الطلب تم اعتماده قبل إضافة نظام إثبات الدفع.
+          </div>
+        ) : null}
 
         {status === 'REJECTED' && rejectionReason ? (
           <div className="rounded-[1.2rem] border border-[color:rgb(var(--color-error-rgb)/0.24)] bg-[color:rgb(var(--color-error-rgb)/0.08)] p-4 text-sm text-[var(--color-error)]">
