@@ -165,6 +165,8 @@ const serializePaymentGroupsForApi = (groups) => {
       instructions: method.instructions,
       image: method.image,
       imageName: method.imageName,
+      qrCodeImage: method.qrCodeImage,
+      qrCodeImageName: method.qrCodeImageName,
       isActive: method.isActive !== false,
       fields: Array.isArray(method.fields) ? method.fields : [],
     })),

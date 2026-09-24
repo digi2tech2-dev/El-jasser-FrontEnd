@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { AlertCircle, CheckCircle, Copy, Hash, Info, Landmark, Loader, ReceiptText, ShieldCheck, Smartphone, Sparkles, WalletCards } from 'lucide-react';
+import { AlertCircle, CheckCircle, Copy, Hash, Info, Landmark, Loader, QrCode, ReceiptText, ShieldCheck, Smartphone, Sparkles, WalletCards } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import UploadReceiptBox from '../components/wallet/UploadReceiptBox';
@@ -204,6 +204,7 @@ const PaymentDetails = ({
     [methodFields]
   );
   const methodInstructions = String(method?.instructions || '').trim();
+  const qrCodeUrl = resolveImageUrl(method?.qrCodeImage || '');
   const requiresReceipt = normalizeMethodType(method?.type) !== 'site_wallet' && !isVodafoneCashMethod(method);
   const feePercent = useMemo(() => {
     const value = Number(method?.feePercent);
@@ -600,6 +601,42 @@ const PaymentDetails = ({
             </div>
           </motion.div>
         )}
+
+        {qrCodeUrl ? (
+          <motion.section
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.25, delay: 0.06, ease: 'easeOut' }}
+            className="my-4 border-y border-cyan-500/20 py-4 text-center"
+          >
+            <div className="mb-3 flex items-center justify-center gap-2">
+              <span className="grid h-8 w-8 place-items-center rounded-lg border border-cyan-500/25 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300">
+                <QrCode className="h-4 w-4" />
+              </span>
+              <div className="text-start">
+                <h3 className="text-xs font-black text-[var(--color-text)]">{dir === 'rtl' ? 'الدفع عبر QR Code' : 'Pay with QR Code'}</h3>
+                <p className="mt-0.5 text-[9px] text-[var(--color-text-secondary)]">{dir === 'rtl' ? 'امسح الكود من تطبيق الدفع لإتمام التحويل' : 'Scan the code in your payment app to complete the transfer'}</p>
+              </div>
+            </div>
+            <div className="mx-auto max-w-[19rem] border border-cyan-500/20 bg-white p-3 shadow-sm dark:bg-[color:rgb(var(--color-card-rgb)/0.96)]">
+              <img
+                src={qrCodeUrl}
+                alt={dir === 'rtl' ? 'رمز QR للدفع' : 'Payment QR code'}
+                decoding="async"
+                referrerPolicy="no-referrer"
+                className="aspect-square w-full object-contain"
+              />
+            </div>
+            <a
+              href={qrCodeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex text-xs font-black text-cyan-600 underline-offset-4 transition hover:underline dark:text-cyan-300"
+            >
+              {dir === 'rtl' ? 'فتح الصورة بالحجم الكامل' : 'Open full-size image'}
+            </a>
+          </motion.section>
+        ) : null}
 
         {methodInstructions ? (
           <motion.aside

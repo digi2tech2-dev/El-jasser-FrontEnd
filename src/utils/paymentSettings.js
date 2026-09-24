@@ -125,6 +125,8 @@ export const normalizePaymentMethod = (method = {}, index = 0) => {
     instructions: String(method?.instructions || '').trim(),
     image: String(method?.image || method?.imageUrl || method?.logo || '').trim(),
     imageName: String(method?.imageName || '').trim(),
+    qrCodeImage: String(method?.qrCodeImage || '').trim(),
+    qrCodeImageName: String(method?.qrCodeImageName || '').trim(),
     isActive: method?.isActive !== false,
     fields,
   };
@@ -256,4 +258,3 @@ export const findPaymentMethodById = (settings, methodId, options = {}) => {
 
   return null;
 };
-

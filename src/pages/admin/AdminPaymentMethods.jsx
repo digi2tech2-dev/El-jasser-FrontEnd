@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Building2, Eye, EyeOff, ImagePlus, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { Building2, Eye, EyeOff, ImagePlus, Pencil, Plus, QrCode, Trash2, X } from 'lucide-react';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import { uploadImage } from '../../services/realApi';
 import Button from '../../components/ui/Button';
@@ -38,18 +38,14 @@ const defaultMethodForm = {
   instructions: '',
   image: '',
   imageName: '',
+  qrCodeImage: '',
+  qrCodeImageName: '',
   isActive: true,
 };
 
 const paymentImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+const qrCodeImageTypes = ['image/png', 'image/jpeg', 'image/webp'];
 const paymentImageMaxSize = 2 * 1024 * 1024;
-
-const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => resolve(String(reader.result || ''));
-  reader.onerror = () => reject(new Error('Failed to read image'));
-  reader.readAsDataURL(file);
-});
 
 const getMethodBadge = (method) => {
   if (method?.image) return null;
@@ -306,6 +302,8 @@ const AdminPaymentMethods = () => {
       instructions: method.instructions || '',
       image: method.image || '',
       imageName: method.imageName || '',
+      qrCodeImage: method.qrCodeImage || '',
+      qrCodeImageName: method.qrCodeImageName || '',
       isActive: method.isActive !== false,
     });
     setMethodModalOpen(true);
@@ -346,6 +344,44 @@ const AdminPaymentMethods = () => {
       ...prev,
       image: '',
       imageName: '',
+    }));
+  };
+
+  const handleMethodQrCodeChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!qrCodeImageTypes.includes(file.type)) {
+      addToast(tx('صيغة QR غير مدعومة. استخدم PNG أو JPG أو WebP.', 'Unsupported QR format. Use PNG, JPG, or WebP.'), 'error');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > paymentImageMaxSize) {
+      addToast(tx('حجم صورة QR يجب أن يكون أقل من 2MB', 'QR image size must be smaller than 2MB'), 'error');
+      event.target.value = '';
+      return;
+    }
+
+    try {
+      const path = await uploadImage('payments', file);
+      setMethodForm((prev) => ({
+        ...prev,
+        qrCodeImage: path,
+        qrCodeImageName: file.name,
+      }));
+    } catch (_error) {
+      addToast(tx('تعذر رفع صورة QR', 'Unable to upload QR image'), 'error');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveMethodQrCode = () => {
+    setMethodForm((prev) => ({
+      ...prev,
+      qrCodeImage: '',
+      qrCodeImageName: '',
     }));
   };
 
@@ -403,6 +439,8 @@ const AdminPaymentMethods = () => {
       instructions: methodForm.instructions,
       image: methodForm.image,
       imageName: methodForm.imageName,
+      qrCodeImage: methodForm.qrCodeImage,
+      qrCodeImageName: methodForm.qrCodeImageName,
       isActive: methodForm.isActive,
     });
 
@@ -630,6 +668,12 @@ const AdminPaymentMethods = () => {
                           >
                             {method.isActive !== false ? tx('نشطة', 'Active') : tx('معطلة', 'Disabled')}
                           </span>
+                          {method.qrCodeImage ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/12 px-2.5 py-1 text-[11px] font-semibold text-cyan-600 dark:text-cyan-300">
+                              <QrCode className="h-3 w-3" />
+                              {tx('QR متاح', 'QR available')}
+                            </span>
+                          ) : null}
                         </div>
                         <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
                           {method.description || getMethodTypeLabel(method.type)}
@@ -684,6 +728,12 @@ const AdminPaymentMethods = () => {
                       <p>
                         <span className="font-medium text-[var(--color-text)]">{tx('اسم الصورة:', 'Image name:')}</span>{' '}
                         {method.imageName}
+                      </p>
+                    )}
+                    {method.qrCodeImageName && (
+                      <p>
+                        <span className="font-medium text-[var(--color-text)]">{tx('ملف QR:', 'QR file:')}</span>{' '}
+                        {method.qrCodeImageName}
                       </p>
                     )}
                   </div>
@@ -963,6 +1013,51 @@ const AdminPaymentMethods = () => {
             {methodForm.image ? (
               <div className="overflow-hidden rounded-2xl border border-[color:rgb(var(--color-border-rgb)/0.85)] bg-[color:rgb(var(--color-card-rgb)/0.96)] p-3">
                 <img src={resolveImageUrl(methodForm.image)} alt={methodForm.name || 'Payment method'} decoding="async" referrerPolicy="no-referrer" className="h-44 w-full rounded-xl object-cover" />
+              </div>
+            ) : null}
+          </div>
+
+          <div className="space-y-3 rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.05] p-4">
+            <div className={`flex items-start justify-between gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 text-sm font-medium text-[var(--color-text)]">
+                  <QrCode className="h-4 w-4 text-cyan-600 dark:text-cyan-300" />
+                  {tx('QR Code للدفع', 'Payment QR Code')}
+                </p>
+                <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
+                  {tx('ارفع صورة QR التي سيقوم العميل بمسحها لإتمام التحويل. الحد الأقصى 2MB.', 'Upload the QR image customers scan to complete the transfer. Maximum size is 2MB.')}
+                </p>
+              </div>
+              {methodForm.qrCodeImage ? (
+                <button
+                  type="button"
+                  onClick={handleRemoveMethodQrCode}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[color:rgb(var(--color-error-rgb)/0.22)] bg-[color:rgb(var(--color-error-rgb)/0.08)] text-[var(--color-error)] transition-colors hover:bg-[color:rgb(var(--color-error-rgb)/0.14)]"
+                  aria-label={tx('حذف QR', 'Remove QR code')}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null}
+            </div>
+
+            <label className="flex cursor-pointer flex-col gap-3 rounded-2xl border border-dashed border-cyan-500/35 bg-[color:rgb(var(--color-card-rgb)/0.9)] p-4 transition-colors hover:border-cyan-500/65">
+              <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleMethodQrCodeChange} />
+              <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500 text-white">
+                  <QrCode className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[var(--color-text)]">{methodForm.qrCodeImage ? tx('استبدال صورة QR', 'Replace QR image') : tx('رفع صورة QR', 'Upload QR image')}</p>
+                  <p className="text-xs text-[var(--color-text-secondary)]">
+                    {methodForm.qrCodeImageName || 'PNG, JPG, JPEG, WebP'}
+                  </p>
+                </div>
+              </div>
+            </label>
+
+            {methodForm.qrCodeImage ? (
+              <div className="overflow-hidden rounded-2xl border border-cyan-500/25 bg-white p-3 dark:bg-[color:rgb(var(--color-card-rgb)/0.96)]">
+                <img src={resolveImageUrl(methodForm.qrCodeImage)} alt={tx('رمز QR للدفع', 'Payment QR code')} decoding="async" referrerPolicy="no-referrer" className="mx-auto aspect-square h-52 max-w-full rounded-lg object-contain" />
               </div>
             ) : null}
           </div>
