@@ -326,6 +326,7 @@ const useAuthStore = create((set, get) => ({
               ok: true,
               status: 'profile_completion_required',
               completionToken: response.completionToken,
+              missingProfileFields: response.missingProfileFields || [],
               redirectTo: response.redirectTo || '/auth?status=PROFILE_COMPLETION_REQUIRED',
               canAccessApp: false,
             };
@@ -406,10 +407,10 @@ const useAuthStore = create((set, get) => ({
         }
       },
 
-      completeGoogleProfile: async ({ completionToken, country, currency }) => {
+      completeGoogleProfile: async ({ completionToken, country, currency, phone }) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await apiClient.auth.completeGoogleProfile({ completionToken, country, currency });
+          const response = await apiClient.auth.completeGoogleProfile({ completionToken, country, currency, phone });
           const outcome = buildAuthOutcome(response.user);
 
           set({
@@ -441,6 +442,35 @@ const useAuthStore = create((set, get) => ({
             blockedStatus: 'profile_completion_required',
             blockedUser: null,
           });
+          return { ok: false, status: 'profile_completion_required', error: formattedError };
+        }
+      },
+
+      completeProfile: async ({ phone }) => {
+        set({ isLoading: true, error: null });
+        try {
+          const user = await apiClient.auth.completeProfile({ phone });
+          const outcome = buildAuthOutcome(user);
+          const current = get();
+          set({
+            user,
+            isLoading: false,
+            blockedStatus: outcome.canAccessApp ? null : outcome.status,
+            blockedUser: outcome.canAccessApp ? null : user,
+            profileLastLoadedAt: Date.now(),
+          });
+          writeStoredAuthState({
+            user,
+            token: current.token || null,
+            isAuthenticated: Boolean(current.token),
+            blockedStatus: outcome.canAccessApp ? null : outcome.status,
+            blockedUser: outcome.canAccessApp ? null : user,
+            profileLastLoadedAt: Date.now(),
+          });
+          return outcome;
+        } catch (err) {
+          const formattedError = formatAuthErrorMessage(err, { action: 'profile' });
+          set({ error: formattedError, isLoading: false });
           return { ok: false, status: 'profile_completion_required', error: formattedError };
         }
       },

@@ -1920,6 +1920,10 @@ const realApi = {
       const rawCallbackStatus = String(params.get('status') || '').trim().toUpperCase();
       const callbackStatus = normalizeAccountStatus(rawCallbackStatus);
       const completionToken = params.get('completionToken') || params.get('completion_token');
+      const missingProfileFields = String(params.get('missingFields') || '')
+        .split(',')
+        .map((field) => field.trim())
+        .filter(Boolean);
       if (rawCallbackStatus === 'OAUTH_ERROR') {
         throw new Error('Google authentication failed. Please try again.');
       }
@@ -1929,6 +1933,7 @@ const realApi = {
           user: null,
           token: null,
           completionToken,
+          missingProfileFields,
           status: 'profile_completion_required',
           callbackStatus: 'PROFILE_COMPLETION_REQUIRED',
           redirectTo: '/auth?status=PROFILE_COMPLETION_REQUIRED',
@@ -1965,11 +1970,12 @@ const realApi = {
       return { user, token, status: 'login_complete', callbackStatus: rawCallbackStatus || 'LOGIN_COMPLETE' };
     },
 
-    completeGoogleProfile: async ({ completionToken, country, currency }) => {
+    completeGoogleProfile: async ({ completionToken, country, currency, phone }) => {
       const res = await http.post('/auth/google/complete-profile', {
         completionToken,
         country,
         currency,
+        phone,
       });
       const data = unwrap(res);
       const user = normaliseUser(data.user);
@@ -1977,6 +1983,11 @@ const realApi = {
       const refreshToken = data.refreshToken ?? data.refresh_token ?? null;
       if (token) setStoredAuthTokens(token, refreshToken);
       return { user, token, status: normalizeAccountStatus(data.status || 'LOGIN_COMPLETE') };
+    },
+
+    completeProfile: async ({ phone }) => {
+      const res = await http.patch('/users/me', { phone });
+      return normaliseUser(unwrap(res)?.user || unwrap(res));
     },
 
     resendVerification: async (email) => {

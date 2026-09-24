@@ -14,12 +14,12 @@ import { useToast } from '../components/ui/Toast';
 import { resolveUserAvatar } from '../utils/avatar';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { getReadableErrorMessage } from '../utils/errorMessages';
+import { validatePhone } from '../utils/validation';
 
 const MAX_AVATAR_FILE_SIZE = 2 * 1024 * 1024;
 const ALLOWED_AVATAR_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^\+?[0-9 ()-]{7,20}$/;
 const usernameRegex = /^[a-zA-Z0-9_.-]{3,30}$/;
 
 const getProfileFromUser = (user) => {
@@ -322,7 +322,10 @@ const Account = () => {
     if (!email) validationErrors.email = text.validationRequired;
     else if (!emailRegex.test(email)) validationErrors.email = text.validationEmail;
 
-    if (phone && !phoneRegex.test(phone)) validationErrors.phone = text.validationPhone;
+    const phoneError = validatePhone(phone, {
+      required: String(user?.role || '').toLowerCase() === 'customer',
+    });
+    if (phoneError) validationErrors.phone = text.validationPhone;
 
     return validationErrors;
   };
@@ -390,7 +393,7 @@ const Account = () => {
         username: trimmedProfile.username,
       };
 
-      await updateUserProfile(user.id, profilePayload, user);
+      const updatedProfile = await updateUserProfile(user.id, profilePayload, user);
 
       updateUserSession({
         name: profilePayload.name,
@@ -467,7 +470,7 @@ const Account = () => {
         name: profilePayload.name,
         email: profilePayload.email,
         username: profilePayload.username,
-        phone: profilePayload.phone,
+        phone: updatedProfile?.phone ?? profilePayload.phone,
         avatar: nextAvatarValue
       });
 
@@ -475,7 +478,7 @@ const Account = () => {
         fullName: trimmedProfile.fullName,
         username: trimmedProfile.username,
         email: trimmedProfile.email,
-        phone: trimmedProfile.phone,
+        phone: updatedProfile?.phone ?? trimmedProfile.phone,
         avatar: nextAvatarValue
       };
 
@@ -748,6 +751,8 @@ const Account = () => {
               onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
               error={errors.phone}
               placeholder={isEnglish ? '+1 555 123 4567' : '+20 100 123 4567'}
+              inputMode="tel"
+              autoComplete="tel"
             />
           </div>
           <p className="mt-3 text-xs text-[var(--color-muted)]">{text.email2faHint}</p>

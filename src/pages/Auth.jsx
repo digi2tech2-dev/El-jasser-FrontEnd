@@ -10,6 +10,7 @@ import {
   Globe,
   Lock,
   Mail,
+  Phone,
   TicketCheck,
   User,
 } from 'lucide-react';
@@ -27,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 import {
   validateEmail,
   validateFullName,
+  validatePhone,
   validatePassword,
 } from '../utils/validation';
 import { COUNTRY_CATALOG } from '../data/countryCatalog';
@@ -83,12 +85,14 @@ const Auth = () => {
     verifyTwoFactor,
     loginWithGoogle,
     completeGoogleProfile,
+    completeProfile,
     signup,
     isLoading,
     error: storeError,
     isAuthenticated,
     user,
     blockedStatus,
+    logout,
   } = useAuthStore();
   const { currencies: systemCurrencies, loadCurrencies } = useSystemStore();
 
@@ -100,6 +104,7 @@ const Auth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [country, setCountry] = useState('US');
   const [currency, setCurrency] = useState('USD');
   const [referralCode, setReferralCode] = useState(() => readReferralCodeFromSearch(location.search) || readReferralBridge());
@@ -121,6 +126,25 @@ const Auth = () => {
       ? ''
       : (new URLSearchParams(window.location.search).get('completionToken') || '')
   ));
+  const [profileCompletionFields, setProfileCompletionFields] = useState(() => (
+    typeof window === 'undefined'
+      ? []
+      : String(new URLSearchParams(window.location.search).get('missingFields') || '')
+        .split(',')
+        .map((field) => field.trim())
+        .filter(Boolean)
+  ));
+
+  const authenticatedProfileCompletion = Boolean(
+    isAuthenticated && user?.profileCompletionRequired && !googleSetupPending
+  );
+  const completionMode = googleSetupPending || authenticatedProfileCompletion;
+  const completionFields = completionMode
+    ? (profileCompletionFields.length ? profileCompletionFields : (user?.missingProfileFields || ['phone']))
+    : ['country', 'currency', 'phone'];
+  const requiresCountry = completionFields.includes('country');
+  const requiresCurrency = completionFields.includes('currency');
+  const requiresPhone = completionFields.includes('phone');
 
 const countryOptions = useMemo(() => {
     const source = countries.length ? countries : fallbackCountries;
@@ -203,7 +227,21 @@ const countryOptions = useMemo(() => {
   }, [availableCurrencyOptions]);
 
   useEffect(() => {
+    if (!authenticatedProfileCompletion) return;
+    setIsLogin(false);
+    setRegisterStep(2);
+    setProfileCompletionFields(user?.missingProfileFields?.length ? user.missingProfileFields : ['phone']);
+    setPhone(user?.phone || '');
+  }, [authenticatedProfileCompletion, user?.missingProfileFields, user?.phone]);
+
+  useEffect(() => {
     if (location.search.includes('token=')) return;
+    if (authenticatedProfileCompletion) {
+      if (!location.search.includes('status=PROFILE_COMPLETION_REQUIRED')) {
+        navigate('/auth?status=PROFILE_COMPLETION_REQUIRED', { replace: true });
+      }
+      return;
+    }
     if (location.search.includes('status=')) return;
 
     const normalizedStatus = normalizeAccountStatus(user?.status || blockedStatus);
@@ -219,7 +257,7 @@ const countryOptions = useMemo(() => {
     if (isAuthenticated && user) {
       navigate(getDefaultRouteForRole(user?.role), { replace: true });
     }
-  }, [blockedStatus, googleSetupPending, isAuthenticated, location.search, navigate, user]);
+  }, [authenticatedProfileCompletion, blockedStatus, googleSetupPending, isAuthenticated, location.search, navigate, user]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -234,6 +272,7 @@ const countryOptions = useMemo(() => {
 
       if (result?.status === 'profile_completion_required' || result?.completionToken) {
         setGoogleCompletionToken(result?.completionToken || params.get('completionToken') || '');
+        setProfileCompletionFields(result?.missingProfileFields || String(params.get('missingFields') || '').split(',').filter(Boolean));
         setGoogleSetupPending(true);
         setIsLogin(false);
         setRegisterStep(2);
@@ -344,10 +383,10 @@ const countryOptions = useMemo(() => {
   };
 
   const validateRegisterStepTwo = () => {
-    const nextErrors = {
-      country: country ? null : t('auth.country'),
-      currency: currency ? null : t('auth.noCurrenciesConfigured'),
-    };
+    const nextErrors = {};
+    if (requiresCountry) nextErrors.country = country ? null : t('auth.country');
+    if (requiresCurrency) nextErrors.currency = currency ? null : t('auth.noCurrenciesConfigured');
+    if (requiresPhone) nextErrors.phone = validatePhone(phone, { required: true });
 
     setScopedErrors(nextErrors);
     return !Object.values(nextErrors).some(Boolean);
@@ -358,7 +397,9 @@ const countryOptions = useMemo(() => {
     && Boolean(email.trim())
     && Boolean(password)
     && Boolean(confirmPassword);
-  const isStepTwoReady = Boolean(country) && Boolean(currency);
+  const isStepTwoReady = (!requiresCountry || Boolean(country))
+    && (!requiresCurrency || Boolean(currency))
+    && (!requiresPhone || !validatePhone(phone, { required: true }));
 
   const goToRegisterStepTwo = () => {
     if (!validateRegisterStepOne()) return;
@@ -434,34 +475,43 @@ const countryOptions = useMemo(() => {
       }
 
       if (registerStep !== 2) return;
-      if ((!googleSetupPending && !validateRegisterStepOne()) || !validateRegisterStepTwo()) return;
+      if ((!completionMode && !validateRegisterStepOne()) || !validateRegisterStepTwo()) return;
     } else if (!validateForm()) {
       return;
     }
 
-    if (!isLogin && !currency) {
+    if (!isLogin && requiresCurrency && !currency) {
       addToast(t('auth.noCurrenciesConfigured'), 'error');
       return;
     }
 
-    if (googleSetupPending) {
-      if (!country || !currency) {
-        addToast('اختر الدولة والعملة لإكمال حساب Google.', 'error');
+    if (completionMode) {
+      if (!isStepTwoReady) {
+        addToast('أدخل البيانات المطلوبة لإكمال الحساب.', 'error');
         return;
       }
 
       try {
-        const result = await completeGoogleProfile({
-          completionToken: googleCompletionToken,
-          country,
-          currency,
-        });
-        window.sessionStorage.removeItem('auth:google-signup-intent');
-        clearReferralBridge();
-        setGoogleSetupPending(false);
-        setGoogleCompletionToken('');
-        addToast('تم استكمال إعداد حساب Google بنجاح.', 'success');
-        navigate(getDefaultRouteForRole(result?.user?.role || useAuthStore.getState().user?.role), { replace: true });
+        if (googleSetupPending) {
+          const result = await completeGoogleProfile({
+            completionToken: googleCompletionToken,
+            ...(requiresCountry ? { country } : {}),
+            ...(requiresCurrency ? { currency } : {}),
+            phone,
+          });
+          window.sessionStorage.removeItem('auth:google-signup-intent');
+          clearReferralBridge();
+          setGoogleSetupPending(false);
+          setGoogleCompletionToken('');
+          addToast('تم استكمال إعداد حساب Google بنجاح.', 'success');
+          navigate(getDefaultRouteForRole(result?.user?.role || useAuthStore.getState().user?.role), { replace: true });
+        } else {
+          const result = await completeProfile({ phone });
+          if (result?.canAccessApp) {
+            addToast('تم حفظ رقم الهاتف بنجاح.', 'success');
+            navigate(result.redirectTo || getDefaultRouteForRole(result?.user?.role || useAuthStore.getState().user?.role), { replace: true });
+          }
+        }
       } catch (error) {
         addToast(error?.message || 'تعذر حفظ إعدادات حساب Google. حاول مرة أخرى.', 'error');
       }
@@ -476,6 +526,7 @@ const countryOptions = useMemo(() => {
           password,
           country,
           currency,
+          phone,
           signupMethod: 'email',
           referralCode: referralCode.trim().toUpperCase(),
         });
@@ -831,7 +882,7 @@ const countryOptions = useMemo(() => {
                   </StepOne>
                 ) : registerStep === 2 ? (
                   <StepTwo>
-                    <div>
+                    {requiresCountry && <div>
                       <label className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]">
                         {t('auth.country')}
                       </label>
@@ -850,9 +901,9 @@ const countryOptions = useMemo(() => {
                         <Globe className={`pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)] ${dir === 'rtl' ? 'right-3' : 'left-3'}`} />
                       </div>
                       {errors.country && <p role="alert" className="mt-2 flex items-center gap-1.5 rounded-lg border border-rose-400/25 bg-rose-500/[0.07] px-2.5 py-2 text-xs font-semibold text-rose-700 dark:text-rose-300"><AlertCircle className="h-3.5 w-3.5 shrink-0" />{errors.country}</p>}
-                    </div>
+                    </div>}
 
-                    <div>
+                    {requiresCurrency && <div>
                       <label className="mb-1.5 block text-sm font-medium text-[var(--color-text-secondary)]">
                         {t('auth.currency')}
                       </label>
@@ -872,9 +923,22 @@ const countryOptions = useMemo(() => {
                         ))}
                       </select>
                       {errors.currency && <p role="alert" className="mt-2 flex items-center gap-1.5 rounded-lg border border-rose-400/25 bg-rose-500/[0.07] px-2.5 py-2 text-xs font-semibold text-rose-700 dark:text-rose-300"><AlertCircle className="h-3.5 w-3.5 shrink-0" />{errors.currency}</p>}
-                    </div>
+                    </div>}
 
-                    <Input
+                    {requiresPhone && <Input
+                      label={dir === 'rtl' ? 'رقم الهاتف' : 'Phone number'}
+                      type="tel"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                      placeholder={dir === 'rtl' ? '01012345678 أو +20 101 234 5678' : '+1 555 123 4567'}
+                      inputMode="tel"
+                      autoComplete="tel"
+                      icon={<Phone className="h-4 w-4" />}
+                      error={errors.phone}
+                      className={styles.authInput}
+                    />}
+
+                    {!completionMode && <Input
                       label={dir === 'rtl' ? 'كود الدعوة (اختياري)' : 'Invitation code (optional)'}
                       type="text"
                       value={referralCode}
@@ -884,8 +948,8 @@ const countryOptions = useMemo(() => {
                       maxLength={32}
                       className={styles.authInput}
                       prefix={<TicketCheck className="h-4 w-4" />}
-                    />
-                    {readReferralCodeFromSearch(location.search) && referralCode ? (
+                    />}
+                    {!completionMode && readReferralCodeFromSearch(location.search) && referralCode ? (
                       <p className="-mt-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                         <TicketCheck className="h-3.5 w-3.5" />
                         {dir === 'rtl' ? 'تمت إضافة كود الدعوة تلقائيًا من الرابط.' : 'The invitation code was added automatically from the link.'}
@@ -965,7 +1029,7 @@ const countryOptions = useMemo(() => {
                 </Button>
               ) : (
                 <div className={styles.stepActions}>
-                  {!googleSetupPending && <Button
+                  {!completionMode && <Button
                     type="button"
                     variant="secondary"
                     className={styles.secondaryStepButton}
@@ -985,7 +1049,7 @@ const countryOptions = useMemo(() => {
                 </div>
               )}
 
-              {!twoFactorChallenge && !googleSetupPending && (
+              {!twoFactorChallenge && !completionMode && (
               <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[rgba(212,175,55,0.3)] to-transparent" />
@@ -1018,6 +1082,11 @@ const countryOptions = useMemo(() => {
               )}
 
               <div className="mt-6 space-y-2 text-center">
+                {authenticatedProfileCompletion && (
+                  <button type="button" onClick={logout} className={authLinkClassName}>
+                    {dir === 'rtl' ? 'تسجيل الخروج' : 'Log out'}
+                  </button>
+                )}
                 <span className="block text-sm text-[var(--color-text-secondary)]">
                   {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}{' '}
                   <button

@@ -45,6 +45,25 @@ export const validateMobilePhone = (phone, phoneCode = '') => {
   return null;
 };
 
+// Mirrors the backend's presentation-tolerant phone rules. This is only a UX
+// check; the API remains the source of truth and performs normalization.
+export const validatePhone = (phone, { required = false } = {}) => {
+  const raw = String(phone ?? '')
+    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
+    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .trim();
+
+  if (!raw) return required ? 'رقم الهاتف مطلوب' : null;
+  if (!/^[0-9+ ()-]+$/.test(raw)) return 'رقم الهاتف غير صالح';
+  if ((raw.match(/\+/g) || []).length > (raw.startsWith('+') ? 1 : 0)) {
+    return 'رقم الهاتف غير صالح';
+  }
+
+  const digits = raw.replace(/[ ()-]/g, '').replace(/^\+/, '');
+  if (!/^\d{7,15}$/.test(digits)) return 'رقم الهاتف يجب أن يحتوي على 7 إلى 15 رقمًا';
+  return null;
+};
+
 export const validateGameId = (gameId) => {
   if (!gameId) return 'المعرف مطلوب';
   if (gameId.trim().length < 3) return 'المعرف قصير جدًا';

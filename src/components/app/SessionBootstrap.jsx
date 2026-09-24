@@ -100,6 +100,7 @@ const SessionBootstrap = () => {
   const token = useAuthStore((state) => state.token);
   const userId = useAuthStore((state) => state.user?.id);
   const userRole = useAuthStore((state) => String(state.user?.role || '').toLowerCase());
+  const profileCompletionRequired = useAuthStore((state) => Boolean(state.user?.profileCompletionRequired));
   const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
@@ -127,11 +128,13 @@ const SessionBootstrap = () => {
 
       if (cancelled) return;
 
+      let profileRequiresCompletion = false;
       await runSilently(async () => {
-        await useAuthStore.getState().refreshProfile?.({ force: true });
+        const profile = await useAuthStore.getState().refreshProfile?.({ force: true });
+        profileRequiresCompletion = Boolean(profile?.profileCompletionRequired);
       });
 
-      if (cancelled) return;
+      if (cancelled || profileRequiresCompletion) return;
 
       idleHandle = scheduleIdleTask(() => {
         void runSilently(async () => {
@@ -148,10 +151,10 @@ const SessionBootstrap = () => {
       cancelled = true;
       clearIdleTask(idleHandle);
     };
-  }, [isAuthenticated, token, userId, userRole]);
+  }, [isAuthenticated, token, userId, userRole, profileCompletionRequired]);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !isAuthenticated || !token || !userId) return undefined;
+    if (typeof window === 'undefined' || !isAuthenticated || !token || !userId || profileCompletionRequired) return undefined;
 
     let lastSyncAt = Date.now();
     let syncInFlight = false;
@@ -189,10 +192,10 @@ const SessionBootstrap = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.clearInterval(intervalId);
     };
-  }, [isAuthenticated, token, userId]);
+  }, [isAuthenticated, token, userId, profileCompletionRequired]);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
+    if (!isAuthenticated || !token || profileCompletionRequired) {
       stopPaymentSettingsPolling();
       return undefined;
     }
@@ -202,10 +205,10 @@ const SessionBootstrap = () => {
     return () => {
       stopPaymentSettingsPolling();
     };
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, profileCompletionRequired]);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.BroadcastChannel || !isAuthenticated || !token) return undefined;
+    if (typeof window === 'undefined' || !window.BroadcastChannel || !isAuthenticated || !token || profileCompletionRequired) return undefined;
 
     const channel = new BroadcastChannel(PAYMENT_SETTINGS_BROADCAST_CHANNEL);
     channel.onmessage = (event) => {
@@ -218,7 +221,7 @@ const SessionBootstrap = () => {
     };
 
     return () => channel.close();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, profileCompletionRequired]);
 
   return null;
 };
