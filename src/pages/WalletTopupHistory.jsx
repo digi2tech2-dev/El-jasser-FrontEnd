@@ -88,9 +88,18 @@ const getTopupAmount = (topup) => Number(
 );
 
 const getTopupFee = (topup) => Number(
-  topup?.paymentFeeAmount
+  topup?.paymentMethodFeeAmount
+  ?? topup?.paymentFeeAmount
   ?? topup?.feeAmount
   ?? topup?.fees
+  ?? 0
+);
+
+const getTopupNetAmount = (topup) => Number(
+  topup?.netAmount
+  ?? topup?.walletCreditAmount
+  ?? topup?.requestedAmount
+  ?? topup?.amount
   ?? 0
 );
 
@@ -271,6 +280,7 @@ const WalletTopupHistory = () => {
               const currency = resolveTopupExecutionCurrency(topup, user?.currency || 'USD');
               const amount = getTopupAmount(topup);
               const fee = getTopupFee(topup);
+              const netAmount = getTopupNetAmount(topup);
               const createdAt = topup?.createdAt || topup?.date;
               const method = getTopupMethod(topup);
 
@@ -307,7 +317,7 @@ const WalletTopupHistory = () => {
                     </span>
                   </div>
 
-                  <div className="mt-3 flex items-end justify-between gap-3 rounded-2xl border border-[color:rgb(var(--color-primary-rgb)/0.14)] bg-[linear-gradient(135deg,rgb(var(--color-primary-rgb)/0.07),rgb(192_38_211/0.05))] px-3 py-2.5">
+                  <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[color:rgb(var(--color-primary-rgb)/0.14)] bg-[linear-gradient(135deg,rgb(var(--color-primary-rgb)/0.07),rgb(192_38_211/0.05))] px-3 py-2.5">
                     <div>
                       <p className="flex items-center gap-1 text-[9px] font-bold text-[var(--color-text-secondary)]">
                         <CircleDollarSign className="h-3 w-3" />
@@ -321,6 +331,12 @@ const WalletTopupHistory = () => {
                       <p className="text-[9px] font-bold text-[var(--color-text-secondary)]">الرسوم</p>
                       <p className="mt-1 text-[11px] font-black [direction:ltr]">
                         {formatWalletAmount(fee, currency || 'USD')}
+                      </p>
+                    </div>
+                    <div className="text-end">
+                      <p className="text-[9px] font-bold text-[var(--color-text-secondary)]">الصافي المضاف</p>
+                      <p className="mt-1 text-[11px] font-black text-emerald-600 [direction:ltr] dark:text-emerald-300">
+                        {formatWalletAmount(netAmount, currency || 'USD')}
                       </p>
                     </div>
                   </div>

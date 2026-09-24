@@ -83,6 +83,13 @@ const getSenderDetails = (request) => {
   return { label, value: value || '-', transactionNumber };
 };
 
+const getDepositFinancialDetails = (request) => ({
+  feePercent: Number(request?.paymentMethodFeePercentSnapshot ?? 0),
+  feeAmount: request?.paymentMethodFeeAmount,
+  netAmount: request?.netAmount,
+  walletCreditAmount: request?.walletCreditAmount,
+});
+
 const PAGE_SIZE = 20;
 
 const SummaryCard = ({ icon: Icon, label, value }) => (
@@ -384,6 +391,7 @@ const AdminPayments = () => {
             const requestedAmount = formatRequestAmount(request.requestedAmount ?? request.requestedCoins ?? request.amount ?? 0);
             const actualAmount = request.actualPaidAmount ? formatRequestAmount(request.actualPaidAmount) : '-';
             const senderDetails = getSenderDetails(request);
+            const financial = getDepositFinancialDetails(request);
 
             return (
             <article
@@ -429,6 +437,14 @@ const AdminPayments = () => {
                   <p className="text-[var(--color-text-secondary)]">المبلغ الفعلي</p>
                   <p className="mt-0.5 font-semibold text-[var(--color-text)]">{actualAmount}</p>
                 </div>
+                {request.status === 'approved' ? (
+                  <div className="rounded-lg bg-[color:rgb(var(--color-surface-rgb)/0.62)] px-2 py-1.5">
+                    <p className="text-[var(--color-text-secondary)]">الرسوم / الصافي</p>
+                    <p className="mt-0.5 font-semibold text-[var(--color-text)]">
+                      {formatRequestAmount(financial.feeAmount ?? 0)} ({financial.feePercent}%) / {formatRequestAmount(financial.netAmount ?? 0)}
+                    </p>
+                  </div>
+                ) : null}
                 <div className="rounded-lg bg-[color:rgb(var(--color-surface-rgb)/0.62)] px-2 py-1.5">
                   <p className="text-[var(--color-text-secondary)]">الدولة</p>
                   <p className="mt-0.5 font-semibold text-[var(--color-text)]">
@@ -484,6 +500,8 @@ const AdminPayments = () => {
                 <TableHead className="text-center">العملة</TableHead>
                 <TableHead className="text-center">المبلغ المطلوب</TableHead>
                 <TableHead className="text-center">المبلغ الفعلي</TableHead>
+                <TableHead className="text-center">الرسوم</TableHead>
+                <TableHead className="text-center">الصافي / المضاف</TableHead>
                 <TableHead className="text-center">بيانات المرسل</TableHead>
                 <TableHead className="text-center">الإيصال</TableHead>
                 <TableHead className="text-center">الحالة</TableHead>
@@ -495,6 +513,7 @@ const AdminPayments = () => {
                 const requestId = getRequestId(request);
                 const currencyCode = request.currencyCode || findUserCurrency(request.userId);
                 const senderDetails = getSenderDetails(request);
+                const financial = getDepositFinancialDetails(request);
 
                 return (
                 <TableRow key={request.id}>
@@ -516,6 +535,16 @@ const AdminPayments = () => {
                   <TableCell className="text-center font-semibold">{currencyCode}</TableCell>
                   <TableCell className="text-center">{formatRequestAmount(request.requestedAmount ?? request.requestedCoins ?? request.amount ?? 0)}</TableCell>
                   <TableCell className="text-center">{request.actualPaidAmount ? formatRequestAmount(request.actualPaidAmount) : '-'}</TableCell>
+                  <TableCell className="text-center">
+                    {request.status === 'approved'
+                      ? `${formatRequestAmount(financial.feeAmount ?? 0)} (${financial.feePercent}%)`
+                      : '-'}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {request.status === 'approved'
+                      ? `${formatRequestAmount(financial.netAmount ?? 0)} / ${formatRequestAmount(financial.walletCreditAmount ?? 0)}`
+                      : '-'}
+                  </TableCell>
                   <TableCell className="max-w-[220px] text-center">
                     <div className="break-all text-sm font-semibold text-[var(--color-text)]">{senderDetails.value}</div>
                     {senderDetails.value !== '-' ? (
@@ -756,4 +785,3 @@ const AdminPayments = () => {
 };
 
 export default AdminPayments;
-

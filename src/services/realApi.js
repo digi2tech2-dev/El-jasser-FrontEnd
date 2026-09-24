@@ -114,30 +114,62 @@ const normalizePaymentSettingsResponse = (settings) => {
   };
 };
 
-const serializePaymentGroupsForApi = (groups) => normalizePaymentGroups(groups, { fallbackToDefault: false }).map((group) => ({
-  id: group.id,
-  name: group.name,
-  description: group.description,
-  currency: group.currency,
-  image: group.image,
-  imageName: group.imageName,
-  isActive: group.isActive !== false,
-  methods: group.methods.map((method) => ({
-    id: method.id,
-    name: method.name,
-    description: method.description,
-    type: method.type,
-    accountNumber: method.accountNumber,
-    accountName: method.accountName,
-    bankName: method.bankName,
-    feePercent: method.feePercent,
-    instructions: method.instructions,
-    image: method.image,
-    imageName: method.imageName,
-    isActive: method.isActive !== false,
-    fields: Array.isArray(method.fields) ? method.fields : [],
-  })),
-}));
+const serializePaymentMethodFeePercent = (value) => {
+  // HTML number inputs produce strings. Convert only valid values at the API
+  // boundary so the backend's strict financial validation receives JSON numbers.
+  if (value === undefined || value === null) return 0;
+  if (typeof value === 'string' && !value.trim()) {
+    throw new Error('Method fee percentage is required.');
+  }
+
+  const feePercent = Number(value);
+  if (!Number.isFinite(feePercent) || feePercent < 0 || feePercent > 100) {
+    throw new Error('Method fee percentage must be a number between 0 and 100.');
+  }
+  return feePercent;
+};
+
+const validatePaymentGroupFeePercentsForApi = (groups) => {
+  if (!Array.isArray(groups)) return;
+  groups.forEach((group) => {
+    if (!group || !Array.isArray(group.methods)) return;
+    group.methods.forEach((method) => {
+      if (method && Object.prototype.hasOwnProperty.call(method, 'feePercent')) {
+        serializePaymentMethodFeePercent(method.feePercent);
+      }
+    });
+  });
+};
+
+const serializePaymentGroupsForApi = (groups) => {
+  // Validate the raw form payload before normalizers can clamp or default it.
+  validatePaymentGroupFeePercentsForApi(groups);
+
+  return normalizePaymentGroups(groups, { fallbackToDefault: false }).map((group) => ({
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    currency: group.currency,
+    image: group.image,
+    imageName: group.imageName,
+    isActive: group.isActive !== false,
+    methods: group.methods.map((method) => ({
+      id: method.id,
+      name: method.name,
+      description: method.description,
+      type: method.type,
+      accountNumber: method.accountNumber,
+      accountName: method.accountName,
+      bankName: method.bankName,
+      feePercent: serializePaymentMethodFeePercent(method.feePercent),
+      instructions: method.instructions,
+      image: method.image,
+      imageName: method.imageName,
+      isActive: method.isActive !== false,
+      fields: Array.isArray(method.fields) ? method.fields : [],
+    })),
+  }));
+};
 
 const normaliseSenderDetails = (source = {}) => {
   const rawDetails = source?.senderDetails && typeof source.senderDetails === 'object'
@@ -1025,6 +1057,10 @@ const normaliseDeposit = (d) => {
   const requestedAmount = d.requestedAmount ?? d.amountRequested ?? d.amount ?? 0;
   const amountUsd = d.amountUsd ?? d.amountApproved ?? d.actualPaidAmount ?? null;
   const currency = d.currency || 'USD';
+  const paymentMethodFeePercentSnapshot = d.paymentMethodFeePercentSnapshot ?? 0;
+  const paymentMethodFeeAmount = d.paymentMethodFeeAmount ?? null;
+  const netAmount = d.netAmount ?? null;
+  const walletCreditAmount = d.walletCreditAmount ?? null;
   const exchangeRate = d.exchangeRate ?? 1;
   const senderDetails = normaliseSenderDetails(d);
 
@@ -1053,7 +1089,11 @@ const normaliseDeposit = (d) => {
     // actualPaidAmount = the amount the user ACTUALLY paid in their LOCAL currency.
     // Do NOT alias this to amountUsd — that's the USD conversion for internal accounting.
     actualPaidAmount: requestedAmount,
-    creditedCoins: status === 'approved' ? requestedAmount : null,
+    creditedCoins: status === 'approved' ? walletCreditAmount : null,
+    paymentMethodFeePercentSnapshot,
+    paymentMethodFeeAmount,
+    netAmount,
+    walletCreditAmount,
     // Multi-currency fields
     currency,
     currencyCode: currency,          // alias — AdminPayments reads currencyCode

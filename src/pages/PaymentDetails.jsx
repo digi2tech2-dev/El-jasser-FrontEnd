@@ -213,7 +213,7 @@ const PaymentDetails = ({
   const enteredAmount = Number(formData.amount || 0);
   const baseAmount = Number.isFinite(enteredAmount) && enteredAmount > 0 ? enteredAmount : 0;
   const feeAmount = Number(((baseAmount * feePercent) / 100).toFixed(2));
-  const payableAmount = Number((baseAmount + feeAmount).toFixed(2));
+  const netAmount = Number((baseAmount - feeAmount).toFixed(2));
   const paymentCurrencyCode = String(group?.currency || method?.currency || user?.currency || 'USD').toUpperCase();
   const paymentCurrencySymbol = useMemo(() => {
     const configuredCurrency = (Array.isArray(currencies) ? currencies : []).find(
@@ -370,7 +370,7 @@ const PaymentDetails = ({
         ? Math.min(100, Math.max(0, freshFeePercentValue))
         : 0;
       const freshFeeAmount = Number(((baseAmount * freshFeePercent) / 100).toFixed(2));
-      const freshPayableAmount = Number((baseAmount + freshFeeAmount).toFixed(2));
+      const freshNetAmount = Number((baseAmount - freshFeeAmount).toFixed(2));
       const freshSenderRequirement = getSenderDetailRequirement(freshMethod);
       const senderValue = freshSenderRequirement
         ? String(formData[freshSenderRequirement.field] || '').trim()
@@ -404,7 +404,7 @@ const PaymentDetails = ({
         paymentMethodId: freshMethod?.id || '',
         paymentFeePercent: freshFeePercent,
         paymentFeeAmount: freshFeeAmount,
-        amountWithFee: freshPayableAmount,
+        netAmount: freshNetAmount,
         senderDetails,
         senderWalletNumber: freshSenderRequirement?.field === 'senderWalletNumber' ? senderValue : '',
         senderWalletAddress: freshSenderRequirement?.field === 'senderWalletAddress' ? senderValue : '',
@@ -838,7 +838,7 @@ const PaymentDetails = ({
               <div className="mt-2 flex items-center justify-between gap-3 px-1 text-xs">
                 <span className="font-bold text-[var(--color-text-secondary)]">
                   {t('payments.feeAmountLabel', {
-                    defaultValue: dir === 'rtl' ? 'رسوم التحويل' : 'Payment fee',
+                  defaultValue: dir === 'rtl' ? 'رسوم الطريقة' : 'Method fee',
                   })}
                   {` (${feePercent}%)`}
                 </span>
@@ -849,10 +849,10 @@ const PaymentDetails = ({
             <div className="mt-3 flex items-end justify-between gap-3 border-t border-indigo-500/15 px-1 pt-3 text-xs">
               <span className="font-black text-[var(--color-text)]">
                 {t('payments.totalToTransferLabel', {
-                  defaultValue: dir === 'rtl' ? 'الإجمالي المطلوب تحويله' : 'Total to transfer',
+                  defaultValue: dir === 'rtl' ? 'صافي المبلغ الذي سيُضاف لمحفظتك' : 'Net amount credited to your wallet',
                 })}
               </span>
-              <span className="font-['Poppins'] text-lg font-black tracking-tight text-cyan-600 [direction:ltr] [font-variant-numeric:tabular-nums] dark:text-cyan-300">{formatMoney(payableAmount)}</span>
+              <span className="font-['Poppins'] text-lg font-black tracking-tight text-cyan-600 [direction:ltr] [font-variant-numeric:tabular-nums] dark:text-cyan-300">{formatMoney(netAmount)}</span>
             </div>
           </div>
 
@@ -1047,4 +1047,3 @@ const PaymentDetails = ({
 };
 
 export default PaymentDetails;
-

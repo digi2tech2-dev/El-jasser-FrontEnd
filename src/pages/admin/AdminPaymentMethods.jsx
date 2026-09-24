@@ -363,6 +363,13 @@ const AdminPaymentMethods = () => {
       return;
     }
 
+    const rawFeePercent = String(methodForm.feePercent ?? '').trim();
+    const feePercent = Number(rawFeePercent);
+    if (!rawFeePercent || !Number.isFinite(feePercent) || feePercent < 0 || feePercent > 100) {
+      addToast(tx('رسوم الطريقة يجب أن تكون رقمًا بين 0 و100', 'Method fee must be a number between 0 and 100'), 'error');
+      return;
+    }
+
     const nextGroups = paymentGroups.map((group) => ({
       ...group,
       methods: [...group.methods],
@@ -389,7 +396,7 @@ const AdminPaymentMethods = () => {
       name: trimmedName,
       description: String(methodForm.description || '').trim(),
       type: methodForm.type,
-      feePercent: methodForm.feePercent,
+      feePercent,
       accountNumber: methodForm.accountNumber,
       accountName: methodForm.accountName,
       bankName: methodForm.bankName,
