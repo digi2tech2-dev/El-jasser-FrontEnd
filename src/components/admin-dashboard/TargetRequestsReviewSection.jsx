@@ -72,7 +72,7 @@ const TargetRequestsReviewSection = ({
       ) : (
         <div className={cn(
           'overflow-y-auto pe-1.5',
-          requests.length > 2 ? 'h-[26rem]' : 'max-h-[26rem]'
+          requests.length > 2 ? 'max-h-none sm:h-[26rem]' : 'max-h-none sm:max-h-[26rem]'
         )}>
           <div className="space-y-2.5">
             {requests.map((request) => {

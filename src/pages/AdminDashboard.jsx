@@ -36,6 +36,7 @@ import QuickActionsSection from '../components/admin-dashboard/QuickActionsSecti
 import ActivityFeedSection from '../components/admin-dashboard/ActivityFeedSection';
 import SupplierBalancesSection from '../components/admin-dashboard/SupplierBalancesSection';
 import DashboardDateRangeFilter from '../components/admin-dashboard/DashboardDateRangeFilter';
+import ProfitTrendChart from '../components/admin-dashboard/ProfitTrendChart';
 import OrderDetailsDrawer from '../components/orders/OrderDetailsDrawer';
 import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
@@ -670,6 +671,30 @@ const AdminDashboard = () => {
   const monthlyTargetProfitUsd = asNumber(statsFinancials.totalProfitUsd ?? statsFinancials.netProfit);
   const monthlyTargetProgress = Math.min(100, Math.round((monthlyTargetProfitUsd / monthlyTargetUsd) * 100));
   const monthlyTargetRemaining = Math.max(0, monthlyTargetUsd - monthlyTargetProfitUsd);
+  const profitTrendPoints = useMemo(() => {
+    const rangeStart = parseDateInputValue(startDate) || startOfMonth(new Date());
+    const rangeEnd = parseDateInputValue(endDate) || new Date();
+    const safeEnd = rangeEnd < rangeStart ? rangeStart : rangeEnd;
+    const dailyProfit = new Map();
+
+    completedOrders.forEach((order) => {
+      const dateValue = toDateInputValue(getOrderDashboardDate(order));
+      if (!dateValue) return;
+      const profit = asNumber(order?.profitUsd ?? order?.financialSnapshot?.profitUsd);
+      dailyProfit.set(dateValue, (dailyProfit.get(dateValue) || 0) + profit);
+    });
+
+    const points = [];
+    for (let date = new Date(rangeStart); date <= safeEnd; date = shiftDateByDays(date, 1)) {
+      const dateValue = toDateInputValue(date);
+      points.push({
+        date: dateValue,
+        value: dailyProfit.get(dateValue) || 0,
+        label: new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' }).format(date),
+      });
+    }
+    return points;
+  }, [completedOrders, endDate, locale, startDate]);
 
   const stats = useMemo(
     () => [
@@ -1057,6 +1082,12 @@ const AdminDashboard = () => {
       </Card>
 
       <StatsGrid stats={stats} isLoading={isLoadingDashboardStats} />
+
+      <ProfitTrendChart
+        points={profitTrendPoints}
+        isArabic={isArabic}
+        formatMoney={formatMoney}
+      />
 
       <div className="grid place-items-center gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)] xl:place-items-stretch xl:gap-6">
         <div className="w-full space-y-4 md:space-y-6">

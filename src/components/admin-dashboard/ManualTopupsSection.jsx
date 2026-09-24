@@ -65,7 +65,7 @@ const ManualTopupsSection = ({
       ) : (
         <div className={cn(
           'overflow-y-auto pe-1.5',
-          topups.length > 2 ? 'h-[26rem]' : 'max-h-[26rem]'
+          topups.length > 2 ? 'max-h-none sm:h-[26rem]' : 'max-h-none sm:max-h-[26rem]'
         )}>
           <div className="space-y-2.5">
             {topups.map((topup) => {

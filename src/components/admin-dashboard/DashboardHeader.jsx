@@ -5,7 +5,10 @@ import { cn } from '../ui/Button';
 const DashboardHeader = ({ isArabic, userName, currentDateLabel }) => {
   return (
     <section className="admin-dashboard-header relative mx-auto w-[calc(100vw-1.5rem)] max-w-[42rem] overflow-hidden rounded-[1.5rem] border border-[color:rgb(var(--color-primary-rgb)/0.2)] p-4 sm:w-full sm:p-6 lg:max-w-none lg:p-7">
-      <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgb(var(--color-primary-rgb)/0.72),transparent)]" />
+      <span className="admin-dashboard-orb admin-dashboard-orb--one" aria-hidden="true" />
+      <span className="admin-dashboard-orb admin-dashboard-orb--two" aria-hidden="true" />
+      <div className="admin-dashboard-grid absolute inset-0" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,#54f7ff,#b65cff,transparent)]" />
       <div className="relative flex flex-col items-center gap-4 text-center sm:gap-5 lg:flex-row lg:items-end lg:justify-between lg:text-start">
         <div className="space-y-2.5 sm:space-y-4">
           <span className={cn('section-kicker justify-center text-[10px] sm:text-xs lg:justify-start', isArabic && 'lg:justify-end')}>
