@@ -92,8 +92,8 @@ const getCopy = (language = 'ar') => (
         quantityPlaceholder: 'أدخل الكمية',
         minQuantity: 'أقل كمية',
         maxQuantity: 'أقصى كمية',
-        userId: 'معرف المستخدم',
-        userIdPlaceholder: 'أدخل معرف المستخدم',
+        userId: 'ايدي الحساب',
+        userIdPlaceholder: 'أدخل ايدي الحساب',
         buyNow: 'شراء',
         loginToBuy: 'تسجيل الدخول للشراء',
         buying: 'جاري التنفيذ...',
@@ -109,7 +109,7 @@ const getCopy = (language = 'ar') => (
         emptyQuantity: 'أدخل الكمية.',
         belowMin: 'الكمية أقل من الحد الأدنى.',
         aboveMax: 'الكمية أكبر من الحد الأقصى.',
-        emptyUserId: 'معرف المستخدم مطلوب.',
+        emptyUserId: 'ايدي الحساب مطلوب.',
         insufficientBalance: 'الرصيد غير كافي.',
         balanceRequiredTitle: 'اشحن رصيدك لإتمام الطلب',
         balanceRequiredDescription: 'رصيدك الحالي لا يكفي، وتحتاج إلى شحن المبلغ الموضح بالأسفل.',
@@ -1014,11 +1014,11 @@ const ProductPurchaseDialog = ({
 
             {hasPrimaryOrderField ? (
               <div className="purchase-dialog-field">
-                <span className="purchase-dialog-field-label"><UserRound className="h-4 w-4" />{primaryOrderFieldLabel}</span>
+                <span className="purchase-dialog-field-label"><span className="purchase-dialog-id-mark" aria-hidden="true">ID</span>{primaryOrderFieldLabel}</span>
                 <div className={primaryOrderField?.isVerifiable === true ? 'grid grid-cols-[minmax(0,1fr)_auto] gap-2' : ''}>
                   <div className="purchase-dialog-input-shell">
                     <span className="purchase-dialog-input-badge" aria-hidden="true">
-                      <UserRound className="h-4 w-4" />
+                      ID
                     </span>
                     <input
                       type="text"

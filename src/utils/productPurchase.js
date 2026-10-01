@@ -2,7 +2,7 @@ const CONTROL_CHARACTERS = /[\u0000-\u001F\u007F]/g;
 const DYNAMIC_FIELD_TYPES = ['text', 'number', 'email', 'select', 'image', 'file'];
 
 const FIELD_COPY = {
-  playerId: { ar: 'معرف المستخدم', en: 'User ID' },
+  playerId: { ar: 'ايدي الحساب', en: 'User ID' },
   uid: { ar: 'UID', en: 'UID' },
   email: { ar: 'البريد الإلكتروني', en: 'Email' },
   phone: { ar: 'رقم الهاتف', en: 'Phone Number' },
