@@ -10,6 +10,7 @@ import HeroSlider from '../components/home/HeroSlider';
 import CategoryCard from '../components/home/CategoryCard';
 import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
+import StorefrontPromotions from '../components/products/StorefrontPromotions';
 import ProductPurchaseDialog from '../components/products/ProductPurchaseDialog';
 import slideOneHeroImage from '../assets/slide-1.webp';
 import slideTwoHeroImage from '../assets/slide-2.webp';
@@ -254,7 +255,11 @@ const Dashboard = () => {
       <HeroSlider slides={heroSlides} />
 
       <section id="categories" className="scroll-mt-28 space-y-3 sm:space-y-3.5">
-        <div className="relative z-10 mx-auto flex w-full max-w-5xl justify-center px-0.5 sm:px-2">
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col justify-center gap-3 px-0.5 sm:px-2">
+          <StorefrontPromotions
+            language={language}
+            onSellTarget={() => navigate('/buy-target')}
+          />
           <ProductSearchBar products={storefrontProducts} language={language} onSelectProduct={handleProductSelect} forceIconRight placeholder={language === 'ar' ? 'ابحث عن منتج...' : 'Search for a product...'} noResultsLabel={language === 'ar' ? 'لا يوجد منتج مطابق' : 'No matching product found'} className="mx-auto w-full" inputClassName="h-10 rounded-full" />
         </div>
 
