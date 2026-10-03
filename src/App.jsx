@@ -1,10 +1,11 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import React, { Suspense, lazy, useState } from 'react';
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
 import PageTransition from './components/app/PageTransition';
 import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
+import IntroSplash from './components/app/IntroSplash';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -461,17 +462,42 @@ const AnimatedAppRoutes = ({ location }) => {
   );
 };
 
+const LoginAfterIntroPrompt = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="login-after-intro" role="dialog" aria-modal="true" aria-labelledby="login-after-intro-title">
+      <button type="button" className="login-after-intro__backdrop" onClick={onClose} aria-label="إغلاق" />
+      <section className="login-after-intro__card">
+        <span className="login-after-intro__icon" aria-hidden="true">✦</span>
+        <h2 id="login-after-intro-title">مرحبًا بك في الجاسر كارد</h2>
+        <p>يرجى تسجيل الدخول لتتمكن من الشراء أو بيع Target.</p>
+        <div className="login-after-intro__actions">
+          <Link to="/auth?mode=login" onClick={onClose} className="login-after-intro__primary">تسجيل الدخول</Link>
+          <Link to="/auth?mode=signup" onClick={onClose} className="login-after-intro__secondary">إنشاء حساب</Link>
+        </div>
+        <button type="button" className="login-after-intro__continue" onClick={onClose}>متابعة التصفح</button>
+      </section>
+    </div>
+  );
+};
+
 function App() {
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   return (
     <ThemeProvider>
       <LanguageProvider>
         <ToastProvider>
           <SessionBootstrap />
           <BrowserRouter>
+            <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
             <PageTransition>
               {(location) => <AnimatedAppRoutes location={location} />}
             </PageTransition>
             <FloatingWhatsApp />
+            <LoginAfterIntroPrompt isOpen={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} />
           </BrowserRouter>
         </ToastProvider>
       </LanguageProvider>

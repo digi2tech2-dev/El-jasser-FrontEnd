@@ -78,6 +78,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
           ? 'border-cyan-300/35 bg-[#071f35]'
           : 'border-amber-200/40 bg-[#172333]'
       )}
+      data-tone={slide.tone}
       aria-label={isArabic ? 'روابط سريعة' : 'Quick links'}
     >
       <div className={cn(
