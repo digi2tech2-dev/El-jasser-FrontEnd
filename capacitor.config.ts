@@ -17,7 +17,7 @@ try {
 
 const config: CapacitorConfig = {
   appId: 'com.eljasser.app',
-  appName: 'El Jasser',
+  appName: 'El-Jasser',
   webDir: 'dist',
   server: {
     // A remote site is loaded instead of embedding the Vite bundle in the APK.

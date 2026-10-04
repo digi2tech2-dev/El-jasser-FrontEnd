@@ -6,3 +6,73 @@ coverage/
 *.log
 .env*
 !.env.example
+
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Gradle
+.gradle/
+**/.gradle/
+
+# Android generated files
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Gradle
+.gradle/
+**/.gradle/
+
+# Android generated files
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+.gradle-build-cache/
+.gradle/
+**/.gradle/

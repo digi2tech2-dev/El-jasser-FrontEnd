@@ -57,7 +57,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
   const Icon = slide.icon;
   const isTargetSlide = slide.tone === 'target';
   const actionClassName = cn(
-    'inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-extrabold transition-all hover:-translate-y-0.5 hover:brightness-110 sm:px-4',
+    'inline-flex shrink-0 items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-[10px] font-extrabold transition-all hover:-translate-y-0.5 hover:brightness-110 sm:px-3 sm:text-xs',
     isTargetSlide
       ? 'border-cyan-200/30 bg-gradient-to-l from-[#0b92bd] to-[#075d8d] text-white shadow-[0_10px_24px_-13px_rgba(20,190,229,0.58)]'
       : 'border-amber-100/35 bg-gradient-to-l from-[#e5b744] to-[#b87816] text-[#132b3f] shadow-[0_10px_24px_-13px_rgba(229,183,68,0.58)]'
@@ -73,7 +73,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
   return (
     <section
       className={cn(
-        'storefront-promotions relative isolate overflow-hidden rounded-[1.35rem] border px-3 py-3 shadow-[0_20px_42px_-28px_rgba(2,17,35,0.88)] sm:px-4',
+        'storefront-promotions relative isolate flex h-[5.75rem] flex-col overflow-hidden rounded-[1.15rem] border px-2.5 py-2 shadow-[0_20px_42px_-28px_rgba(2,17,35,0.88)] sm:px-3',
         isTargetSlide
           ? 'border-cyan-300/35 bg-[#071f35]'
           : 'border-amber-200/40 bg-[#172333]'
@@ -89,19 +89,19 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
       )} />
       <div className="pointer-events-none absolute -end-6 -top-10 h-28 w-28 rounded-full border border-white/10" />
       <div className="pointer-events-none absolute -end-1 top-3 h-16 w-16 rounded-full border border-white/[0.07]" />
-      <div key={slide.id} className="relative flex items-center gap-2.5 animate-in fade-in duration-300 sm:gap-3">
+      <div key={slide.id} className="relative flex min-h-0 flex-1 items-center gap-2 animate-in fade-in duration-300">
         <span className={cn(
-          'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-[inset_0_1px_rgba(255,255,255,0.18)]',
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border shadow-[inset_0_1px_rgba(255,255,255,0.18)]',
           isTargetSlide
             ? 'border-cyan-200/30 bg-cyan-300/15 text-cyan-100'
             : 'border-amber-100/30 bg-amber-200/15 text-amber-100'
         )}>
-          <Icon className="h-5 w-5" />
+          <Icon className="h-4 w-4" />
         </span>
 
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-extrabold text-white sm:text-[15px]">{slide.title}</p>
-          <p className="mt-0.5 text-xs text-cyan-50/75">{slide.description}</p>
+          <p className="text-xs font-extrabold text-white sm:text-sm">{slide.title}</p>
+          <p className="mt-px text-[10px] text-cyan-50/75 sm:text-xs">{slide.description}</p>
         </div>
 
         {slide.href ? (
@@ -116,7 +116,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
       </div>
 
       {slides.length > 1 && (
-        <div className="relative mt-2 flex justify-center gap-1.5" aria-label={isArabic ? 'اختيار الإعلان' : 'Choose promotion'}>
+        <div className="relative mt-1 flex justify-center gap-1" aria-label={isArabic ? 'اختيار الإعلان' : 'Choose promotion'}>
           {slides.map((item, index) => (
             <button
               key={item.id}
@@ -125,10 +125,10 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
               aria-label={item.title}
               aria-current={index === activeSlide ? 'true' : undefined}
               className={cn(
-                'h-1.5 rounded-full transition-all',
+                'h-1 rounded-full transition-all',
                 index === activeSlide
-                  ? cn('w-5', isTargetSlide ? 'bg-cyan-200' : 'bg-amber-200')
-                  : 'w-1.5 bg-white/25 hover:bg-white/55'
+                  ? cn('w-4', isTargetSlide ? 'bg-cyan-200' : 'bg-amber-200')
+                  : 'w-1 bg-white/25 hover:bg-white/55'
               )}
             />
           ))}

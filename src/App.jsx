@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useState } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import PageTransition from './components/app/PageTransition';
 import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
@@ -496,6 +497,7 @@ function App() {
             <PageTransition>
               {(location) => <AnimatedAppRoutes location={location} />}
             </PageTransition>
+            <MobileBottomNav />
             <FloatingWhatsApp />
             <LoginAfterIntroPrompt isOpen={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} />
           </BrowserRouter>
