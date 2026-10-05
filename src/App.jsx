@@ -8,6 +8,7 @@ import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
 import AppUpdateController from './components/app/AppUpdateController';
+import { isAndroidNativeApp } from './utils/platform';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -97,6 +98,7 @@ const AdminDashboardRoute = () => {
 
 const CreatedByEntryRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAndroidApp = isAndroidNativeApp();
   const role = useAuthStore((state) => state.user?.role);
 
   if (isAuthenticated && role === 'customer') {
@@ -496,7 +498,9 @@ function App() {
         <ToastProvider>
           <SessionBootstrap />
           <BrowserRouter>
-            <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
+            {isAndroidApp && (
+              <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
+            )}
             <AppUpdateController />
             <PageTransition>
               {(location) => <AnimatedAppRoutes location={location} />}
