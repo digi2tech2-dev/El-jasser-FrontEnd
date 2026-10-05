@@ -102,7 +102,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
         </div>
 
         {slide.href ? (
-          <a href={slide.href} className={actionClassName} download>
+          <a href={slide.href} className={actionClassName}>
             {actionContent}
           </a>
         ) : (
