@@ -98,7 +98,6 @@ const AdminDashboardRoute = () => {
 
 const CreatedByEntryRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isAndroidApp = isAndroidNativeApp();
   const role = useAuthStore((state) => state.user?.role);
 
   if (isAuthenticated && role === 'customer') {
@@ -491,6 +490,7 @@ const LoginAfterIntroPrompt = ({ isOpen, onClose }) => {
 function App() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAndroidApp = isAndroidNativeApp();
 
   return (
     <ThemeProvider>
