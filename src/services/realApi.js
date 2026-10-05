@@ -2012,6 +2012,20 @@ const realApi = {
       return { user, token, status: 'login_complete', callbackStatus: rawCallbackStatus || 'LOGIN_COMPLETE' };
     },
 
+    loginWithNativeGoogle: async ({ idToken, intent, referralCode }) => {
+      const res = await http.post('/auth/google/native', { idToken, intent, referralCode });
+      const data = unwrap(res);
+      const user = data?.user ? normaliseUser(data.user) : null;
+      const token = data?.token || data?.accessToken || null;
+      if (token) setStoredAuthTokens(token, data?.refreshToken || null);
+      return {
+        ...data,
+        user,
+        token,
+        status: normalizeAccountStatus(data?.status || 'LOGIN_COMPLETE'),
+      };
+    },
+
     completeGoogleProfile: async ({ completionToken, country, currency, phone }) => {
       const res = await http.post('/auth/google/complete-profile', {
         completionToken,
@@ -2089,6 +2103,17 @@ const realApi = {
       // bearer tokens, so clearing the persisted session is the logout action.
       clearStoredSession();
       return { success: true };
+    },
+  },
+
+  devices: {
+    registerPush: async ({ token, platform }) => {
+      const res = await http.post('/me/devices/push', { token, platform });
+      return unwrap(res);
+    },
+    unregisterPush: async ({ token }) => {
+      const res = await http.delete('/me/devices/push', { data: { token } });
+      return unwrap(res);
     },
   },
 

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
 import apiClient from '../../services/client';
+import { initializeNativePush, PUSH_ACTION_EVENT } from '../../services/pushNotifications';
 
 const AUTH_FORCE_LOGOUT_EVENT = 'auth:force-logout';
 const PAYMENT_SETTINGS_BROADCAST_CHANNEL = 'payment-settings-updates';
@@ -96,12 +98,29 @@ const stopPaymentSettingsPolling = () => {
 };
 
 const SessionBootstrap = () => {
+  const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const token = useAuthStore((state) => state.token);
   const userId = useAuthStore((state) => state.user?.id);
   const userRole = useAuthStore((state) => String(state.user?.role || '').toLowerCase());
   const profileCompletionRequired = useAuthStore((state) => Boolean(state.user?.profileCompletionRequired));
   const logout = useAuthStore((state) => state.logout);
+
+  useEffect(() => {
+    if (!isAuthenticated || !token || !userId || profileCompletionRequired) return undefined;
+    void initializeNativePush(userId);
+  }, [isAuthenticated, token, userId, profileCompletionRequired]);
+
+  useEffect(() => {
+    const handlePushAction = (event) => {
+      const route = event?.detail?.route;
+      if (typeof route === 'string' && route.startsWith('/') && !route.startsWith('//')) {
+        navigate(route);
+      }
+    };
+    window.addEventListener(PUSH_ACTION_EVENT, handlePushAction);
+    return () => window.removeEventListener(PUSH_ACTION_EVENT, handlePushAction);
+  }, [navigate]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;

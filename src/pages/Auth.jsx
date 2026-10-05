@@ -42,6 +42,7 @@ import {
 } from '../utils/referralCode';
 import brandIconImage from '../assets/elgny.webp';
 import styles from './Auth.module.css';
+import { isAndroidNativeApp } from '../utils/platform';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
@@ -84,6 +85,7 @@ const Auth = () => {
     login,
     verifyTwoFactor,
     loginWithGoogle,
+    loginWithNativeGoogle,
     completeGoogleProfile,
     completeProfile,
     signup,
@@ -574,7 +576,12 @@ const countryOptions = useMemo(() => {
       if (isLogin) window.sessionStorage.removeItem('auth:google-signup-intent');
       else window.sessionStorage.setItem('auth:google-signup-intent', '1');
     }
-    const result = await loginWithGoogle();
+    const result = isAndroidNativeApp()
+      ? await loginWithNativeGoogle({
+          intent: isLogin ? 'login' : 'signup',
+          referralCode: referralCode.trim().toUpperCase(),
+        })
+      : await loginWithGoogle();
     if (!result) return;
     consumeAuthResult(result, { source: 'google', mode: isLogin ? 'login' : 'signup' });
   };

@@ -10,6 +10,8 @@ import { getDefaultRouteForRole } from '../utils/authRoles';
 import { formatAuthErrorMessage } from '../utils/authErrorMessages';
 import { devLogger } from '../utils/devLogger';
 import { getWalletBalanceSummary } from '../utils/money';
+import { signInWithNativeGoogle, clearNativeGoogleCredentialState } from '../services/nativeGoogleAuth';
+import { unregisterNativePush } from '../services/pushNotifications';
 
 const AUTH_STORAGE_KEY = 'auth-storage';
 const PROFILE_CACHE_TTL = 20 * 1000; // short TTL to keep UI responsive while staying reasonably fresh
@@ -302,7 +304,7 @@ const useAuthStore = create((set, get) => ({
         }
       },
 
-      loginWithGoogle: async () => {
+      loginWithGoogle: async ({ native = false, intent = 'login', referralCode = '' } = {}) => {
         set({
           isLoading: true,
           error: null,
@@ -310,7 +312,16 @@ const useAuthStore = create((set, get) => ({
           blockedUser: null,
         });
         try {
-          const response = await apiClient.auth.loginWithGoogle();
+          const response = native
+            ? await (async () => {
+                const nativeIdentity = await signInWithNativeGoogle();
+                return apiClient.auth.loginWithNativeGoogle({
+                  idToken: nativeIdentity.idToken,
+                  intent,
+                  referralCode,
+                });
+              })()
+            : await apiClient.auth.loginWithGoogle();
           if (response?.status === 'profile_completion_required' || response?.completionToken) {
             set({
               user: null,
@@ -406,6 +417,10 @@ const useAuthStore = create((set, get) => ({
           return { ok: false, error: formattedError };
         }
       },
+
+      loginWithNativeGoogle: async ({ intent = 'login', referralCode = '' } = {}) => (
+        get().loginWithGoogle({ native: true, intent, referralCode })
+      ),
 
       completeGoogleProfile: async ({ completionToken, country, currency, phone }) => {
         set({ isLoading: true, error: null });
@@ -558,6 +573,10 @@ const useAuthStore = create((set, get) => ({
 
       logout: async () => {
         profileRefreshRequest = null;
+        await Promise.allSettled([
+          unregisterNativePush(),
+          clearNativeGoogleCredentialState(),
+        ]);
         set({
           user: null,
           token: null,

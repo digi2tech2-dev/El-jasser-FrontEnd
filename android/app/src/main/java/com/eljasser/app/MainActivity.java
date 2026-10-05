@@ -18,13 +18,17 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Capacitor 8 builds the Bridge during super.onCreate(); add local
+        // plugins to its builder before that happens.
+        registerPlugin(NativeGoogleAuthPlugin.class);
         super.onCreate(savedInstanceState);
         requestRequiredPermissions();
     }
 
     /**
-     * Requests only the permissions needed by the app's camera, media-upload,
-     * and notification features. Android shows its own localized explanations.
+     * Requests only the permissions needed by the app's camera and media-upload
+     * features. Push notification permission is intentionally
+     * owned by the Capacitor Push Notifications lifecycle after sign-in.
      */
     private void requestRequiredPermissions() {
         List<String> missingPermissions = new ArrayList<>();
@@ -32,7 +36,6 @@ public class MainActivity extends BridgeActivity {
         addIfMissing(missingPermissions, Manifest.permission.CAMERA);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            addIfMissing(missingPermissions, Manifest.permission.POST_NOTIFICATIONS);
             addIfMissing(missingPermissions, Manifest.permission.READ_MEDIA_IMAGES);
             addIfMissing(missingPermissions, Manifest.permission.READ_MEDIA_VIDEO);
         } else {
