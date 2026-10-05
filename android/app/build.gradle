@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+def eljasserStoreFile = System.getenv('ELJASSER_KEYSTORE_FILE')
+def eljasserStorePassword = System.getenv('ELJASSER_KEYSTORE_PASSWORD')
+def eljasserKeyAlias = System.getenv('ELJASSER_KEY_ALIAS') ?: 'eljasser-release'
+def eljasserKeyPassword = System.getenv('ELJASSER_KEY_PASSWORD')
+
 android {
     namespace = "com.eljasser.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -21,8 +26,22 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (eljasserStoreFile && eljasserStorePassword && eljasserKeyPassword) {
+                storeFile file(eljasserStoreFile)
+                storePassword eljasserStorePassword
+                keyAlias eljasserKeyAlias
+                keyPassword eljasserKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (eljasserStoreFile && eljasserStorePassword && eljasserKeyPassword) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
