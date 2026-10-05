@@ -1,15 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Capacitor } from '@capacitor/core';
 import { Download, Rocket, Target } from 'lucide-react';
 import { cn } from '../ui/Button';
-
-const isNativeApp = () => Capacitor.isNativePlatform();
+import { isNativeApp } from '../../utils/platform';
 
 const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
   const [activeSlide, setActiveSlide] = useState(0);
   const isArabic = language === 'ar';
   const runningInApp = isNativeApp();
-  const androidAppUrl = import.meta.env.VITE_ANDROID_APP_URL || '/el-jasser.apk';
 
   const slides = useMemo(() => {
     const targetSlide = {
@@ -34,10 +31,10 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
         title: isArabic ? 'حمّل التطبيق على أندرويد' : 'Download the Android app',
         description: isArabic ? 'لتجربة أسرع وأكثر استقرارًا.' : 'For a faster, more stable experience.',
         action: isArabic ? 'تحميل التطبيق' : 'Download app',
-        href: androidAppUrl,
+        href: '/download-app',
       },
     ];
-  }, [androidAppUrl, isArabic, onSellTarget, runningInApp]);
+  }, [isArabic, onSellTarget, runningInApp]);
 
   useEffect(() => {
     setActiveSlide(0);

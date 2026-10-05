@@ -108,7 +108,7 @@ const SessionBootstrap = () => {
 
   useEffect(() => {
     if (!isAuthenticated || !token || !userId || profileCompletionRequired) return undefined;
-    void initializeNativePush(userId);
+    void initializeNativePush(userId).catch(() => {});
   }, [isAuthenticated, token, userId, profileCompletionRequired]);
 
   useEffect(() => {

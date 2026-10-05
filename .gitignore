@@ -72,6 +72,11 @@ android/local.properties
 .DS_Store
 Thumbs.db
 
+# Android release artifacts and Firebase configuration are deployed separately.
+*.apk
+*.aab
+android/app/google-services.json
+
 
 .gradle-build-cache/
 .gradle/

@@ -7,6 +7,7 @@ import PageTransition from './components/app/PageTransition';
 import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
+import AppUpdateController from './components/app/AppUpdateController';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -60,6 +61,7 @@ const WalletTopupHistory = lazy(routeLoaders.WalletTopupHistory);
 const PaymentDetails = lazy(routeLoaders.PaymentDetails);
 const DeveloperApi = lazy(routeLoaders.DeveloperApi);
 const ApiDocs = lazy(routeLoaders.ApiDocs);
+const DownloadApp = lazy(routeLoaders.DownloadApp);
 
 const ADMIN_PANEL_ROLES = [...ADMIN_ROLES, ...SUPERVISOR_ROLES];
 
@@ -114,6 +116,7 @@ const AnimatedAppRoutes = ({ location }) => {
       <Route path="/about-us" element={renderSuspended(<AboutUsPage />)} />
       <Route path="/created-by" element={<CreatedByEntryRoute />} />
       <Route path="/api-docs" element={renderSuspended(<ApiDocs />)} />
+      <Route path="/download-app" element={renderSuspended(<DownloadApp />)} />
       <Route path="/public-contact-us" element={renderSuspended(<ContactUs accountOnly />)} />
       <Route path="/auth" element={renderSuspended(<Auth />)} />
       <Route path="/login" element={renderSuspended(<Auth />)} />
@@ -494,6 +497,7 @@ function App() {
           <SessionBootstrap />
           <BrowserRouter>
             <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
+            <AppUpdateController />
             <PageTransition>
               {(location) => <AnimatedAppRoutes location={location} />}
             </PageTransition>

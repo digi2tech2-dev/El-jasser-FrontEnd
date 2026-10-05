@@ -39,6 +39,7 @@ export const routeLoaders = {
   PaymentDetails: () => import('../pages/PaymentDetails'),
   DeveloperApi: () => import('../pages/DeveloperApi'),
   ApiDocs: () => import('../pages/ApiDocs'),
+  DownloadApp: () => import('../pages/DownloadApp'),
 };
 
 const publicPaths = new Set([
@@ -47,6 +48,7 @@ const publicPaths = new Set([
   '/about-us',
   '/created-by',
   '/api-docs',
+  '/download-app',
   '/public-contact-us',
   '/auth',
   '/login',
@@ -82,6 +84,7 @@ const routeMatchers = [
   [/^\/account\/created-by\/?$/, routeLoaders.CreatedBy],
   [/^\/created-by\/?$/, routeLoaders.CreatedBy],
   [/^\/api-docs\/?$/, routeLoaders.ApiDocs],
+  [/^\/download-app\/?$/, routeLoaders.DownloadApp],
   [/^\/contact-us\/?$/, routeLoaders.ContactUs],
   [/^\/buy-target\/?$/, routeLoaders.BuyTarget],
   [/^\/target-orders\/?$/, routeLoaders.TargetOrders],

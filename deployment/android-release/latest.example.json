@@ -1,0 +1,23 @@
+{
+  "platform": "android",
+  "appId": "com.eljasser.app",
+  "versionCode": 3,
+  "versionName": "1.2.0",
+  "minSupportedVersionCode": 2,
+  "forceUpdate": false,
+  "legacyForceUpdate": false,
+  "apkUrl": "/downloads/android/el-jasser-1.2.0.apk",
+  "publishedAt": "2026-10-05T00:00:00Z",
+  "sizeBytes": 0,
+  "sha256": "",
+  "releaseNotes": {
+    "ar": [
+      "إشعارات فورية حتى عند إغلاق التطبيق",
+      "تسجيل الدخول باستخدام Google من داخل التطبيق"
+    ],
+    "en": [
+      "Native Android push notifications",
+      "Native Google Sign-In"
+    ]
+  }
+}

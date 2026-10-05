@@ -12,11 +12,13 @@
     "android:apk": "cap sync android && cd android && gradlew.bat assembleDebug",
     "generate:favicons": "node scripts/generate-favicons.mjs",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:app-update": "node --test src/services/appUpdate.test.js"
   },
   "dependencies": {
     "@barba/core": "^2.10.3",
     "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.1.2",
     "@capacitor/camera": "^8.2.5",
     "@capacitor/core": "^8.5.2",
     "@capacitor/filesystem": "^8.1.4",
