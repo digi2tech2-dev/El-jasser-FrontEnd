@@ -496,8 +496,8 @@ function App() {
     <ThemeProvider>
       <LanguageProvider>
         <ToastProvider>
-          <SessionBootstrap />
           <BrowserRouter>
+            <SessionBootstrap />
             {isAndroidApp && (
               <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
             )}
