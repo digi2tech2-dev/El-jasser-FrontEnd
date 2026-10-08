@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -42,6 +42,7 @@ import apiClient from '../../services/client';
 import { normalizeBillingMode, normalizeQuota } from '../../utils/billing';
 
 const FILTER_OPTIONS = ['all', 'approved', 'rejected', 'deleted'];
+const USERS_PER_PAGE = 20;
 
 const compactButtonClassName = 'h-7 rounded-[var(--radius-sm)] px-2 text-[10px]';
 const compactFieldClassName =
@@ -124,6 +125,7 @@ const AdminUsers = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const statusFromQuery = searchParams.get('status');
+  const userIdFromQuery = String(searchParams.get('userId') || '').trim();
   const initialFilter = FILTER_OPTIONS.includes(statusFromQuery) ? statusFromQuery : 'all';
 
   const {
@@ -156,6 +158,7 @@ const AdminUsers = () => {
 
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState('');
+  const deferredSearch = useDeferredValue(search);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [approveTarget, setApproveTarget] = useState(null);
@@ -176,6 +179,7 @@ const AdminUsers = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [copiedUserId, setCopiedUserId] = useState('');
+  const [localPage, setLocalPage] = useState(1);
 
   const isArabic = String(i18n.resolvedLanguage || i18n.language || 'ar').toLowerCase().startsWith('ar');
   const locale = getNumericLocale(isArabic ? 'ar-EG' : 'en-US');
@@ -185,11 +189,23 @@ const AdminUsers = () => {
   const canViewWallet = hasPermission(actor, PERMISSIONS.ADMIN_WALLET);
 
   useEffect(() => {
-    loadUsers({ force: true });
     loadGroups({ force: true });
     loadCurrencies({ force: true });
     Promise.resolve(loadWallets({ force: true })).catch(() => null);
-  }, [loadCurrencies, loadGroups, loadUsers, loadWallets]);
+  }, [loadCurrencies, loadGroups, loadWallets]);
+
+  // Search and status are applied by the API, so results and counts span every
+  // user page instead of only the users that happened to be loaded first.
+  useEffect(() => {
+    const status = filter === 'all' || filter === 'deleted' ? '' : filter;
+    loadUsers({
+      force: true,
+      page: 1,
+      search: filter === 'deleted' ? '' : deferredSearch,
+      status,
+      role: 'customer',
+    });
+  }, [deferredSearch, filter, loadUsers]);
 
   useEffect(() => {
     if (!FILTER_OPTIONS.includes(statusFromQuery)) return;
@@ -287,6 +303,20 @@ const AdminUsers = () => {
       });
   }, [customerUsers, deletedCustomerUsers, filter, isArabic, search, walletByUserId]);
 
+  const serverPageCount = Number(usersPagination?.pages || 0);
+  const usesServerPagination = filter !== 'deleted' && serverPageCount > 1;
+  const localPageCount = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE));
+  const safeLocalPage = Math.min(localPage, localPageCount);
+  const visibleUsers = useMemo(() => {
+    if (usesServerPagination) return filteredUsers;
+    const start = (safeLocalPage - 1) * USERS_PER_PAGE;
+    return filteredUsers.slice(start, start + USERS_PER_PAGE);
+  }, [filteredUsers, safeLocalPage, usesServerPagination]);
+
+  useEffect(() => {
+    setLocalPage(1);
+  }, [filter, search]);
+
   const openDetails = async (entry) => {
     setSelectedUser(entry);
     setSettingsTopupAmount('');
@@ -321,6 +351,29 @@ const AdminUsers = () => {
       setIsDetailsLoading(false);
     }
   };
+
+  // Enables direct links from order management to the customer's full account details.
+  useEffect(() => {
+    if (!userIdFromQuery) return undefined;
+    let active = true;
+
+    const openRequestedUser = async () => {
+      const existing = (users || []).find((entry) => String(entry?.id || entry?._id || entry?.userId || '').trim() === userIdFromQuery);
+      const entry = existing || await getUserById(userIdFromQuery, { force: true }).catch(() => null);
+      if (active && entry) await openDetails(entry);
+
+      if (active) {
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete('userId');
+        setSearchParams(nextParams, { replace: true });
+      }
+    };
+
+    void openRequestedUser();
+    return () => { active = false; };
+  // The query should be handled once per navigation; user data may refresh while the drawer is open.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userIdFromQuery]);
 
   const formatDate = (value) => {
     if (!value) return isArabic ? 'غير متوفر' : 'Unavailable';
@@ -820,7 +873,7 @@ const AdminUsers = () => {
       </section>
 
       <div className="space-y-2 md:hidden">
-        {filteredUsers.map((entry) => {
+        {visibleUsers.map((entry) => {
           const walletPreview = resolveWalletForEntry(entry);
           const balanceValue = getWalletBalanceValue(entry, walletPreview);
 
@@ -828,7 +881,7 @@ const AdminUsers = () => {
           <Card key={entry.id} variant="elevated" className="overflow-hidden border-[color:rgb(var(--color-primary-rgb)/0.16)] bg-[linear-gradient(145deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-surface-rgb)/0.66))] p-2.5 shadow-[0_18px_42px_-36px_rgb(var(--color-primary-rgb)/0.28)]">
             <div className="flex items-start gap-2.5">
               <img
-                src={resolveUserAvatar(entry, entry.name || entry.email || 'Dra90n User')}
+                src={resolveUserAvatar(entry, entry.name || entry.email || 'EMBRATOR User')}
                 alt={entry.name}
                 className="h-9 w-9 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.22)] object-cover shadow-[0_14px_28px_-24px_rgb(0_0_0/0.82)]"
               />
@@ -907,7 +960,7 @@ const AdminUsers = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((entry) => {
+            {visibleUsers.map((entry) => {
               const walletPreview = resolveWalletForEntry(entry);
               const balanceValue = getWalletBalanceValue(entry, walletPreview);
 
@@ -916,7 +969,7 @@ const AdminUsers = () => {
                 <TableCell className={`${compactTableCellClassName} rounded-s-xl py-2`}>
                   <div className="flex items-center gap-2.5">
                     <img
-                src={resolveUserAvatar(entry, entry.name || entry.email || 'Dra90n User')}
+                src={resolveUserAvatar(entry, entry.name || entry.email || 'EMBRATOR User')}
                       alt={entry.name}
                       className="h-9 w-9 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.22)] object-cover shadow-[0_14px_28px_-24px_rgb(0_0_0/0.84)]"
                     />
@@ -974,18 +1027,17 @@ const AdminUsers = () => {
       </div>
 
       {/* ── Pagination Controls (bottom of users list/table) ───────────────── */}
-      {usersPagination && usersPagination.pages > 1 && (
-        <div className="admin-premium-panel mt-2.5 flex flex-col gap-2 rounded-[var(--radius-md)] border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[color:rgb(var(--color-card-rgb)/0.84)] px-3 py-2 md:flex-row md:items-center md:justify-between">
+      <div className="admin-premium-panel mt-2.5 flex flex-col gap-2 rounded-[var(--radius-md)] border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[color:rgb(var(--color-card-rgb)/0.84)] px-3 py-2 md:flex-row md:items-center md:justify-between">
           <p className="text-[11px] text-[var(--color-text-secondary)]">
-            صفحة {usersPagination.page} من {usersPagination.pages} — إجمالي {usersPagination.total} مستخدم
+            صفحة {usesServerPagination ? usersPagination.page : safeLocalPage} من {usesServerPagination ? serverPageCount : localPageCount} — إجمالي {usesServerPagination ? usersPagination.total : filteredUsers.length} مستخدم
           </p>
           <div className="flex items-center gap-1.5">
             <Button
               size="sm"
               variant="outline"
               className={compactButtonClassName}
-              disabled={usersPagination.page <= 1}
-              onClick={() => loadUsersPage(usersPagination.page - 1)}
+              disabled={usesServerPagination ? usersPagination.page <= 1 : safeLocalPage <= 1}
+              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page - 1) : setLocalPage((page) => Math.max(1, page - 1)))}
             >
               <ChevronRight className="h-3.5 w-3.5" />
               السابق
@@ -994,15 +1046,14 @@ const AdminUsers = () => {
               size="sm"
               variant="outline"
               className={compactButtonClassName}
-              disabled={usersPagination.page >= usersPagination.pages}
-              onClick={() => loadUsersPage(usersPagination.page + 1)}
+              disabled={usesServerPagination ? usersPagination.page >= serverPageCount : safeLocalPage >= localPageCount}
+              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page + 1) : setLocalPage((page) => Math.min(localPageCount, page + 1)))}
             >
               التالي
               <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
           </div>
-        </div>
-      )}
+      </div>
 
       <Modal
         isOpen={isDetailsOpen}
@@ -1015,7 +1066,7 @@ const AdminUsers = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex items-center gap-2.5">
                 <img
-                  src={resolveUserAvatar(selectedUser, selectedUser?.name || selectedUser?.email || 'Dra90n User')}
+                  src={resolveUserAvatar(selectedUser, selectedUser?.name || selectedUser?.email || 'EMBRATOR User')}
                   alt={selectedUser?.name}
                   className="h-12 w-12 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] object-cover"
                 />
