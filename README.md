@@ -730,13 +730,29 @@ Static hosting requirements:
 - Use HTTPS for auth tokens, OAuth callbacks, uploads, and payment/deposit flows.
 - Ensure uploaded file URLs under `/uploads` are served by the backend or a CDN reachable by the frontend.
 
-General Nginx-style SPA fallback example:
+Nginx SPA fallback and asset caching (required when old Android WebViews or
+browser tabs may retain an earlier `index.html`):
 
 ```nginx
+location ^~ /assets/ {
+  try_files $uri =404;
+  add_header Cache-Control "public, max-age=31536000, immutable" always;
+}
+
+location = /index.html {
+  add_header Cache-Control "no-store, max-age=0" always;
+}
+
 location / {
+  add_header Cache-Control "no-store, max-age=0" always;
   try_files $uri $uri/ /index.html;
 }
 ```
+
+Deploy `index.html` after all new hashed assets are uploaded, and retain old
+`/assets/` files for a short overlap when possible. A missing asset must return
+404 instead of the SPA HTML; HTML returned for a CSS URL makes the app render
+without styling.
 
 ## Error Handling And User Feedback
 

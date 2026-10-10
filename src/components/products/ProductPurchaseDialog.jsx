@@ -37,6 +37,7 @@ const getCopy = (language = 'ar') => (
     ? {
         available: 'Available',
         unavailable: 'Unavailable',
+        priceUnavailable: 'Price is temporarily unavailable. Please try again later.',
         unitPrice: 'Unit Price',
         agentProductId: 'Agent ID',
         accountNumber: 'Receiver Account ID',
@@ -80,6 +81,7 @@ const getCopy = (language = 'ar') => (
     : {
         available: 'متاح',
         unavailable: 'غير متاح',
+        priceUnavailable: 'السعر غير متاح مؤقتًا. حاول لاحقًا.',
         unitPrice: 'سعر الوحدة',
         agentProductId: 'رقم آيدي الوكيل',
         accountNumber: 'آيدي الحساب المستلم',
@@ -265,7 +267,8 @@ const ProductPurchaseDialog = ({
 
       if (cachedProduct) {
         setProduct(cachedProduct);
-        setIsLoading(false);
+        const cachedPrice = Number(cachedProduct.finalPrice ?? cachedProduct.basePriceCoins ?? cachedProduct.basePrice ?? 0);
+        setIsLoading(!(Number.isFinite(cachedPrice) && cachedPrice > 0));
       } else {
         setIsLoading(true);
       }
@@ -276,6 +279,9 @@ const ProductPurchaseDialog = ({
         const freshProduct = (useMediaStore.getState().products || []).find((item) => String(item.id) === String(productId));
         if (freshProduct) {
           setProduct(freshProduct);
+        } else {
+          const productDetails = await apiClient.products.get(productId);
+          if (isActive && productDetails) setProduct(productDetails);
         }
       } catch (error) {
         devLogger.error('Failed to load product', error);
@@ -305,6 +311,7 @@ const ProductPurchaseDialog = ({
   const pricingGroupPercentage = pricingUser?.groupPercentage ?? null;
   const unitPriceBase = product ? calculateProductPrice(product, pricingGroup, pricingGroupPercentage) : '0';
   const unitPrice = product ? resolveProductUnitPrice(product, userCurrencyCode, currencies, pricingGroup, pricingGroupPercentage) : '0';
+  const hasValidPrice = Number.isFinite(Number(unitPrice)) && Number(unitPrice) > 0;
   const quantity = parseQuantityInput(quantityInput);
   const safeQuantity = Number.isFinite(quantity) ? quantity : 0;
   const totalPrice = normalizeMoneyAmount(Number(unitPrice) * safeQuantity);
@@ -376,7 +383,7 @@ const ProductPurchaseDialog = ({
     : (product?.storefrontStatus?.label || product?.storefrontStatus?.badgeLabel || copy.unavailable);
   const purchaseButtonLabel = isSubmitting
     ? copy.buying
-    : (shouldRequireAuth && isPurchasable ? copy.loginToBuy : (isPurchasable ? copy.buyNow : statusLabel));
+    : (!isPurchasable ? statusLabel : (shouldRequireAuth ? copy.loginToBuy : (hasValidPrice ? copy.buyNow : copy.priceUnavailable)));
 
   const primaryOrderField = orderFields.find((field) => String(field?.key || '').toLowerCase() === 'playerid')
     || orderFields.find((field) => !isUploadFieldType(field?.type))
@@ -413,6 +420,7 @@ const ProductPurchaseDialog = ({
       }
     }
     if (!isPurchasable) return copy.unavailable;
+    if (!hasValidPrice) return copy.priceUnavailable;
     return '';
   };
 
@@ -1046,7 +1054,7 @@ const ProductPurchaseDialog = ({
                 type="button"
                 className="purchase-dialog-primary"
                 onClick={handlePurchase}
-                disabled={isSubmitting || !isPurchasable}
+                disabled={isSubmitting || !isPurchasable || (!shouldRequireAuth && !hasValidPrice)}
               >
                 <LockKeyhole className="h-5 w-5" />
                 {purchaseButtonLabel}

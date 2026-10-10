@@ -49,6 +49,24 @@
         }
       })();
     </script>
+    <script>
+      // A cached page may point to a CSS hash removed by a later deployment.
+      // Retry the document once with a fresh URL if that stylesheet fails.
+      window.addEventListener('error', function (event) {
+        var link = event.target;
+        if (!link || link.tagName !== 'LINK' || link.rel !== 'stylesheet' || !/\/assets\/[^/]+\.css(?:\?|$)/.test(link.href)) return;
+        try {
+          var key = 'el-jasser:css-retry:' + link.href;
+          if (window.sessionStorage.getItem(key)) return;
+          window.sessionStorage.setItem(key, '1');
+          var url = new URL(window.location.href);
+          url.searchParams.set('_assets', String(Date.now()));
+          window.location.replace(url.toString());
+        } catch (error) {
+          // The page remains usable when browser storage is unavailable.
+        }
+      }, true);
+    </script>
     <style>
       #app-boot-loader {
         position: fixed;

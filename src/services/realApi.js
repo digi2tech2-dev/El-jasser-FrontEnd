@@ -37,6 +37,13 @@ const http = axios.create({
   // Hardcoding it breaks Multer file uploads.
 });
 
+// Public storefront requests must have the same response before and after
+// sign-in. Keep them separate from the authenticated request interceptors.
+const publicHttp = axios.create({
+  baseURL: API_BASE,
+  timeout: 180_000,
+});
+
 // ─── Token helpers ───────────────────────────────────────────────────────────
 
 const AUTH_STORAGE_KEY = 'auth-storage';
@@ -3402,7 +3409,7 @@ const realApi = {
       for (const entry of catalogRequests) {
         try {
           const [endpoint, config] = Array.isArray(entry) ? entry : [entry, undefined];
-          const res = await http.get(endpoint, config);
+          const res = await publicHttp.get(endpoint, config);
           const data = readPayload(res);
           const categoryItems = Array.isArray(data?.categories) ? data.categories : null;
           const productItems = Array.isArray(data) ? data : (Array.isArray(data?.products) ? data.products : null);
@@ -3428,7 +3435,7 @@ const realApi = {
         for (const entry of productRequests) {
           try {
             const [endpoint, config] = Array.isArray(entry) ? entry : [entry, undefined];
-            const res = await http.get(endpoint, config);
+            const res = await publicHttp.get(endpoint, config);
             const data = readPayload(res);
             const productItems = Array.isArray(data)
               ? data
@@ -3446,7 +3453,7 @@ const realApi = {
       if (!hasCategoriesPayload) {
         for (const endpoint of categoryRequests) {
           try {
-            const res = await http.get(endpoint, { params: { _fresh: includeUnavailableParams._fresh } });
+            const res = await publicHttp.get(endpoint, { params: { _fresh: includeUnavailableParams._fresh } });
             const data = readPayload(res);
             const categoryItems = Array.isArray(data)
               ? data
