@@ -10,7 +10,7 @@ const ProductPurchasePage = () => {
     <ProductPurchaseDialog
       isOpen
       productId={productId}
-      onClose={() => navigate('/products')}
+      onClose={() => navigate('/dashboard/category')}
       onViewOrder={(orderId) => navigate(`/orders/${encodeURIComponent(orderId)}`)}
     />
   );

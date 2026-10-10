@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState } from 'react';
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Download, ExternalLink, X } from 'lucide-react';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
@@ -35,7 +35,6 @@ const AboutUsPage = lazy(routeLoaders.AboutUsPage);
 const Dashboard = lazy(routeLoaders.Dashboard);
 const AdminDashboard = lazy(routeLoaders.AdminDashboard);
 const Orders = lazy(routeLoaders.Orders);
-const Products = lazy(routeLoaders.Products);
 const ProductSearch = lazy(routeLoaders.ProductSearch);
 const ProductPurchasePage = lazy(routeLoaders.ProductPurchasePage);
 const Settings = lazy(routeLoaders.Settings);
@@ -101,6 +100,19 @@ const AdminDashboardRoute = () => {
   return renderSuspended(<AdminDashboard />);
 };
 
+const LegacyProductsRedirect = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const productId = params.get('request');
+  const categoryId = params.get('category');
+  const destination = productId
+    ? `/products/${encodeURIComponent(productId)}`
+    : categoryId
+      ? `/dashboard/category/${encodeURIComponent(categoryId)}`
+      : '/dashboard/category';
+  return <Navigate to={destination} replace />;
+};
+
 const CreatedByEntryRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const role = useAuthStore((state) => state.user?.role);
@@ -144,6 +156,22 @@ const AnimatedAppRoutes = ({ location }) => {
           )}
         />
         <Route
+          path="/dashboard/category"
+          element={(
+            <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
+              {renderSuspended(<Dashboard />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/dashboard/category/:categoryId"
+          element={(
+            <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
+              {renderSuspended(<Dashboard />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
           path="/orders"
           element={(
             <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
@@ -163,7 +191,7 @@ const AnimatedAppRoutes = ({ location }) => {
           path="/products"
           element={(
             <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
-              {renderSuspended(<Products />)}
+              <LegacyProductsRedirect />
             </ProtectedRoute>
           )}
         />

@@ -487,7 +487,7 @@ const Orders = () => {
               ? 'عندما تنشئ طلبًا جديدًا سيظهر هنا مع حالته وتفاصيله كاملة.'
               : 'Once you place a new order, it will appear here with its status and details.')}
           actionLabel={isLoading ? '' : (isArabic ? 'تصفح المنتجات' : 'Browse products')}
-          actionTo={isLoading ? '' : '/products'}
+          actionTo={isLoading ? '' : '/dashboard/category'}
         />
       )}
 

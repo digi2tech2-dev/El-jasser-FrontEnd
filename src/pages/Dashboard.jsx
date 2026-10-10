@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Layers3, ShieldCheck } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 import useMediaStore from '../store/useMediaStore';
 import useGroupStore from '../store/useGroupStore';
+import apiClient from '../services/client';
 import HeroSlider from '../components/home/HeroSlider';
 import CategoryCard from '../components/home/CategoryCard';
+import ProductCardSimple from '../components/products/ProductCardSimple';
 import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import StorefrontPromotions from '../components/products/StorefrontPromotions';
@@ -25,15 +27,30 @@ import {
   getStorefrontLanguage,
 } from '../utils/storefront';
 
+const isRealProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase() === 'real';
+const categoryKey = (value) => String(value || '').trim().toLowerCase();
+const categoryAliases = (source) => {
+  const values = source && typeof source === 'object'
+    ? [source.id, source._id, source.name, source.nameAr, source.title, source.titleAr, source.slug]
+    : [source];
+  return values.map(categoryKey).filter(Boolean);
+};
+
 const Dashboard = () => {
   const { user, refreshProfile } = useAuthStore();
   const { categories, products, loadProducts } = useMediaStore();
   const groupsLastLoadedAt = useGroupStore((state) => state.groupsLastLoadedAt);
   const { i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { categoryId: routeCategoryId } = useParams();
+  const isCatalogRoute = location.pathname.startsWith('/dashboard/category');
+  const categoryId = String(routeCategoryId || '').trim();
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [publicCatalog, setPublicCatalog] = useState(null);
   const [showWelcomeGenie, setShowWelcomeGenie] = useState(false);
   const language = getStorefrontLanguage(i18n);
+  const isArabic = language === 'ar';
   const isTwoFactorEnabled = Boolean(user?.twoFactorEnabled ?? user?.isTwoFactorEnabled);
   const isCustomerUser = String(user?.role || '').trim().toLowerCase() === 'customer';
 
@@ -51,7 +68,7 @@ const Dashboard = () => {
     }
   }, [user?.email, user?.id, user?._id, user?.username]);
 
-  useBodyScrollLock(showWelcomeGenie);
+  useBodyScrollLock(showWelcomeGenie && !isCatalogRoute);
 
   useEffect(() => {
     if (!showWelcomeGenie) return undefined;
@@ -88,6 +105,15 @@ const Dashboard = () => {
     };
   }, [loadProducts]);
 
+  useEffect(() => {
+    if (!isRealProvider) return undefined;
+    let mounted = true;
+    apiClient.publicCatalog.fetch()
+      .then((catalog) => { if (mounted) setPublicCatalog(catalog); })
+      .catch(() => { if (mounted) setPublicCatalog(null); });
+    return () => { mounted = false; };
+  }, []);
+
   const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDq1UwDTkK4AeRqT02c';
   const heroSlides = useMemo(() => ([
     { id: 'landing-slide-1', image: slideOneHeroImage, title: '' },
@@ -96,19 +122,49 @@ const Dashboard = () => {
     { id: 'landing-slide-4', image: slideFourHeroImage, title: '' },
   ]), []);
 
+  const catalogProducts = useMemo(() => {
+    if (!Array.isArray(publicCatalog?.products)) return products;
+    const privateById = new Map(products.map((product) => [String(product?.id || ''), product]));
+    return publicCatalog.products.map((product) => {
+      const privateProduct = privateById.get(String(product?.id || ''));
+      return privateProduct ? {
+        ...product,
+        ...privateProduct,
+        category: product.category || privateProduct.category,
+        status: product.status,
+        productStatus: product.productStatus,
+        isActive: product.isActive,
+        isVisibleInStore: product.isVisibleInStore,
+        showWhenUnavailable: product.showWhenUnavailable,
+      } : product;
+    });
+  }, [products, publicCatalog]);
+  const catalogCategories = Array.isArray(publicCatalog?.categories) ? publicCatalog.categories : categories;
+
   const storefrontProducts = useMemo(
-    () => createStorefrontProducts(products, {
+    () => createStorefrontProducts(catalogProducts, {
       language,
       userGroup: user?.groupId || user?.group || 'Normal',
       userGroupPercentage: user?.groupPercentage ?? null,
     }),
-    [groupsLastLoadedAt, language, products, user?.group, user?.groupId, user?.groupPercentage]
+    [catalogProducts, groupsLastLoadedAt, language, user?.group, user?.groupId, user?.groupPercentage]
   );
 
   const storefrontCategories = useMemo(
-    () => createStorefrontCategories(categories, storefrontProducts, language),
-    [categories, storefrontProducts, language]
+    () => createStorefrontCategories(catalogCategories, storefrontProducts, language),
+    [catalogCategories, storefrontProducts, language]
   );
+
+  const catalogCategoriesById = useMemo(() => new Map(
+    storefrontCategories.filter((category) => category.id !== 'all').map((category) => [category.id, category])
+  ), [storefrontCategories]);
+  const currentCategory = catalogCategoriesById.get(categoryId);
+  const currentParentId = String(currentCategory?.parentCategory || '').trim();
+  const currentSubcategories = useMemo(() => (
+    categoryId
+      ? storefrontCategories.filter((category) => String(category.parentCategory || '').trim() === categoryId)
+      : storefrontCategories.filter((category) => category.id !== 'all' && !String(category.parentCategory || '').trim())
+  ), [categoryId, storefrontCategories]);
 
   const visibleHomepageCategories = useMemo(
     () => storefrontCategories.filter((category) => {
@@ -145,6 +201,25 @@ const Dashboard = () => {
     return seen;
   }, [categoryChildrenByParent]);
 
+  const currentProducts = useMemo(() => {
+    if (!categoryId) return [];
+    const descendantIds = collectCategoryIds(categoryId);
+    const aliases = new Set();
+    descendantIds.forEach((id) => {
+      categoryAliases(id).forEach((alias) => aliases.add(alias));
+      const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === id);
+      categoryAliases(source).forEach((alias) => aliases.add(alias));
+    });
+    return storefrontProducts.filter((product) => [
+      ...categoryAliases(product.category),
+      ...categoryAliases(product.categoryId),
+      ...categoryAliases(product.categoryName),
+      ...categoryAliases(product.categoryNameAr),
+      ...categoryAliases(product.categoryTitle),
+      ...categoryAliases(product.categoryTitleAr),
+    ].some((alias) => aliases.has(alias)));
+  }, [catalogCategories, categoryId, collectCategoryIds, storefrontProducts]);
+
   const bestSellingProducts = useMemo(() => {
     const firstCategory = visibleHomepageCategories[0];
     const secondCategory = visibleHomepageCategories[1];
@@ -173,15 +248,12 @@ const Dashboard = () => {
   }, [collectCategoryIds, storefrontProducts, visibleHomepageCategories]);
 
   const handleCategorySelect = useCallback((categoryId) => {
-    navigate(categoryId === 'all' ? '/products' : `/products?category=${encodeURIComponent(categoryId)}`);
+    navigate(categoryId === 'all' ? '/dashboard/category' : `/dashboard/category/${encodeURIComponent(categoryId)}`);
   }, [navigate]);
 
   const handleProductSelect = useCallback((product) => {
-    const next = new URLSearchParams();
-    if (product?.category) next.set('category', product.category);
-    next.set('request', product.id);
-    navigate(`/products?${next.toString()}`);
-  }, [navigate]);
+    setSelectedProduct(product);
+  }, []);
 
   const openPurchaseDialog = useCallback((product) => {
     setSelectedProduct(product);
@@ -218,6 +290,41 @@ const Dashboard = () => {
       </div>
     </div>
   ) : null;
+
+  if (isCatalogRoute) {
+    const backPath = currentParentId
+      ? `/dashboard/category/${encodeURIComponent(currentParentId)}`
+      : '/dashboard';
+    return (
+      <div className="space-y-5 pb-6">
+        <section className="rounded-[1.7rem] border border-[color:rgb(var(--color-border-rgb)/0.66)] bg-[color:rgb(var(--color-card-rgb)/0.8)] p-5 shadow-[var(--shadow-subtle)] backdrop-blur-xl">
+          <button type="button" onClick={() => navigate(backPath)} className="inline-flex items-center gap-1.5 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-primary-rgb)/0.08)] px-3 py-2 text-xs font-black text-[var(--color-primary)]">
+            {isArabic ? <ArrowRight className="h-3.5 w-3.5" /> : <ArrowLeft className="h-3.5 w-3.5" />}
+            {isArabic ? 'رجوع' : 'Back'}
+          </button>
+          <div className="mt-4 flex items-center gap-2 text-[var(--color-text)]">
+            {!categoryId && <Layers3 className="h-6 w-6 text-[var(--color-primary)]" />}
+            <h1 className="text-xl font-black">{currentCategory?.title || (isArabic ? 'كل الكاتلوجات' : 'All catalogs')}</h1>
+          </div>
+        </section>
+
+        {currentSubcategories.length > 0 && (
+          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {currentSubcategories.map((category, index) => <CategoryCard key={category.id} category={category} index={index} onSelect={handleCategorySelect} />)}
+          </section>
+        )}
+        {currentProducts.length > 0 && (
+          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {currentProducts.map((product) => <ProductCardSimple key={product.id} product={product} onOpen={setSelectedProduct} unavailableLabel={isArabic ? 'غير متاح' : 'Unavailable'} />)}
+          </section>
+        )}
+        {categoryId && !currentSubcategories.length && !currentProducts.length && (
+          <p className="py-12 text-center text-sm text-[var(--color-text-secondary)]">{isArabic ? 'لا توجد منتجات أو أقسام فرعية في هذا الكاتلوج.' : 'There are no products or subcategories in this catalog.'}</p>
+        )}
+        <ProductPurchaseDialog isOpen={Boolean(selectedProduct)} productId={selectedProduct?.id} initialProduct={selectedProduct} onClose={closePurchaseDialog} onViewOrder={viewCreatedOrder} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-5 sm:space-y-6">
@@ -299,7 +406,7 @@ const Dashboard = () => {
           products={bestSellingProducts}
           categories={storefrontCategories}
           language={language}
-          onViewAll={() => navigate('/products')}
+          onViewAll={() => navigate('/dashboard/category')}
           onProductSelect={openPurchaseDialog}
           disableUnavailable
         />
