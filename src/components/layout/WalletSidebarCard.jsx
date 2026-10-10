@@ -109,23 +109,14 @@ const WalletSidebarCard = ({ className, isVisible = true, onNavigate }) => {
         </div>
 
         {!isQuantityOnly && (
-          <div className="grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              onClick={() => handleNavigate('/wallet/topups')}
-              className="inline-flex h-7 items-center justify-center gap-1 rounded-[10px] border border-[color:rgb(var(--color-primary-rgb)/0.3)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] px-1.5 text-[9px] font-bold text-[var(--color-primary)] transition-colors hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] hover:bg-[color:rgb(var(--color-primary-rgb)/0.16)]"
-            >
-              <span>التفاصيل</span>
-            </button>
             <button
               type="button"
               onClick={() => handleNavigate('/wallet/add-balance')}
-              className="ka-sidebar-topup-button inline-flex h-7 items-center justify-center gap-1 rounded-[10px] border border-[color:rgb(var(--color-secondary-rgb)/0.42)] bg-[linear-gradient(135deg,rgb(var(--color-secondary-rgb)/0.92),rgb(var(--color-primary-rgb)/0.82))] px-1.5 text-[9px] font-bold text-[var(--color-button-text)] shadow-[0_0_24px_-16px_rgb(var(--color-secondary-rgb)/0.8)] transition-colors hover:brightness-[1.06]"
+              className="ka-sidebar-topup-button inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-[10px] border border-amber-200/45 bg-[linear-gradient(105deg,#7c2719_0%,#b66a22_42%,#e6b84e_100%)] px-2 text-[10px] font-black text-white shadow-[0_8px_20px_-10px_rgba(181,112,30,0.86),inset_0_1px_0_rgba(255,255,255,0.28)] transition-all hover:-translate-y-px hover:brightness-110 hover:shadow-[0_12px_24px_-10px_rgba(181,112,30,0.95)] active:translate-y-0"
             >
-              <ArrowUpLeft className="h-3 w-3" />
+              <ArrowUpLeft className="h-3.5 w-3.5" />
               <span>اشحن الآن</span>
             </button>
-          </div>
         )}
       </div>
     </section>

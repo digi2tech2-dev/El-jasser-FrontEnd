@@ -21,6 +21,7 @@ const ProductSearchBar = ({
   inputClassName,
   resetSignal = 0,
   forceIconRight = false,
+  onInputClick,
 }) => {
   const isControlled = typeof value === 'string';
   const [internalValue, setInternalValue] = useState('');
@@ -128,6 +129,7 @@ const ProductSearchBar = ({
         value={searchValue}
         onChange={updateValue}
         onFocus={() => setIsFocused(true)}
+        onClick={onInputClick}
         onBlur={handleBlur}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && results.length > 0) {

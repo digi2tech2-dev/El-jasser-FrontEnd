@@ -6,10 +6,12 @@ import {
 } from 'lucide-react';
 import apiClient from '../services/client';
 import useAuthStore from '../store/useAuthStore';
+import useSystemStore from '../store/useSystemStore';
 import { useLanguage } from '../context/LanguageContext';
 import { cn } from '../components/ui/Button';
 import { formatDateTime } from '../utils/intl';
 import { formatWalletAmount } from '../utils/storefront';
+import { getActivePaymentMethods } from '../utils/paymentSettings';
 
 const number = (value) => {
   const parsed = Number(value);
@@ -24,7 +26,25 @@ const statusMeta = (status) => {
   return { label: 'قيد المعالجة', tone: 'text-amber-600 dark:text-amber-300 border-amber-400/30 bg-amber-500/10', Icon: CircleAlert };
 };
 
-const paymentMethod = (tx) => tx.paymentMethodName || tx.paymentChannel || tx.methodName || tx.method || tx.paymentMethod || tx.source?.paymentMethod || 'محفظة الموقع';
+const paymentMethod = (tx, paymentMethods = []) => {
+  const rawMethod = tx.paymentMethodName
+    || tx.paymentChannel
+    || tx.methodName
+    || tx.method
+    || tx.paymentMethod
+    || tx.source?.paymentMethod
+    || tx.reference?.paymentMethodName
+    || tx.reference?.paymentMethod;
+  if (rawMethod && typeof rawMethod === 'object') {
+    return rawMethod.nameAr || rawMethod.name || rawMethod.titleAr || rawMethod.title || rawMethod.label || rawMethod.code || 'محفظة الموقع';
+  }
+  if (rawMethod) {
+    const matchedMethod = paymentMethods.find((method) => [method.id, method.name, method.paymentMethod, method.paymentMethodName]
+      .some((value) => String(value || '').trim().toLowerCase() === String(rawMethod).trim().toLowerCase()));
+    if (matchedMethod) return matchedMethod.nameAr || matchedMethod.name || matchedMethod.title || String(rawMethod);
+  }
+  return String(rawMethod || 'محفظة الموقع');
+};
 const transactionRef = (tx) => tx.transactionId || tx.transactionNumber || tx.paymentReference || tx.reference?.transactionId || tx.reference?.orderNumber || (typeof tx.reference === 'string' ? tx.reference : '') || tx.id;
 const copyText = async (value) => {
   const text = String(value || '').trim();
@@ -92,6 +112,7 @@ const reconcileBalances = (items, currentBalance) => {
 
 const WalletTransactions = () => {
   const { user } = useAuthStore();
+  const { paymentSettings, loadPaymentSettings } = useSystemStore();
   const { dir } = useLanguage();
   const [transactions, setTransactions] = useState([]);
   const [walletBalance, setWalletBalance] = useState(null);
@@ -99,6 +120,9 @@ const WalletTransactions = () => {
   const [error, setError] = useState('');
   const [filters, setFilters] = useState({ from: '', to: '', type: 'all', method: 'all', query: '' });
   const [currentPage, setCurrentPage] = useState(1);
+  const paymentMethods = useMemo(() => getActivePaymentMethods(paymentSettings, { fallbackToDefault: true }), [paymentSettings]);
+
+  useEffect(() => { void loadPaymentSettings({ force: true }); }, [loadPaymentSettings]);
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
@@ -123,7 +147,7 @@ const WalletTransactions = () => {
     ...tx,
     signedAmount: Number.isFinite(Number(tx.signedAmount)) ? number(tx.signedAmount) : (String(tx.type).toLowerCase() === 'debit' ? -Math.abs(number(tx.amount)) : Math.abs(number(tx.amount))),
   })), walletBalance), [transactions, walletBalance]);
-  const methods = useMemo(() => [...new Set(reconciled.map(paymentMethod).filter(Boolean))], [reconciled]);
+  const methods = useMemo(() => [...new Set(reconciled.map((tx) => paymentMethod(tx, paymentMethods)).filter(Boolean))], [paymentMethods, reconciled]);
   const visible = useMemo(() => reconciled.filter((tx) => {
     const date = tx.createdAt ? new Date(tx.createdAt) : null;
     const from = filters.from ? new Date(`${filters.from}T00:00:00`) : null;
@@ -132,7 +156,7 @@ const WalletTransactions = () => {
     const query = filters.query.trim().toLowerCase();
     return (!from || (date && date >= from)) && (!to || (date && date <= to))
       && (filters.type === 'all' || filters.type === kind || (filters.type === 'purchase' && String(tx.type).toLowerCase() === 'purchase'))
-      && (filters.method === 'all' || paymentMethod(tx) === filters.method)
+      && (filters.method === 'all' || paymentMethod(tx, paymentMethods) === filters.method)
       && (!query || `${transactionRef(tx)} ${tx.description || ''}`.toLowerCase().includes(query));
   }), [filters, reconciled]);
   const totalPages = Math.max(1, Math.ceil(visible.length / TRANSACTIONS_PER_PAGE));
@@ -170,7 +194,7 @@ const WalletTransactions = () => {
         return <article key={tx.id} className={cn('relative overflow-hidden rounded-[1rem] border p-2.5 sm:p-3', meta.tone === 'emerald' ? 'border-emerald-400/25 bg-emerald-500/[.035]' : 'border-rose-400/25 bg-rose-500/[.035]')}><span className={cn('absolute inset-x-0 top-0 h-0.5', meta.tone === 'emerald' ? 'bg-emerald-400' : 'bg-rose-400')} />
           <div className="flex items-start justify-between gap-2"><div className="flex min-w-0 gap-2"><span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-lg', meta.tone === 'emerald' ? 'bg-emerald-500/12 text-emerald-600 dark:text-emerald-300' : 'bg-rose-500/12 text-rose-600 dark:text-rose-300')}><Icon className="h-4 w-4" /></span><div className="min-w-0"><h3 className="truncate text-xs font-black">{title}</h3><p className="mt-0.5 truncate text-[9px] text-[var(--color-text-secondary)]">{admin ? description : (meta.key === 'debit' ? 'تم الشراء من رصيد المحفظة' : description)}</p></div></div><span className={cn('inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[8px] font-black', state.tone)}><StatusIcon className="h-2.5 w-2.5" />{state.label}</span></div>
           {admin && <p className="mt-2 flex items-center gap-1 rounded-lg border border-violet-400/25 bg-violet-500/10 px-2 py-1.5 text-[9px] font-black text-violet-700 dark:text-violet-200"><ShieldCheck className="h-3 w-3" />{meta.key === 'debit' ? 'تم خصم الرصيد بواسطة الأدمن' : 'تمت إضافة الرصيد بواسطة الأدمن'}</p>}
-          <div className="mt-2 flex items-end justify-between rounded-xl border border-[color:rgb(var(--color-border-rgb)/.55)] bg-[color:rgb(var(--color-surface-rgb)/.48)] px-2.5 py-2"><div><p className="text-[8px] font-bold text-[var(--color-text-secondary)]">المبلغ {meta.prefix === '+' ? 'المضاف' : 'المخصوم'}</p><p className={cn('mt-0.5 text-base font-black [direction:ltr]', meta.tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300')}>{meta.prefix}{formatWalletAmount(amount, currency)}</p></div><p className="text-end text-[9px] font-bold text-[var(--color-text-secondary)]"><CreditCard className="mb-0.5 ms-auto h-3 w-3 text-[var(--color-primary)]" />{paymentMethod(tx)}</p></div>
+          <div className="mt-2 flex items-end justify-between rounded-xl border border-[color:rgb(var(--color-border-rgb)/.55)] bg-[color:rgb(var(--color-surface-rgb)/.48)] px-2.5 py-2"><div><p className="text-[8px] font-bold text-[var(--color-text-secondary)]">المبلغ {meta.prefix === '+' ? 'المضاف' : 'المخصوم'}</p><p className={cn('mt-0.5 text-base font-black [direction:ltr]', meta.tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300')}>{meta.prefix}{formatWalletAmount(amount, currency)}</p></div><p className="text-end text-[9px] font-bold text-[var(--color-text-secondary)]"><CreditCard className="mb-0.5 ms-auto h-3 w-3 text-[var(--color-primary)]" /><span className="block text-[7px] font-semibold">وسيلة الدفع</span><strong className="block">{paymentMethod(tx, paymentMethods)}</strong></p></div>
           <div className="mt-2 grid grid-cols-3 gap-1 text-center"><div className="rounded-lg bg-[color:rgb(var(--color-surface-rgb)/.55)] px-1 py-1.5"><p className="text-[7px] font-bold text-[var(--color-text-secondary)]">قبل العملية</p><p className="mt-0.5 truncate text-[9px] font-black [direction:ltr]">{balance(tx.before)}</p></div><div className="rounded-lg bg-[color:rgb(var(--color-surface-rgb)/.55)] px-1 py-1.5"><p className="text-[7px] font-bold text-[var(--color-text-secondary)]">التغيير</p><p className={cn('mt-0.5 text-[9px] font-black [direction:ltr]', meta.tone === 'emerald' ? 'text-emerald-600' : 'text-rose-600')}>{meta.prefix}{formatWalletAmount(amount, currency)}</p></div><div className="rounded-lg bg-[color:rgb(var(--color-surface-rgb)/.55)] px-1 py-1.5"><p className="text-[7px] font-bold text-[var(--color-text-secondary)]">بعد العملية</p><p className="mt-0.5 truncate text-[9px] font-black [direction:ltr]">{balance(tx.after)}</p></div></div>
           <div className="mt-2 grid gap-1 border-t border-[color:rgb(var(--color-border-rgb)/.55)] pt-2 text-[9px] text-[var(--color-text-secondary)] sm:grid-cols-2"><button type="button" onClick={() => void copyText(transactionRef(tx))} title="نسخ رقم العملية" className="flex min-w-0 items-center gap-1 text-start transition hover:text-[var(--color-primary)]"><Hash className="h-3 w-3 shrink-0 text-[var(--color-primary)]" /><span className="truncate [direction:ltr]">{transactionRef(tx) || 'لا يوجد رقم عملية'}</span><Copy className="h-2.5 w-2.5 shrink-0" /></button><p className="flex min-w-0 items-center gap-1"><CalendarDays className="h-3 w-3 shrink-0 text-[var(--color-primary)]" /><span className="truncate">{tx.createdAt ? formatDateTime(tx.createdAt, 'ar-EG', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) : 'بدون تاريخ'}</span></p></div>
         </article>;

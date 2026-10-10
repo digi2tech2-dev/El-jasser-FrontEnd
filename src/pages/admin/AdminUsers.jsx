@@ -73,6 +73,16 @@ const resolveInitialGroupValue = (entry, groups) => {
   return matchedGroup?.id || groups?.[0]?.id || '';
 };
 
+const arabicLevelOrdinals = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'];
+
+const getGroupPercentage = (group) => Number(group?.discount ?? group?.percentage ?? 0);
+
+const getGroupLevelLabel = (group, rankedGroups) => {
+  const levelIndex = rankedGroups.findIndex((rankedGroup) => String(rankedGroup?.id || rankedGroup?._id) === String(group?.id || group?._id));
+  if (levelIndex < 0) return '';
+  return `المستوى ${arabicLevelOrdinals[levelIndex] || levelIndex + 1}`;
+};
+
 const toFiniteNumber = (value, fallback = 0) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -155,6 +165,11 @@ const AdminUsers = () => {
   const { addToast } = useToast();
   const { t } = useLanguage();
   const { i18n } = useTranslation();
+  const rankedGroups = useMemo(() => (
+    (Array.isArray(groups) ? groups : [])
+      .slice()
+      .sort((left, right) => getGroupPercentage(right) - getGroupPercentage(left))
+  ), [groups]);
 
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState('');
@@ -1190,6 +1205,16 @@ const AdminUsers = () => {
                 <p className="mt-0.5 text-xs font-semibold text-[var(--color-text)]">{selectedUser?.group || '-'}</p>
               </div>
               <div>
+                <p className="text-[11px] text-[var(--color-text-secondary)]">المستوى</p>
+                <p className="mt-0.5 text-xs font-semibold text-[var(--color-text)]">
+                  {getGroupLevelLabel(
+                    rankedGroups.find((group) => String(group?.id || group?._id) === String(selectedUser?.groupId))
+                      || rankedGroups.find((group) => String(group?.name || '').toLowerCase() === String(selectedUser?.group || '').toLowerCase()),
+                    rankedGroups
+                  ) || '-'}
+                </p>
+              </div>
+              <div>
                 <p className="text-[11px] text-[var(--color-text-secondary)]">العملة</p>
                 <p className="mt-0.5 text-xs font-semibold text-[var(--color-text)]">{selectedUser?.currency || '-'}</p>
               </div>
@@ -1305,9 +1330,9 @@ const AdminUsers = () => {
                     onChange={(event) => setSettingsGroup(event.target.value)}
                     disabled={!canManageUsers}
                   >
-                    {groups.map((group) => (
+                    {rankedGroups.map((group) => (
                       <option key={group.id} value={group.id}>
-                        {group.name} ({group.discount ?? group.percentage ?? 0}%)
+                        {group.name} - {getGroupLevelLabel(group, rankedGroups)} ({getGroupPercentage(group)}%)
                       </option>
                     ))}
                   </select>

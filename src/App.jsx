@@ -1,14 +1,16 @@
 import React, { Suspense, lazy, useState } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Download, ExternalLink, X } from 'lucide-react';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
 import MobileBottomNav from './components/layout/MobileBottomNav';
+import AdminBottomNav from './components/layout/AdminBottomNav';
 import PageTransition from './components/app/PageTransition';
 import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
 import AppUpdateController from './components/app/AppUpdateController';
-import { isAndroidNativeApp } from './utils/platform';
+import appLogo from './assets/elgny.webp';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -34,6 +36,7 @@ const Dashboard = lazy(routeLoaders.Dashboard);
 const AdminDashboard = lazy(routeLoaders.AdminDashboard);
 const Orders = lazy(routeLoaders.Orders);
 const Products = lazy(routeLoaders.Products);
+const ProductSearch = lazy(routeLoaders.ProductSearch);
 const ProductPurchasePage = lazy(routeLoaders.ProductPurchasePage);
 const Settings = lazy(routeLoaders.Settings);
 const ContactUs = lazy(routeLoaders.ContactUs);
@@ -58,6 +61,7 @@ const AdminTargetRequests = lazy(routeLoaders.AdminTargetRequests);
 const BuyTarget = lazy(routeLoaders.BuyTarget);
 const TargetOrders = lazy(routeLoaders.TargetOrders);
 const AddBalance = lazy(routeLoaders.AddBalance);
+const WalletLevels = lazy(routeLoaders.WalletLevels);
 const WalletTopupHistory = lazy(routeLoaders.WalletTopupHistory);
 const WalletTransactions = lazy(routeLoaders.WalletTransactions);
 const PaymentDetails = lazy(routeLoaders.PaymentDetails);
@@ -164,6 +168,14 @@ const AnimatedAppRoutes = ({ location }) => {
           )}
         />
         <Route
+          path="/search"
+          element={(
+            <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
+              {renderSuspended(<ProductSearch />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
           path="/products/:productId"
           element={(
             <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
@@ -264,6 +276,14 @@ const AnimatedAppRoutes = ({ location }) => {
           element={(
             <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
               {renderSuspended(<AddBalance />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/wallet/levels"
+          element={(
+            <ProtectedRoute roles={['customer', 'admin', ...SUPERVISOR_ROLES]}>
+              {renderSuspended(<WalletLevels />)}
             </ProtectedRoute>
           )}
         />
@@ -476,30 +496,76 @@ const AnimatedAppRoutes = ({ location }) => {
   );
 };
 
-const LoginAfterIntroPrompt = ({ isOpen, onClose }) => {
+const LoginAfterIntroPrompt = ({ isOpen, onClose, onContinue }) => {
   if (!isOpen) return null;
 
   return (
     <div className="login-after-intro" role="dialog" aria-modal="true" aria-labelledby="login-after-intro-title">
       <button type="button" className="login-after-intro__backdrop" onClick={onClose} aria-label="إغلاق" />
-      <section className="login-after-intro__card">
-        <span className="login-after-intro__icon" aria-hidden="true">✦</span>
-        <h2 id="login-after-intro-title">مرحبًا بك في الجاسر كارد</h2>
-        <p>يرجى تسجيل الدخول لتتمكن من الشراء أو بيع Target.</p>
-        <div className="login-after-intro__actions">
-          <Link to="/auth?mode=login" onClick={onClose} className="login-after-intro__primary">تسجيل الدخول</Link>
-          <Link to="/auth?mode=signup" onClick={onClose} className="login-after-intro__secondary">إنشاء حساب</Link>
+      <div className="login-after-intro__content">
+        <section className="login-after-intro__card">
+        <div className="login-after-intro__brand" dir="ltr">
+          <span className="login-after-intro__icon" aria-hidden="true">
+            <img src={appLogo} alt="" />
+          </span>
+          <span>EL-JASSER APP</span>
         </div>
-        <button type="button" className="login-after-intro__continue" onClick={onClose}>متابعة التصفح</button>
-      </section>
+        <h2 id="login-after-intro-title">تجربة أسرع تبدأ من هنا</h2>
+        <p>حمّل تطبيق الجاسر واستمتع بتجربة أسرع وأسهل، وصول فوري لمنتجاتك وطلباتك ومحفظتك من أي مكان.</p>
+        <Link to="/download-app" onClick={onClose} className="login-after-intro__primary">
+          <Download aria-hidden="true" />
+          تحميل التطبيق
+        </Link>
+        <button type="button" className="login-after-intro__continue" onClick={onContinue || onClose}>متابعة إلى الموقع</button>
+        </section>
+        <button type="button" className="prompt-external-close" onClick={onContinue || onClose} aria-label="متابعة إلى قناة واتساب">
+          <X aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const WhatsappChannelPrompt = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="whatsapp-channel-prompt" role="dialog" aria-modal="true" aria-labelledby="whatsapp-channel-title">
+      <button type="button" className="whatsapp-channel-prompt__backdrop" onClick={onClose} aria-label="إغلاق" />
+      <div className="whatsapp-channel-prompt__content">
+        <section className="whatsapp-channel-prompt__card">
+        <div className="whatsapp-channel-prompt__icon" aria-hidden="true">
+          <img src={appLogo} alt="" />
+        </div>
+        <span className="whatsapp-channel-prompt__eyebrow">هام جدًا</span>
+        <h2 id="whatsapp-channel-title">لمتابعة تحديثات المنتجات والتخفيضات</h2>
+        <p>يجب عليكم الانضمام إلى <strong>قناة الواتساب</strong> ✅</p>
+        <a
+          href="https://www.whatsapp.com/channel/0029VbDq1UwDTkK4AeRqT02c"
+          target="_blank"
+          rel="noreferrer"
+          onClick={onClose}
+          className="whatsapp-channel-prompt__primary"
+        >
+          <ExternalLink aria-hidden="true" />
+          أضغط هنا للانضمام
+        </a>
+        <div className="whatsapp-channel-prompt__actions">
+          <button type="button" className="whatsapp-channel-prompt__confirm" onClick={onClose}>موافق</button>
+        </div>
+        </section>
+        <button type="button" className="prompt-external-close" onClick={onClose} aria-label="إغلاق">
+          <X aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 };
 
 function App() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showWhatsappPrompt, setShowWhatsappPrompt] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isAndroidApp = isAndroidNativeApp();
 
   return (
     <ThemeProvider>
@@ -507,16 +573,25 @@ function App() {
         <ToastProvider>
           <BrowserRouter>
             <SessionBootstrap />
-            {isAndroidApp && (
-              <IntroSplash onComplete={() => setShowLoginPrompt(!isAuthenticated)} />
+            {!isAuthenticated && (
+              <IntroSplash onComplete={() => setShowLoginPrompt(true)} />
             )}
             <AppUpdateController />
             <PageTransition>
               {(location) => <AnimatedAppRoutes location={location} />}
             </PageTransition>
             <MobileBottomNav />
+            <AdminBottomNav />
             <FloatingWhatsApp />
-            <LoginAfterIntroPrompt isOpen={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} />
+            <LoginAfterIntroPrompt
+              isOpen={showLoginPrompt}
+              onClose={() => setShowLoginPrompt(false)}
+              onContinue={() => {
+                setShowLoginPrompt(false);
+                setShowWhatsappPrompt(true);
+              }}
+            />
+            <WhatsappChannelPrompt isOpen={showWhatsappPrompt} onClose={() => setShowWhatsappPrompt(false)} />
           </BrowserRouter>
         </ToastProvider>
       </LanguageProvider>

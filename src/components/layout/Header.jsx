@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bell, CheckCircle2, Clock3, CreditCard, Menu, ShoppingBag, UserCheck, Wallet, XCircle } from 'lucide-react';
+import { Bell, CheckCircle2, Clock3, CreditCard, Layers3, Menu, ShoppingBag, UserCheck, Wallet, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import useNotificationStore from '../../store/useNotificationStore';
 import { useLanguage } from '../../context/LanguageContext';
-import ThemeToggle from '../ui/ThemeToggle';
 import headerBrandImage from '../../assets/el-jasser-card.webp';
 import { formatWalletAmount } from '../../utils/storefront';
 import { getDefaultRouteForRole, isAdminRole, isSupervisorRole } from '../../utils/authRoles';
@@ -207,7 +206,7 @@ const Header = ({ toggleSidebar }) => {
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="inline-flex scale-[1.2] items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+              className="inline-flex -translate-x-10 scale-[1.2] items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
             >
               <img
                 src={headerBrandImage}
@@ -231,8 +230,6 @@ const Header = ({ toggleSidebar }) => {
           <div className={cn(
             'header-mobile-actions col-start-1 row-start-1 flex min-w-0 shrink-0 items-center gap-1 justify-self-start px-0 sm:gap-2'
           )}>
-            <ThemeToggle compact className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] shadow-[var(--shadow-subtle)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8" />
-
             <div ref={notificationsRef} className="relative">
               <button
                 type="button"
@@ -304,6 +301,18 @@ const Header = ({ toggleSidebar }) => {
                 </div>
               ) : null}
             </div>
+
+            {isCustomer ? (
+              <button
+                type="button"
+                onClick={() => navigate('/wallet/levels')}
+                className="relative inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-secondary-rgb)/0.42)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] text-[var(--color-secondary)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-secondary-rgb)/0.7)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
+                aria-label={language === 'ar' ? 'مستويات الإيداع' : 'Deposit levels'}
+                title={language === 'ar' ? 'مستويات الإيداع' : 'Deposit levels'}
+              >
+                <Layers3 className="h-3.5 w-3.5" />
+              </button>
+            ) : null}
 
             {shouldShowWallet && (
               <>

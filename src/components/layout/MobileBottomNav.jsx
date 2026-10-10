@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { CircleDollarSign, ClipboardList, History, LayoutDashboard, ScanSearch } from 'lucide-react';
+import { Clock, Home, List, Search, Wallet } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import useHideOnScroll from '../../hooks/useHideOnScroll';
@@ -20,11 +20,11 @@ const MobileBottomNav = () => {
     && !HIDDEN_PATHS.some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`));
   const { isHidden, isScrolled } = useHideOnScroll({ enabled: shouldShow, hideAfter: 15, minimumDelta: 5 });
   const items = useMemo(() => ([
-    { to: '/orders', label: isArabic ? 'طلباتي' : 'Orders', icon: ClipboardList, matches: ['/orders', '/target-orders'], accent: '189 132 37' },
-    { to: '/wallet/add-balance', label: isArabic ? 'إضافة رصيد' : 'Add balance', icon: CircleDollarSign, matches: ['/wallet/add-balance', '/wallet/payment-details'], accent: '55 201 233' },
-    { to: '/dashboard', label: isArabic ? 'الرئيسية' : 'Home', icon: LayoutDashboard, matches: ['/dashboard'], accent: '8 127 163' },
-    { to: '/wallet/topup-history', label: isArabic ? 'سجل الرصيد' : 'Wallet history', icon: History, matches: ['/wallet/topup-history', '/wallet/topups'], accent: '217 166 46' },
-    { to: '/products', label: isArabic ? 'البحث' : 'Search', icon: ScanSearch, matches: ['/products', '/purchase'], accent: '32 168 200', colorShift: true, state: { openProductSearch: true } },
+    { to: '/orders', label: isArabic ? 'طلباتي' : 'Orders', icon: List, matches: ['/orders', '/target-orders'], accent: '189 132 37' },
+    { to: '/wallet/add-balance', label: isArabic ? 'إضافة رصيد' : 'Add balance', icon: Wallet, matches: ['/wallet/add-balance', '/wallet/payment-details'], accent: '55 201 233' },
+    { to: '/dashboard', label: isArabic ? 'الرئيسية' : 'Home', icon: Home, matches: ['/dashboard'], accent: '8 127 163' },
+    { to: '/wallet/transactions', label: isArabic ? 'دفعاتي المالية' : 'My payments', icon: Clock, matches: ['/wallet/transactions'], accent: '217 166 46' },
+    { to: '/search', label: isArabic ? 'البحث' : 'Search', icon: Search, matches: ['/search'], accent: '32 168 200', colorShift: true },
   ]), [isArabic]);
 
   useEffect(() => {

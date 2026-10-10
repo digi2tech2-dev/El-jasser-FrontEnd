@@ -51,8 +51,8 @@ const useGroupStore = create((set, get) => ({
     const cacheIsFresh = cacheAge >= 0 && cacheAge < GROUPS_CACHE_TTL;
     const hasFreshGroups = !shouldBypassHydratedCache && hasGroups && cacheIsFresh;
 
-    // Serve cached groups when still fresh (even if force=true).
-    if (hasFreshGroups) return groups;
+    // A forced load must see percentage changes made from another session.
+    if (!force && hasFreshGroups) return groups;
     if (!force && hasGroups) return groups;
 
     if (groupsRequest) return groupsRequest;

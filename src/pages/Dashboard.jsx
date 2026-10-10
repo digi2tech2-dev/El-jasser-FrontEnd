@@ -260,7 +260,7 @@ const Dashboard = () => {
             language={language}
             onSellTarget={() => navigate('/buy-target')}
           />
-          <ProductSearchBar products={storefrontProducts} language={language} onSelectProduct={handleProductSelect} forceIconRight placeholder={language === 'ar' ? 'ابحث عن منتج...' : 'Search for a product...'} noResultsLabel={language === 'ar' ? 'لا يوجد منتج مطابق' : 'No matching product found'} className="mx-auto w-full" inputClassName="h-10 rounded-full" />
+          <ProductSearchBar products={storefrontProducts} language={language} onSelectProduct={handleProductSelect} onInputClick={() => navigate('/search')} forceIconRight placeholder={language === 'ar' ? 'ابحث عن منتج...' : 'Search for a product...'} noResultsLabel={language === 'ar' ? 'لا يوجد منتج مطابق' : 'No matching product found'} className="mx-auto w-full" inputClassName="h-10 cursor-pointer rounded-full" />
         </div>
 
         <div className="relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4">

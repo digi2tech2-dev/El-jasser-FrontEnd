@@ -23,7 +23,6 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
     if (runningInApp) return [targetSlide];
 
     return [
-      targetSlide,
       {
         id: 'download-android',
         icon: Download,
@@ -33,6 +32,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
         action: isArabic ? 'تحميل التطبيق' : 'Download app',
         href: '/download-app',
       },
+      targetSlide,
     ];
   }, [isArabic, onSellTarget, runningInApp]);
 

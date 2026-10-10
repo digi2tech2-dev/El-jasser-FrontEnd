@@ -20,10 +20,12 @@ import {
   LockKeyhole,
   LogOut,
   MessageCircle,
+  Moon,
   Share2,
   ReceiptText,
   SlidersHorizontal,
   Sparkles,
+  Sun,
   Target,
   Truck,
   UserCog,
@@ -36,6 +38,7 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import { cn } from '../ui/Button';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import WalletSidebarCard from './WalletSidebarCard';
 import HeaderBrand from './HeaderBrand';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
@@ -83,6 +86,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
   const navigate = useNavigate();
   const { dir } = useLanguage();
   const { t } = useTranslation();
+  const { isDark, toggleTheme } = useTheme();
 
   const isExpanded = isOpen || isMobile || isPreviewExpanded;
   const userId = String(user?.id || user?._id || user?.userId || '').trim();
@@ -166,7 +170,8 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
       path: '/orders',
       roles: ['customer', 'admin', ...SUPERVISOR_ROLES]
     },
-    { icon: WalletCards, label: dir === 'rtl' ? 'سجل العمليات المالية' : 'Wallet Transactions', path: '/wallet/transactions', roles: ['customer', 'admin', ...SUPERVISOR_ROLES] },
+    { icon: WalletCards, label: dir === 'rtl' ? 'محفظتي' : 'My Wallet', path: '/wallet/add-balance', roles: ['customer', 'admin', ...SUPERVISOR_ROLES] },
+    { icon: ReceiptText, label: dir === 'rtl' ? 'دفعاتي المالية' : 'My Payments', path: '/wallet/transactions', roles: ['customer', 'admin', ...SUPERVISOR_ROLES] },
     { icon: Target, label: 'بيع التارجت', path: '/buy-target', roles: ['customer'] },
     {
       icon: Code2,
@@ -236,9 +241,6 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
   const isAdmin = String(user?.role || '').toLowerCase() === 'admin';
   const userDisplayName = user?.name || user?.email || (dir === 'rtl' ? 'حسابي' : 'My Account');
   const userAvatar = resolveUserAvatar(user, userDisplayName);
-  const userRoleLabel = isAdmin
-    ? (dir === 'rtl' ? 'مدير المنصة' : 'Platform Admin')
-    : (dir === 'rtl' ? 'عضو المتجر' : 'Store Member');
 
   const renderNavItem = (item) => (
     item.isExternal ? (
@@ -359,6 +361,61 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
 
           <div className="relative z-10 flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
             {isExpanded && (
+              <div className="ka-sidebar-user-card mb-2.5 px-2 py-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex shrink-0 flex-col items-center">
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={handleOpenMyAccount}
+                        className="ka-sidebar-avatar h-8 w-8"
+                        aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
+                      >
+                        <img
+                          src={userAvatar}
+                          alt={userDisplayName}
+                        />
+                      </button>
+                      <span
+                        className="absolute -bottom-0.5 -right-0.5 z-10 h-3 w-3 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_3px_rgb(16_185_129/0.16),0_0_14px_rgb(16_185_129/0.76)]"
+                        role="status"
+                        aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                        title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex min-w-0 items-center gap-1">
+                      <div className="min-w-0 flex-1 truncate text-[0.68rem] font-semibold leading-tight text-[var(--color-text)]">{userDisplayName}</div>
+                      <button
+                        type="button"
+                        onClick={handleLogoutClick}
+                        className="ka-sidebar-account-logout grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-rose-400/25 bg-rose-500/10 text-rose-500 transition hover:border-rose-400/45 hover:bg-rose-500/16"
+                        aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                        title={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                      >
+                        <LogOut className="h-4 w-4" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                    {userId ? (
+                      <button
+                        type="button"
+                        onClick={handleCopyUserId}
+                        className="mt-0.5 inline-flex max-w-full items-center gap-1 truncate text-[0.56rem] font-bold tracking-wide text-[var(--color-primary-hover)] transition-colors hover:text-[var(--color-primary)]"
+                        title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
+                        aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
+                      >
+                        {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
+                        <span className="truncate">{copiedUserId ? 'تم النسخ' : `ID ••••${userId.slice(-6)}`}</span>
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isExpanded && (
               <div className="mb-3 flex justify-center">
                 <button
                   type="button"
@@ -369,68 +426,11 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
                   <img
                     src={dragonLogo}
                     alt="El-Jasser Card"
-                    className="ka-sidebar-dragon-logo h-auto w-[min(9rem,64%)] object-contain drop-shadow-[0_12px_24px_rgba(168,23,19,0.42)]"
+                    className="ka-sidebar-dragon-logo h-auto w-[min(7.5rem,54%)] object-contain drop-shadow-[0_10px_20px_rgba(168,23,19,0.38)]"
                     loading="eager"
                     decoding="async"
                   />
                 </button>
-              </div>
-            )}
-
-            {isExpanded && (
-              <div className="ka-sidebar-user-card mb-3 px-2.5 py-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="relative flex shrink-0 flex-col items-center">
-                    {userId ? (
-                      <button
-                        type="button"
-                        onClick={handleCopyUserId}
-                        className="ka-sidebar-id-chip absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
-                        title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
-                        aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
-                      >
-                        {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
-                        <span className="truncate">{copiedUserId ? 'تم النسخ' : `...${userId.slice(-8)}`}</span>
-                      </button>
-                    ) : null}
-
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={handleOpenMyAccount}
-                        className="ka-sidebar-avatar h-9 w-9"
-                        aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
-                      >
-                        <img
-                          src={userAvatar}
-                          alt={userDisplayName}
-                        />
-                      </button>
-                      <span
-                        className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_3px_rgb(16_185_129/0.16),0_0_14px_rgb(16_185_129/0.76)]"
-                        role="status"
-                        aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                        title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex min-w-0 items-center gap-1.5">
-                      <div className="min-w-0 flex-1 truncate text-[0.74rem] font-semibold leading-tight text-[var(--color-text)]">{userDisplayName}</div>
-                      <button
-                        type="button"
-                        onClick={handleLogoutClick}
-                        className="ka-sidebar-account-logout grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-400/25 bg-rose-500/10 text-rose-500 transition hover:border-rose-400/45 hover:bg-rose-500/16"
-                        aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
-                        title={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
-                      >
-                        <LogOut className="h-5 w-5" strokeWidth={2.5} />
-                      </button>
-                    </div>
-                    <div className="mt-0.5 truncate text-[0.62rem] font-bold text-[var(--color-primary-hover)]">{userRoleLabel}</div>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -460,24 +460,83 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
               ))}
             </div>
 
-            <div className="ka-sidebar-copyright mt-auto" dir="ltr">
-              <span>© 2026</span>
-              <strong>El-Jasser Card</strong>
-            </div>
           </div>
 
-          {!isExpanded ? (
-            <div className="relative z-10 px-3 pb-5 pt-1">
+          <div className={cn(
+            'relative z-10 border-t border-[color:rgb(var(--color-border-rgb)/0.5)] bg-[color:rgb(var(--color-card-rgb)/0.18)] p-3 backdrop-blur-xl',
+            !isExpanded && 'px-3 pb-5 pt-3'
+          )}>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-pressed={isDark}
+              aria-label={isDark
+                ? (dir === 'rtl' ? 'تفعيل الوضع الفاتح' : 'Enable light mode')
+                : (dir === 'rtl' ? 'تفعيل الوضع الليلي' : 'Enable dark mode')}
+              title={isDark
+                ? (dir === 'rtl' ? 'تفعيل الوضع الفاتح' : 'Enable light mode')
+                : (dir === 'rtl' ? 'تفعيل الوضع الليلي' : 'Enable dark mode')}
+              className={cn(
+                'group relative flex w-full items-center overflow-hidden rounded-2xl border p-1.5 text-start shadow-[0_14px_28px_-22px_rgb(0_0_0/0.8)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
+                isDark
+                  ? 'border-sky-400/25 bg-[linear-gradient(135deg,rgb(14_53_78/0.8),rgb(21_30_52/0.88))] text-sky-100 hover:border-sky-300/45'
+                  : 'border-amber-400/30 bg-[linear-gradient(135deg,rgb(255_248_222/0.96),rgb(255_235_180/0.88))] text-amber-950 hover:border-amber-400/55',
+                !isExpanded && 'aspect-square justify-center rounded-xl p-1'
+              )}
+            >
+              <span className={cn(
+                'relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border shadow-[inset_0_1px_0_rgb(255_255_255/0.3)] transition-transform duration-300 group-hover:scale-105',
+                isDark
+                  ? 'border-sky-300/20 bg-sky-400/15 text-sky-200'
+                  : 'border-amber-400/35 bg-white/60 text-amber-600'
+              )}>
+                {isDark ? <Moon className="h-5 w-5" fill="currentColor" /> : <Sun className="h-5 w-5" />}
+                <span className={cn(
+                  'absolute h-1.5 w-1.5 rounded-full shadow-[0_0_10px_currentColor]',
+                  isDark ? 'right-1.5 top-1.5 bg-sky-200' : 'right-1.5 top-1.5 bg-amber-400'
+                )} />
+              </span>
+
+              {isExpanded ? (
+                <>
+                  <span className="min-w-0 flex-1 px-2.5">
+                    <span className="block truncate text-[0.76rem] font-black">
+                      {isDark ? (dir === 'rtl' ? 'الوضع الليلي' : 'Dark mode') : (dir === 'rtl' ? 'الوضع الفاتح' : 'Light mode')}
+                    </span>
+                    <span className={cn('mt-0.5 block truncate text-[0.62rem] font-semibold', isDark ? 'text-sky-200/70' : 'text-amber-800/70')}>
+                      {dir === 'rtl' ? 'اضغط للتبديل' : 'Click to switch'}
+                    </span>
+                  </span>
+                  <span className={cn(
+                    'relative flex h-7 w-12 shrink-0 items-center rounded-full border p-1 transition-colors',
+                    isDark ? 'border-sky-200/20 bg-slate-950/35 justify-end' : 'border-amber-500/25 bg-white/70 justify-start'
+                  )}>
+                    <span className={cn('grid h-5 w-5 place-items-center rounded-full shadow-sm', isDark ? 'bg-sky-300 text-slate-900' : 'bg-amber-400 text-white')}>
+                      {isDark ? <Moon className="h-3 w-3" fill="currentColor" /> : <Sun className="h-3 w-3" />}
+                    </span>
+                  </span>
+                </>
+              ) : null}
+            </button>
+
+            {!isExpanded ? (
               <button
                 type="button"
                 onClick={handleLogoutClick}
-                className="ka-sidebar-logout-pill is-icon-only w-full"
+                className="ka-sidebar-logout-pill is-icon-only mt-2 w-full"
                 aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
               >
                 <LogOut className="h-5 w-5" />
               </button>
-            </div>
-          ) : null}
+            ) : null}
+
+            {isExpanded ? (
+              <div className="ka-sidebar-copyright mt-2" dir="ltr">
+                <span>© 2026</span>
+                <strong>El-Jasser Card</strong>
+              </div>
+            ) : null}
+          </div>
         </div>
       </motion.aside>
       <ConfirmDialog
