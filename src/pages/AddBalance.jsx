@@ -72,6 +72,11 @@ const PaymentMethodButton = ({ method, groupImage, onSelect }) => {
           ) : method.name}
         </strong>
       </span>
+      {method.accountNumber ? (
+        <span dir="ltr" className="max-w-full break-all rounded-lg bg-indigo-500/10 px-2 py-1 font-['Poppins'] text-[11px] font-bold text-[var(--color-text)]">
+          {method.accountNumber}
+        </span>
+      ) : null}
     </button>
   );
 };

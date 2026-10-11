@@ -380,20 +380,6 @@ const PublicCatalog = () => {
     return String(parent) || null;
   }, []);
 
-  const childrenMap = useMemo(() => {
-    const map = new Map();
-
-    for (const category of storefrontCategories) {
-      const parentId = getParentId(category);
-      if (!map.has(parentId)) {
-        map.set(parentId, []);
-      }
-      map.get(parentId).push(category);
-    }
-
-    return map;
-  }, [getParentId, storefrontCategories]);
-
   const currentCategories = useMemo(
     () => storefrontCategories.filter((category) => {
       const parentId = getParentId(category);
@@ -420,44 +406,13 @@ const PublicCatalog = () => {
     return trail;
   }, [currentParentId, getParentId, storefrontCategories]);
 
-  const currentCategoryIds = useMemo(() => {
-    if (!currentParentId) return [];
-
-    const ids = [];
-    const seen = new Set();
-    const queue = [currentParentId];
-
-    while (queue.length > 0) {
-      const categoryId = queue.shift();
-      if (!categoryId || seen.has(categoryId)) continue;
-
-      seen.add(categoryId);
-      ids.push(categoryId);
-
-      (childrenMap.get(categoryId) || []).forEach((child) => {
-        if (child?.id && !seen.has(child.id)) {
-          queue.push(child.id);
-        }
-      });
-    }
-
-    return ids;
-  }, [childrenMap, currentParentId]);
-
   const currentCategoryProductKeys = useMemo(() => {
     const keys = new Set();
-
-    currentCategoryIds.forEach((categoryId) => {
-      const aliases = categoryAliasesById.get(categoryId);
-      if (aliases) {
-        aliases.forEach((alias) => keys.add(alias));
-      } else {
-        addCategoryAlias(keys, categoryId);
-      }
-    });
-
+    const aliases = categoryAliasesById.get(currentParentId);
+    if (aliases) aliases.forEach((alias) => keys.add(alias));
+    else if (currentParentId) addCategoryAlias(keys, currentParentId);
     return keys;
-  }, [categoryAliasesById, currentCategoryIds]);
+  }, [categoryAliasesById, currentParentId]);
 
   const currentProducts = useMemo(
     () => (

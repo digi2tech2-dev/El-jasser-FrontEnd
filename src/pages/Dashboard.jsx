@@ -192,41 +192,15 @@ const Dashboard = () => {
     [storefrontCategories]
   );
 
-  const categoryChildrenByParent = useMemo(() => (
-    storefrontCategories.reduce((map, category) => {
-      const parentId = String(category?.parentCategory || '').trim();
-      if (!parentId) return map;
-      if (!map.has(parentId)) map.set(parentId, []);
-      map.get(parentId).push(category.id);
-      return map;
-    }, new Map())
-  ), [storefrontCategories]);
-
-  const collectCategoryIds = useCallback((categoryId) => {
-    const seen = new Set();
-    const stack = [String(categoryId || '').trim()].filter(Boolean);
-    while (stack.length) {
-      const currentId = stack.pop();
-      if (!currentId || seen.has(currentId)) continue;
-      seen.add(currentId);
-      (categoryChildrenByParent.get(currentId) || []).forEach((childId) => {
-        if (!seen.has(childId)) stack.push(childId);
-      });
-    }
-    return seen;
-  }, [categoryChildrenByParent]);
-
   const currentProducts = useMemo(() => {
     if (!categoryId) return [];
     const aliases = new Set();
-    collectCategoryIds(categoryId).forEach((id) => {
-      categoryAliases(id).forEach((alias) => aliases.add(alias));
-      const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === id);
-      categoryAliases(source).forEach((alias) => aliases.add(alias));
-      categoryAliases(catalogCategoriesById.get(id)?.title).forEach((alias) => aliases.add(alias));
-    });
+    categoryAliases(categoryId).forEach((alias) => aliases.add(alias));
+    const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === categoryId);
+    categoryAliases(source).forEach((alias) => aliases.add(alias));
+    categoryAliases(catalogCategoriesById.get(categoryId)?.title).forEach((alias) => aliases.add(alias));
     return storefrontProducts.filter((product) => productCategoryAliases(product).some((alias) => aliases.has(alias)));
-  }, [catalogCategories, catalogCategoriesById, categoryId, collectCategoryIds, storefrontProducts]);
+  }, [catalogCategories, catalogCategoriesById, categoryId, storefrontProducts]);
 
   const handleCategorySelect = useCallback((categoryId) => {
     navigate(categoryId === 'all' ? '/dashboard/category' : `/dashboard/category/${encodeURIComponent(categoryId)}`);

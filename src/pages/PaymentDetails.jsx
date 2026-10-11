@@ -552,6 +552,22 @@ const PaymentDetails = ({
         </motion.div>
 
         <div className="min-w-0">
+        {method.accountNumber ? (
+          <section className="my-4 rounded-2xl border border-cyan-500/25 bg-cyan-500/[0.07] p-4" aria-label={dir === 'rtl' ? 'بيانات التحويل' : 'Transfer details'}>
+            <div className="flex items-center gap-2 text-xs font-black text-[var(--color-text)]">
+              {normalizeMethodType(method.type) === 'bank_transfer' ? <Landmark className="h-4 w-4 text-cyan-600" /> : <Smartphone className="h-4 w-4 text-cyan-600" />}
+              <span>{dir === 'rtl' ? 'حوّل إلى الرقم التالي' : 'Transfer to this number'}</span>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <span dir="ltr" className="break-all font-['Poppins'] text-lg font-black text-[var(--color-text)] select-all">{method.accountNumber}</span>
+              <button type="button" onClick={handleCopyAccount} className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-[var(--color-card)] px-3 py-2 text-xs font-black text-cyan-700 transition hover:bg-cyan-500/10 dark:text-cyan-300" aria-label={dir === 'rtl' ? 'نسخ رقم التحويل' : 'Copy transfer number'}>
+                <Copy className="h-4 w-4" />
+                {dir === 'rtl' ? 'نسخ الرقم' : 'Copy number'}
+              </button>
+            </div>
+            {method.accountName ? <p className="mt-2 text-xs font-semibold text-[var(--color-text-secondary)]">{dir === 'rtl' ? 'اسم المستلم: ' : 'Recipient: '}{method.accountName}</p> : null}
+          </section>
+        ) : null}
         {qrCodeUrl ? (
           <motion.section
             initial={{ y: 10, opacity: 0 }}
