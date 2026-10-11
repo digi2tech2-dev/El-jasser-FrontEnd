@@ -9,7 +9,6 @@ import AmbientBackground from './AmbientBackground';
 import { useLanguage } from '../../context/LanguageContext';
 import useAuthStore from '../../store/useAuthStore';
 import { isAdminRole } from '../../utils/authRoles';
-import BackToTopButton from '../ui/BackToTopButton';
 import SiteCopyrightFooter from './SiteCopyrightFooter';
 import {
   getDashboardPathForRole,
@@ -166,7 +165,6 @@ const Layout = ({ children = null }) => {
           />
         ) : null}
       </div>
-      <BackToTopButton />
     </div>
     </MotionConfig>
   );

@@ -56,8 +56,8 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
   const actionClassName = cn(
     'inline-flex shrink-0 items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-[10px] font-extrabold transition-all hover:-translate-y-0.5 hover:brightness-110 sm:px-3 sm:text-xs',
     isTargetSlide
-      ? 'border-cyan-200/30 bg-gradient-to-l from-[#0b92bd] to-[#075d8d] text-white shadow-[0_10px_24px_-13px_rgba(20,190,229,0.58)]'
-      : 'border-amber-100/35 bg-gradient-to-l from-[#e5b744] to-[#b87816] text-[#132b3f] shadow-[0_10px_24px_-13px_rgba(229,183,68,0.58)]'
+      ? 'border-[color:rgb(var(--color-primary-rgb)/0.62)] bg-[linear-gradient(110deg,var(--color-primary),var(--color-tech))] text-white shadow-[0_10px_24px_-13px_rgb(var(--color-primary-rgb)/0.62)]'
+      : 'border-[color:rgb(var(--color-secondary-rgb)/0.52)] bg-[linear-gradient(110deg,var(--color-secondary-soft),var(--color-secondary))] text-[var(--color-button-text)] shadow-[0_10px_24px_-13px_rgb(var(--color-secondary-rgb)/0.58)]'
   );
 
   const actionContent = (
@@ -72,8 +72,8 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
       className={cn(
         'storefront-promotions relative isolate flex h-[5.75rem] flex-col overflow-hidden rounded-[1.15rem] border px-2.5 py-2 shadow-[0_20px_42px_-28px_rgba(2,17,35,0.88)] sm:px-3',
         isTargetSlide
-          ? 'border-cyan-300/35 bg-[#071f35]'
-          : 'border-amber-200/40 bg-[#172333]'
+          ? 'border-[color:rgb(var(--color-primary-rgb)/0.52)] bg-[linear-gradient(135deg,var(--color-bg),var(--color-surface))]'
+          : 'border-[color:rgb(var(--color-secondary-rgb)/0.5)] bg-[linear-gradient(135deg,var(--color-surface),var(--color-card))]'
       )}
       data-tone={slide.tone}
       aria-label={isArabic ? 'روابط سريعة' : 'Quick links'}
@@ -81,24 +81,24 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
       <div className={cn(
         'pointer-events-none absolute inset-0 opacity-90',
         isTargetSlide
-          ? 'bg-[radial-gradient(circle_at_94%_-20%,rgba(31,202,240,0.4),transparent_38%),radial-gradient(circle_at_2%_120%,rgba(7,89,133,0.66),transparent_48%)]'
-          : 'bg-[radial-gradient(circle_at_94%_-20%,rgba(255,215,103,0.42),transparent_38%),radial-gradient(circle_at_2%_120%,rgba(184,120,22,0.42),transparent_48%)]'
+          ? 'bg-[radial-gradient(circle_at_94%_-20%,rgb(var(--color-primary-rgb)/0.3),transparent_38%),radial-gradient(circle_at_2%_120%,rgb(var(--color-tech-rgb)/0.24),transparent_48%)]'
+          : 'bg-[radial-gradient(circle_at_94%_-20%,rgb(var(--color-secondary-rgb)/0.3),transparent_38%),radial-gradient(circle_at_2%_120%,rgb(var(--color-accent-rgb)/0.12),transparent_48%)]'
       )} />
       <div className="pointer-events-none absolute -end-6 -top-10 h-28 w-28 rounded-full border border-white/10" />
       <div className="pointer-events-none absolute -end-1 top-3 h-16 w-16 rounded-full border border-white/[0.07]" />
       <div key={slide.id} className="relative flex min-h-0 flex-1 items-center gap-2 animate-in fade-in duration-300">
         <span className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border shadow-[inset_0_1px_rgba(255,255,255,0.18)]',
-          isTargetSlide
-            ? 'border-cyan-200/30 bg-cyan-300/15 text-cyan-100'
-            : 'border-amber-100/30 bg-amber-200/15 text-amber-100'
+            isTargetSlide
+            ? 'border-[color:rgb(var(--color-primary-rgb)/0.42)] bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary-hover)]'
+            : 'border-[color:rgb(var(--color-secondary-rgb)/0.42)] bg-[color:rgb(var(--color-secondary-rgb)/0.14)] text-[var(--color-secondary-soft)]'
         )}>
           <Icon className="h-4 w-4" />
         </span>
 
         <div className="min-w-0 flex-1">
           <p className="text-xs font-extrabold text-white sm:text-sm">{slide.title}</p>
-          <p className="mt-px text-[10px] text-cyan-50/75 sm:text-xs">{slide.description}</p>
+          <p className="mt-px text-[10px] text-[var(--color-text-secondary)] sm:text-xs">{slide.description}</p>
         </div>
 
         {slide.href ? (
@@ -124,7 +124,7 @@ const StorefrontPromotions = ({ language = 'ar', onSellTarget }) => {
               className={cn(
                 'h-1 rounded-full transition-all',
                 index === activeSlide
-                  ? cn('w-4', isTargetSlide ? 'bg-cyan-200' : 'bg-amber-200')
+                  ? cn('w-4', isTargetSlide ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-secondary)]')
                   : 'w-1 bg-white/25 hover:bg-white/55'
               )}
             />

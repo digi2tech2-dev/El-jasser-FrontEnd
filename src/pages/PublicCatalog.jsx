@@ -25,7 +25,6 @@ import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import HeroSlider from '../components/home/HeroSlider';
 import CategoryCard from '../components/home/CategoryCard';
-import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import StorefrontPromotions from '../components/products/StorefrontPromotions';
 import ProductCardSimple from '../components/products/ProductCardSimple';
@@ -171,8 +170,6 @@ const PublicCatalog = () => {
             unavailable: 'غير متاح',
             loginToBuy: 'شراء الآن',
             targetTitle: 'بيع التارجت',
-            topSellingTitle: 'الأكثر مبيعًا',
-            viewAll: 'عرض الكل',
           }
         : {
             searchPlaceholder: 'Search for a product...',
@@ -186,8 +183,6 @@ const PublicCatalog = () => {
             unavailable: 'Unavailable',
             loginToBuy: 'Buy now',
             targetTitle: 'Target Sales',
-            topSellingTitle: 'Top selling',
-            viewAll: 'View all',
           }
     ),
     [isArabic]
@@ -475,57 +470,6 @@ const PublicCatalog = () => {
     ),
     [currentCategoryProductKeys, currentParentId, storefrontProducts]
   );
-
-  const homepageProducts = useMemo(() => {
-    const rootCategories = storefrontCategories.filter((category) => {
-      const parentId = getParentId(category);
-      return parentId === null;
-    });
-    const pickedIds = new Set();
-
-    const pickFromCategory = (category, limit) => {
-      if (!category) return [];
-      const categoryIds = new Set([category.id]);
-      const queue = [category.id];
-      const selected = [];
-
-      while (queue.length > 0) {
-        const categoryId = queue.shift();
-        (childrenMap.get(categoryId) || []).forEach((child) => {
-          if (child?.id && !categoryIds.has(child.id)) {
-            categoryIds.add(child.id);
-            queue.push(child.id);
-          }
-        });
-      }
-
-      const categoryKeys = new Set();
-      categoryIds.forEach((categoryId) => {
-        addCategoryAlias(categoryKeys, categoryId);
-        const aliases = categoryAliasesById.get(categoryId);
-        if (aliases) {
-          aliases.forEach((alias) => categoryKeys.add(alias));
-        }
-      });
-
-      for (const product of storefrontProducts) {
-        if (selected.length >= limit) break;
-        const productCategoryKeys = getProductCategoryKeys(product);
-        const matchesCategory = Array.from(productCategoryKeys).some((key) => categoryKeys.has(key));
-        if (!matchesCategory) continue;
-        if (pickedIds.has(product.id)) continue;
-        pickedIds.add(product.id);
-        selected.push(product);
-      }
-
-      return selected;
-    };
-
-    return [
-      ...pickFromCategory(rootCategories[0], 4),
-      ...pickFromCategory(rootCategories[1], 4),
-    ];
-  }, [categoryAliasesById, childrenMap, getParentId, storefrontCategories, storefrontProducts]);
 
   const showInitialLoading = (isRealProvider ? isPublicCatalogLoading : isLoading)
     && storefrontProducts.length === 0
@@ -1003,18 +947,6 @@ const PublicCatalog = () => {
             </div>
           )}
 
-          {!isInsideCategory && homepageProducts.length ? (
-            <BestSellingSection
-              id="public-best-selling-title"
-              title={copy.topSellingTitle}
-              viewAllLabel={copy.viewAll}
-              products={homepageProducts}
-              categories={storefrontCategories}
-              language={language}
-              onViewAll={handleLogin}
-              onProductSelect={handleProductSelect}
-            />
-          ) : null}
         </div>
       </main>
 

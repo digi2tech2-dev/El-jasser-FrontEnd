@@ -1760,7 +1760,7 @@ html[data-page-transition="running"] {
 @media (max-width: 640px) {
   .floating-whatsapp {
     right: 0.85rem;
-    bottom: 0.95rem;
+    bottom: calc(6.1rem + env(safe-area-inset-bottom));
   }
 
   .floating-whatsapp-button {
@@ -4787,7 +4787,7 @@ html.performance-lite :where(button, a, [role="button"], .transition, [class*="t
     radial-gradient(18rem circle at 92% -14%, rgb(var(--color-secondary-rgb) / 0.3), transparent 42%),
     radial-gradient(16rem circle at 4% 110%, rgb(var(--color-primary-rgb) / 0.38), transparent 58%),
     radial-gradient(12rem circle at 56% 35%, rgb(var(--color-tech-rgb) / 0.2), transparent 62%),
-    linear-gradient(135deg, #061426 0%, #0a2038 42%, #075a75 76%, #8b641c 132%) !important;
+    linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 42%, #155a82 76%, #8b641c 132%) !important;
   box-shadow:
     inset 0 1px rgb(255 246 215 / 0.17),
     0 0 0 1px rgb(var(--color-primary-rgb) / 0.08),
@@ -5137,7 +5137,7 @@ html.performance-lite :where(button, a, [role="button"], .transition, [class*="t
   background:
     radial-gradient(20rem circle at 90% -10%, rgb(var(--color-secondary-rgb) / 0.18), transparent 44%),
     radial-gradient(16rem circle at 2% 108%, rgb(var(--color-primary-rgb) / 0.18), transparent 56%),
-    linear-gradient(135deg, #0e2a45 0%, #0d3659 48%, #07546e 78%, #8b641c 132%) !important;
+    linear-gradient(135deg, #dff2fa 0%, #c5e4f2 48%, #4b9abd 78%, #c49332 132%) !important;
 }
 :root:not(.dark) .wallet-topup-dragon-logo {
   opacity: 0.55;
@@ -5684,15 +5684,15 @@ html:not(.performance-lite) .page-route-loader__spinner {
 /* El-Jasser Card — final cyan and gold visual system.  Kept at the end to
    retire the former fire/dragon overrides without altering components. */
 :root:not(.dark) body {
-  background: radial-gradient(48rem circle at 8% -12%, rgb(var(--color-primary-rgb) / .13), transparent 43%), radial-gradient(40rem circle at 96% 2%, rgb(var(--color-secondary-rgb) / .13), transparent 39%), linear-gradient(180deg, #fbfaff 0%, #f0eff8 52%, #faf9fd 100%) !important;
+  background: radial-gradient(48rem circle at 8% -12%, rgb(var(--color-primary-rgb) / .15), transparent 43%), radial-gradient(40rem circle at 96% 2%, rgb(var(--color-secondary-rgb) / .14), transparent 39%), linear-gradient(180deg, #f8fcfe 0%, var(--color-bg) 52%, #fffaf0 100%) !important;
 }
 :root.dark body {
-  background: radial-gradient(54rem circle at 9% -14%, rgb(var(--color-primary-rgb) / .2), transparent 42%), radial-gradient(44rem circle at 96% 3%, rgb(var(--color-secondary-rgb) / .1), transparent 38%), linear-gradient(180deg, #0e0f1b 0%, #171828 54%, #0e0f1b 100%) !important;
+  background: radial-gradient(54rem circle at 9% -14%, rgb(var(--color-primary-rgb) / .2), transparent 42%), radial-gradient(44rem circle at 96% 3%, rgb(var(--color-secondary-rgb) / .12), transparent 38%), linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 54%, var(--color-bg) 100%) !important;
 }
-:root.dark .ambient-background__veil { background: linear-gradient(180deg, rgb(14 15 27 / .28), rgb(14 15 27 / .88)) !important; }
+:root.dark .ambient-background__veil { background: linear-gradient(180deg, rgb(var(--color-bg-rgb) / .28), rgb(var(--color-bg-rgb) / .88)) !important; }
 :root.dark .ambient-background__mesh { background-image: linear-gradient(rgb(var(--color-primary-rgb) / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--color-primary-rgb) / .05) 1px, transparent 1px) !important; }
 :root.dark :where(.app-shell-header-panel, .ka-sidebar-panel, .premium-card, .premium-card-elevated, .premium-card-premium, .product-led-card, .admin-premium-hero, .admin-premium-panel, .admin-premium-toolbar, .admin-premium-stat) { border-color: rgb(var(--color-primary-rgb) / .28) !important; background: radial-gradient(circle at 92% 0%, rgb(var(--color-secondary-rgb) / .1), transparent 32%), radial-gradient(circle at 7% 92%, rgb(var(--color-primary-rgb) / .1), transparent 42%), linear-gradient(145deg, rgb(var(--color-card-rgb) / .97), rgb(var(--color-bg-rgb) / .98)) !important; box-shadow: inset 0 1px 0 rgb(255 255 255 / .07), 0 26px 64px -44px rgb(0 0 0 / .9) !important; }
-:root.dark :where([class*="text-cyan-"], [class*="text-sky-"], [class*="text-blue-"]) { color: #b9a9ff !important; }
+:root.dark :where([class*="text-cyan-"], [class*="text-sky-"], [class*="text-blue-"]) { color: var(--color-primary-hover) !important; }
 :root.dark :where([class*="border-cyan-"], [class*="border-sky-"], [class*="border-blue-"]) { border-color: rgb(var(--color-primary-rgb) / .45) !important; }
 :root.dark :where([class*="bg-cyan-"], [class*="bg-sky-"], [class*="bg-blue-"]) { background-color: rgb(var(--color-primary-rgb) / .14) !important; }
 .ka-brand-title, .ka-brand-title > span:first-child { text-shadow: 0 0 18px rgb(35 195 233 / .28) !important; }
@@ -5818,6 +5818,44 @@ html:not(.performance-lite) .page-route-loader__spinner {
   box-shadow: inset 0 1px rgb(255 255 255 / 0.38), 0 0 30px -12px rgb(var(--color-secondary-rgb) / 1), 0 0 28px -15px rgb(var(--color-primary-rgb) / 0.9) !important;
 }
 
+/* Sidebar color refresh: clear navy surfaces with sky-blue and gold wayfinding. */
+:root.dark .ka-sidebar-panel {
+  border-color: rgb(117 183 223 / 0.42) !important;
+  background: linear-gradient(180deg, #142a46 0%, #10233b 54%, #0d1d32 100%) !important;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.1), 0 26px 72px -44px rgb(5 18 34 / 0.96) !important;
+}
+
+:root.dark .ka-sidebar-user-card,
+:root.dark .ka-sidebar-wallet-card {
+  border-color: rgb(117 183 223 / 0.3) !important;
+  background: linear-gradient(145deg, rgb(117 183 223 / 0.16), rgb(29 40 66 / 0.9) 58%, rgb(231 182 78 / 0.1)) !important;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.08), 0 16px 38px -30px rgb(76 166 204 / 0.68) !important;
+}
+
+:root.dark .ka-sidebar-nav-item,
+:root.dark .ka-sidebar-nav-item:hover {
+  border-color: rgb(117 183 223 / 0.2) !important;
+  background: linear-gradient(180deg, rgb(29 40 66 / 0.82), rgb(23 33 57 / 0.72)) !important;
+  color: #c3d2df !important;
+}
+
+:root.dark .ka-sidebar-nav-item:hover {
+  border-color: rgb(117 183 223 / 0.58) !important;
+  color: #f8f4e9 !important;
+}
+
+:root.dark .ka-sidebar-nav-item.is-active {
+  border-color: rgb(231 182 78 / 0.72) !important;
+  background: linear-gradient(100deg, #237eaa 0%, #4ca6cc 56%, #e7b64e 100%) !important;
+  color: #102238 !important;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.22), 0 12px 30px -18px rgb(76 166 204 / 0.82) !important;
+}
+
+:root.dark .ka-sidebar-nav-item.is-active .ka-sidebar-icon-bubble,
+:root.dark .ka-sidebar-nav-item:hover .ka-sidebar-icon-bubble {
+  color: #102238 !important;
+}
+
 /* ─── Topup success modal animations ─── */
 @keyframes topup-coin-fall {
   0%   { transform: translateY(-12px) rotate(-10deg) scale(0.8); opacity: 0; }
@@ -5852,7 +5890,7 @@ html:not(.performance-lite) .page-route-loader__spinner {
 }
 
 :root:not(.dark) .storefront-promotions[data-tone="target"] > div:nth-child(1) {
-  background: radial-gradient(circle at 94% -20%, rgb(32 184 220 / 0.16), transparent 42%), radial-gradient(circle at 2% 120%, rgb(8 127 163 / 0.1), transparent 52%) !important;
+  background: radial-gradient(circle at 94% -20%, rgb(var(--color-primary-rgb) / 0.18), transparent 42%), radial-gradient(circle at 2% 120%, rgb(var(--color-tech-rgb) / 0.1), transparent 52%) !important;
 }
 
 :root:not(.dark) .storefront-promotions[data-tone="android"] > div:nth-child(1) {
@@ -5860,8 +5898,8 @@ html:not(.performance-lite) .page-route-loader__spinner {
 }
 
 :root:not(.dark) .storefront-promotions[data-tone="target"] .bg-cyan-300\/15 {
-  background-color: rgb(8 127 163 / 0.1) !important;
-  color: #087fa3 !important;
+  background-color: rgb(var(--color-primary-rgb) / 0.12) !important;
+  color: var(--color-primary) !important;
 }
 
 :root:not(.dark) .storefront-promotions[data-tone="android"] .bg-amber-200\/15 {
@@ -6572,37 +6610,37 @@ html:not(.performance-lite) .page-route-loader__spinner {
   .wallet-levels-list-heading button { align-self: flex-start; }
 }
 
-/* Keep the mobile navigation aligned with the site's mauve identity. */
+/* Keep the mobile navigation aligned with the sidebar's navy, sky-blue, and gold palette. */
 @media (max-width: 767px) {
   .mobile-bottom-nav__panel {
-    border-color: rgb(192 132 217 / 0.34) !important;
+    border-color: rgb(117 183 223 / 0.42) !important;
     background:
-      radial-gradient(ellipse at 15% -20%, rgb(103 211 241 / 0.2), transparent 42%),
-      radial-gradient(ellipse at 88% 120%, rgb(228 166 216 / 0.18), transparent 44%),
-      linear-gradient(118deg, #21172e 0%, #382047 54%, #254b63 100%) !important;
-    box-shadow: 0 -18px 54px -34px rgb(103 211 241 / 0.82), 0 16px 38px -28px rgb(20 10 28 / 0.92), inset 0 1px rgb(255 231 253 / 0.18) !important;
+      radial-gradient(ellipse at 15% -20%, rgb(117 183 223 / 0.2), transparent 42%),
+      radial-gradient(ellipse at 88% 120%, rgb(231 182 78 / 0.18), transparent 44%),
+      linear-gradient(118deg, #142a46 0%, #10233b 54%, #0d1d32 100%) !important;
+    box-shadow: 0 -18px 54px -34px rgb(76 166 204 / 0.82), 0 16px 38px -28px rgb(5 18 34 / 0.92), inset 0 1px rgb(255 255 255 / 0.18) !important;
   }
 
-  .mobile-bottom-nav__item { color: rgb(245 218 248 / 0.76) !important; }
-  .mobile-bottom-nav__item-icon { border-color: rgb(192 132 217 / 0.2) !important; background: rgb(31 17 43 / 0.38) !important; }
-  .mobile-bottom-nav__item.is-active { color: #fff5ff !important; }
+  .mobile-bottom-nav__item { color: #c3d2df !important; }
+  .mobile-bottom-nav__item-icon { border-color: rgb(117 183 223 / 0.24) !important; background: rgb(29 40 66 / 0.52) !important; }
+  .mobile-bottom-nav__item.is-active { color: #f8f4e9 !important; }
   .mobile-bottom-nav__item.is-active .mobile-bottom-nav__item-icon {
-    border-color: rgb(255 226 250 / 0.55) !important;
-    background: linear-gradient(135deg, #70449a 0%, #ad6bc4 48%, #67d3f1 100%) !important;
-    box-shadow: 0 10px 24px -12px rgb(103 211 241 / 0.92), 0 14px 28px -16px rgb(192 132 217 / 0.76), inset 0 1px rgb(255 255 255 / 0.42) !important;
+    border-color: rgb(231 182 78 / 0.62) !important;
+    background: linear-gradient(135deg, #237eaa 0%, #4ca6cc 48%, #e7b64e 100%) !important;
+    box-shadow: 0 10px 24px -12px rgb(76 166 204 / 0.92), 0 14px 28px -16px rgb(231 182 78 / 0.76), inset 0 1px rgb(255 255 255 / 0.42) !important;
   }
 
   :root:not(.dark) .mobile-bottom-nav__panel {
-    border-color: rgb(145 91 173 / 0.24) !important;
+    border-color: rgb(var(--color-secondary-rgb) / 0.38) !important;
     background:
-      radial-gradient(ellipse at 15% -20%, rgb(103 211 241 / 0.13), transparent 42%),
-      radial-gradient(ellipse at 88% 120%, rgb(228 166 216 / 0.14), transparent 44%),
-      linear-gradient(118deg, #fffaff 0%, #f4eaf8 54%, #e9f9fd 100%) !important;
+      radial-gradient(ellipse at 15% -20%, rgb(var(--color-primary-rgb) / 0.13), transparent 42%),
+      radial-gradient(ellipse at 88% 120%, rgb(var(--color-secondary-rgb) / 0.14), transparent 44%),
+      linear-gradient(118deg, #f8fcfe 0%, #e1f0f7 54%, #fffaf0 100%) !important;
   }
 
-  :root:not(.dark) .mobile-bottom-nav__item { color: #76527f !important; }
-  :root:not(.dark) .mobile-bottom-nav__item-icon { border-color: rgb(145 91 173 / 0.18) !important; background: rgb(255 255 255 / 0.58) !important; }
-  :root:not(.dark) .mobile-bottom-nav__item.is-active { color: #70449a !important; }
-  :root:not(.dark) .mobile-bottom-nav__item.is-active .mobile-bottom-nav__item-icon { color: #fff5ff !important; }
+  :root:not(.dark) .mobile-bottom-nav__item { color: var(--color-text-secondary) !important; }
+  :root:not(.dark) .mobile-bottom-nav__item-icon { border-color: rgb(var(--color-primary-rgb) / 0.2) !important; background: rgb(var(--color-card-rgb) / 0.58) !important; }
+  :root:not(.dark) .mobile-bottom-nav__item.is-active { color: var(--color-primary-hover) !important; }
+  :root:not(.dark) .mobile-bottom-nav__item.is-active .mobile-bottom-nav__item-icon { color: var(--color-button-text) !important; }
 }
 

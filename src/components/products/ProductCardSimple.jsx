@@ -26,7 +26,7 @@ const ProductCardSimple = React.memo(({
         onOpen(product);
       }}
       className={cn(
-        'storefront-product-card group relative isolate flex w-full origin-center select-none flex-col rounded-[1.25rem] p-2 text-start transition-all duration-200 ease-out hover:-translate-y-0.5',
+        'storefront-product-card group relative isolate flex h-full w-full origin-center select-none flex-col rounded-[1.25rem] p-2 text-start transition-all duration-200 ease-out hover:-translate-y-0.5',
         isUnavailable && 'hover:translate-y-0'
       )}
       aria-label={displayName}

@@ -22,6 +22,7 @@ import {
   MessageCircle,
   Moon,
   Share2,
+  ShoppingCart,
   ReceiptText,
   SlidersHorizontal,
   Sparkles,
@@ -165,7 +166,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     { icon: LockKeyhole, label: t('sidebar.accountProtection', { defaultValue: dir === 'rtl' ? 'حماية الحساب' : 'Account Security' }), path: '/account-security', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
     { icon: Share2, label: dir === 'rtl' ? 'رابط الإحالة اكسب واسحب' : 'Referral Link — Earn & Withdraw', path: '/referral', roles: ['customer'] },
     {
-      icon: ReceiptText,
+      icon: ShoppingCart,
       label: t('sidebar.myOrders', { defaultValue: dir === 'rtl' ? 'طلباتي' : 'My Orders' }),
       path: '/orders',
       roles: ['customer', 'admin', ...SUPERVISOR_ROLES]

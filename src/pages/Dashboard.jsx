@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Layers3, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, ShieldCheck } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 import useMediaStore from '../store/useMediaStore';
 import useGroupStore from '../store/useGroupStore';
@@ -10,7 +10,6 @@ import apiClient from '../services/client';
 import HeroSlider from '../components/home/HeroSlider';
 import CategoryCard from '../components/home/CategoryCard';
 import ProductCardSimple from '../components/products/ProductCardSimple';
-import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import StorefrontPromotions from '../components/products/StorefrontPromotions';
 import ProductPurchaseDialog from '../components/products/ProductPurchaseDialog';
@@ -203,13 +202,10 @@ const Dashboard = () => {
 
   const currentProducts = useMemo(() => {
     if (!categoryId) return [];
-    const descendantIds = collectCategoryIds(categoryId);
     const aliases = new Set();
-    descendantIds.forEach((id) => {
-      categoryAliases(id).forEach((alias) => aliases.add(alias));
-      const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === id);
-      categoryAliases(source).forEach((alias) => aliases.add(alias));
-    });
+    categoryAliases(categoryId).forEach((alias) => aliases.add(alias));
+    const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === categoryId);
+    categoryAliases(source).forEach((alias) => aliases.add(alias));
     return storefrontProducts.filter((product) => [
       ...categoryAliases(product.category),
       ...categoryAliases(product.categoryId),
@@ -219,33 +215,6 @@ const Dashboard = () => {
       ...categoryAliases(product.categoryTitleAr),
     ].some((alias) => aliases.has(alias)));
   }, [catalogCategories, categoryId, collectCategoryIds, storefrontProducts]);
-
-  const bestSellingProducts = useMemo(() => {
-    const firstCategory = visibleHomepageCategories[0];
-    const secondCategory = visibleHomepageCategories[1];
-    const pickedIds = new Set();
-
-    const pickFromCategory = (category, limit) => {
-      if (!category) return [];
-      const categoryIds = collectCategoryIds(category.id);
-      const selected = [];
-
-      for (const product of storefrontProducts) {
-        if (selected.length >= limit) break;
-        if (!categoryIds.has(String(product?.category || '').trim())) continue;
-        if (pickedIds.has(product.id)) continue;
-        pickedIds.add(product.id);
-        selected.push(product);
-      }
-
-      return selected;
-    };
-
-    return [
-      ...pickFromCategory(firstCategory, 4),
-      ...pickFromCategory(secondCategory, 4),
-    ];
-  }, [collectCategoryIds, storefrontProducts, visibleHomepageCategories]);
 
   const handleCategorySelect = useCallback((categoryId) => {
     navigate(categoryId === 'all' ? '/dashboard/category' : `/dashboard/category/${encodeURIComponent(categoryId)}`);
@@ -292,29 +261,11 @@ const Dashboard = () => {
   ) : null;
 
   if (isCatalogRoute) {
-    const backPath = currentParentId
-      ? `/dashboard/category/${encodeURIComponent(currentParentId)}`
-      : '/dashboard';
     return (
       <div className="space-y-5 pb-6">
-        <section className="rounded-[1.7rem] border border-[color:rgb(var(--color-border-rgb)/0.66)] bg-[color:rgb(var(--color-card-rgb)/0.8)] p-5 shadow-[var(--shadow-subtle)] backdrop-blur-xl">
-          <button type="button" onClick={() => navigate(backPath)} className="inline-flex items-center gap-1.5 rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-primary-rgb)/0.08)] px-3 py-2 text-xs font-black text-[var(--color-primary)]">
-            {isArabic ? <ArrowRight className="h-3.5 w-3.5" /> : <ArrowLeft className="h-3.5 w-3.5" />}
-            {isArabic ? 'رجوع' : 'Back'}
-          </button>
-          <div className="mt-4 flex items-center gap-2 text-[var(--color-text)]">
-            {!categoryId && <Layers3 className="h-6 w-6 text-[var(--color-primary)]" />}
-            <h1 className="text-xl font-black">{currentCategory?.title || (isArabic ? 'كل الكاتلوجات' : 'All catalogs')}</h1>
-          </div>
-        </section>
-
-        {currentSubcategories.length > 0 && (
+        {(currentSubcategories.length > 0 || currentProducts.length > 0) && (
           <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {currentSubcategories.map((category, index) => <CategoryCard key={category.id} category={category} index={index} onSelect={handleCategorySelect} />)}
-          </section>
-        )}
-        {currentProducts.length > 0 && (
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {currentProducts.map((product) => <ProductCardSimple key={product.id} product={product} onOpen={setSelectedProduct} unavailableLabel={isArabic ? 'غير متاح' : 'Unavailable'} />)}
           </section>
         )}
@@ -396,20 +347,6 @@ const Dashboard = () => {
             </div>
           </Link>
         </div>
-      ) : null}
-
-      {bestSellingProducts.length ? (
-        <BestSellingSection
-          id="best-selling-title"
-          title={language === 'ar' ? 'الأكثر مبيعًا' : 'Best sellers'}
-          viewAllLabel={language === 'ar' ? 'عرض الكل' : 'View all'}
-          products={bestSellingProducts}
-          categories={storefrontCategories}
-          language={language}
-          onViewAll={() => navigate('/dashboard/category')}
-          onProductSelect={openPurchaseDialog}
-          disableUnavailable
-        />
       ) : null}
 
       <ProductPurchaseDialog

@@ -43,29 +43,29 @@ const AccountSecurity = () => {
   );
 
   return (
-    <div className={`min-h-screen bg-gray-50 pb-6 dark:bg-gray-950 sm:pb-8 ${isRTL ? 'rtl' : 'ltr'}`} dir={dir}>
+    <div className={`min-h-screen bg-[var(--color-bg)] pb-6 sm:pb-8 ${isRTL ? 'rtl' : 'ltr'}`} dir={dir}>
       <div
         className="mx-auto w-full max-w-3xl space-y-3 px-3 sm:px-4 sm:space-y-4"
       >
         {/* Hero Header */}
         <header
-          className="rounded-[18px] border border-gray-200 bg-white p-4 shadow-sm sm:p-5 dark:border-gray-800 dark:bg-gray-900"
+          className="rounded-[18px] border border-[color:rgb(var(--color-border-rgb)/0.72)] bg-[color:rgb(var(--color-card-rgb)/0.92)] p-4 shadow-[var(--shadow-subtle)] sm:p-5"
         >
           <div className="flex items-start justify-between gap-3">
             <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gray-950 text-white dark:bg-white dark:text-gray-950"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-primary)] text-[var(--color-button-text)]"
             >
               <Shield className="h-5 w-5" />
             </div>
 
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-300">
+              <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-secondary)]">
                 {text.securityOverview}
               </div>
-              <h1 className="mt-1 text-xl font-black text-gray-950 sm:text-2xl dark:text-white">
+              <h1 className="mt-1 text-xl font-black text-[var(--color-text)] sm:text-2xl">
                 {text.title}
               </h1>
-              <p className="mt-1 max-w-2xl text-xs font-medium leading-5 text-gray-500 sm:text-sm dark:text-gray-400">
+              <p className="mt-1 max-w-2xl text-xs font-medium leading-5 text-[var(--color-text-secondary)] sm:text-sm">
                 {text.subtitle}
               </p>
             </div>
@@ -74,20 +74,20 @@ const AccountSecurity = () => {
 
         {/* Security Alert Card */}
         <div
-          className="rounded-[16px] border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-950/20"
+          className="rounded-[16px] border border-[color:rgb(var(--color-secondary-rgb)/0.3)] bg-[color:rgb(var(--color-secondary-rgb)/0.1)] p-3"
         >
           <div className="flex items-start gap-3">
             <div
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-secondary)] text-[var(--color-button-text)]"
             >
               <AlertCircle className="h-4 w-4" />
             </div>
 
             <div>
-              <h3 className="text-sm font-bold leading-5 text-amber-950 dark:text-amber-200">
+              <h3 className="text-sm font-bold leading-5 text-[var(--color-text)]">
                 {text.securityHint}
               </h3>
-              <p className="mt-1 text-xs font-medium leading-5 text-amber-900/70 dark:text-amber-300/70">
+              <p className="mt-1 text-xs font-medium leading-5 text-[var(--color-text-secondary)]">
                 {isEnglish 
                   ? 'Enable two-factor authentication to add an extra layer of security to your account.'
                   : 'فعّل المصادقة الثنائية لإضافة طبقة أمان إضافية لحسابك.'}

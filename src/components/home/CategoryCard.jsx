@@ -19,7 +19,7 @@ const CategoryCard = ({
       <button
         type="button"
         onClick={() => onSelect(category.id)}
-        className="storefront-category-card storefront-category-card--plain group relative isolate flex w-full origin-center select-none flex-col rounded-[1.4rem] text-start transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.002]"
+        className="storefront-category-card storefront-category-card--plain group relative isolate flex h-full w-full origin-center select-none flex-col rounded-[1.4rem] text-start transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.002]"
         aria-label={displayName}
         style={{ animation: 'page-fade-in 280ms ease-out both', animationDelay: `${Math.min(index * 35, 210)}ms` }}
       >

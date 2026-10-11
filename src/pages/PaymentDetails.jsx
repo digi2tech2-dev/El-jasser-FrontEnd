@@ -552,56 +552,6 @@ const PaymentDetails = ({
         </motion.div>
 
         <div className="min-w-0">
-        {method.accountNumber && (
-          <motion.div
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.25, delay: 0.05, ease: 'easeOut' }}
-            className="min-w-0 border-y border-[color:rgb(var(--color-border-rgb)/0.5)] py-3"
-          >
-            <div className="mb-2.5 flex items-center gap-2">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[color:rgb(var(--color-primary-rgb)/0.24)] bg-[color:rgb(var(--color-primary-rgb)/0.08)] text-[var(--color-primary)]">
-                <Landmark className="h-3.5 w-3.5" />
-              </span>
-              <div>
-                <h3 className="text-xs font-black text-[var(--color-text)]">{t('payments.accountDetails')}</h3>
-                <p className="mt-0.5 text-[9px] text-[var(--color-text-secondary)]">{dir === 'rtl' ? 'بيانات التحويل' : 'Transfer details'}</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleCopyAccount}
-              className="group relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.24)] bg-[linear-gradient(110deg,rgb(var(--color-primary-rgb)/0.1),rgb(var(--color-card-rgb)/0.82))] px-3 py-2.5 text-[var(--color-text)] shadow-[0_12px_28px_-24px_rgb(var(--color-primary-rgb)/0.72)] transition hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-secondary-rgb)/0.5)] focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--color-primary-rgb)/0.25)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] sm:px-4"
-              title={dir === 'rtl' ? 'اضغط للنسخ' : 'Tap to copy'}
-            >
-              <span className="relative min-w-0 text-start">
-                <span className="block text-[9px] font-bold text-[var(--color-text-secondary)]">{dir === 'rtl' ? 'رقم التحويل' : 'Transfer number'}</span>
-                <span className="mt-0.5 block break-all font-['Poppins'] text-lg font-black tracking-[0.1em] text-[var(--color-primary-hover)] [direction:ltr] dark:text-[#37c9e9] sm:text-xl">{method.accountNumber}</span>
-              </span>
-              <span className="relative inline-flex shrink-0 items-center gap-1 rounded-lg border border-[color:rgb(var(--color-secondary-rgb)/0.5)] bg-[color:rgb(var(--color-secondary-rgb)/0.16)] px-2 py-1.5 text-[9px] font-black text-[var(--color-secondary)] transition group-hover:bg-[color:rgb(var(--color-secondary-rgb)/0.24)]">
-                <Copy className="h-3.5 w-3.5" />
-                {dir === 'rtl' ? 'نسخ' : 'Copy'}
-              </span>
-            </button>
-            <div className="relative mt-2 grid grid-cols-2 text-start">
-              {method.accountName && (
-                <div className="min-w-0 px-3 py-2 sm:px-5">
-                  <p className="text-[9px] font-bold text-[var(--color-text-secondary)]">
-                    {t('payments.accountHolder', { defaultValue: dir === 'rtl' ? 'اسم صاحب الحساب' : 'Account holder' })}
-                  </p>
-                  <p className="mt-1 break-words text-xs font-black text-[var(--color-text)]">{method.accountName}</p>
-                </div>
-              )}
-              {method.bankName && (
-                <div className="min-w-0 px-3 py-2 sm:px-5">
-                  <p className="text-[9px] font-bold text-[var(--color-text-secondary)]">{dir === 'rtl' ? 'جهة التحويل' : 'Transfer provider'}</p>
-                  <p className="mt-1 break-words text-xs font-black text-[var(--color-text)]">{method.bankName}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
         {qrCodeUrl ? (
           <motion.section
             initial={{ y: 10, opacity: 0 }}
