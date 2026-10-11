@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, ShieldCheck } from 'lucide-react';
 import useAuthStore from '../store/useAuthStore';
 import useMediaStore from '../store/useMediaStore';
 import useGroupStore from '../store/useGroupStore';
@@ -34,6 +34,11 @@ const categoryAliases = (source) => {
     : [source];
   return values.map(categoryKey).filter(Boolean);
 };
+const productCategoryAliases = (product) => [
+  product?.category, product?.categoryId, product?.categoryName,
+  product?.categoryNameAr, product?.categoryTitle, product?.categoryTitleAr,
+  product?.categoryLabel, product?.categoryLabelAr,
+].flatMap(categoryAliases);
 
 const Dashboard = () => {
   const { user, refreshProfile } = useAuthStore();
@@ -159,6 +164,17 @@ const Dashboard = () => {
   ), [storefrontCategories]);
   const currentCategory = catalogCategoriesById.get(categoryId);
   const currentParentId = String(currentCategory?.parentCategory || '').trim();
+  const breadcrumbTrail = useMemo(() => {
+    const trail = [];
+    const seen = new Set();
+    let current = currentCategory;
+    while (current && !seen.has(current.id)) {
+      seen.add(current.id);
+      trail.unshift(current);
+      current = catalogCategoriesById.get(String(current.parentCategory || '').trim());
+    }
+    return trail;
+  }, [catalogCategoriesById, currentCategory]);
   const currentSubcategories = useMemo(() => (
     categoryId
       ? storefrontCategories.filter((category) => String(category.parentCategory || '').trim() === categoryId)
@@ -203,18 +219,14 @@ const Dashboard = () => {
   const currentProducts = useMemo(() => {
     if (!categoryId) return [];
     const aliases = new Set();
-    categoryAliases(categoryId).forEach((alias) => aliases.add(alias));
-    const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === categoryId);
-    categoryAliases(source).forEach((alias) => aliases.add(alias));
-    return storefrontProducts.filter((product) => [
-      ...categoryAliases(product.category),
-      ...categoryAliases(product.categoryId),
-      ...categoryAliases(product.categoryName),
-      ...categoryAliases(product.categoryNameAr),
-      ...categoryAliases(product.categoryTitle),
-      ...categoryAliases(product.categoryTitleAr),
-    ].some((alias) => aliases.has(alias)));
-  }, [catalogCategories, categoryId, collectCategoryIds, storefrontProducts]);
+    collectCategoryIds(categoryId).forEach((id) => {
+      categoryAliases(id).forEach((alias) => aliases.add(alias));
+      const source = catalogCategories.find((category) => String(category?.id || category?._id || '') === id);
+      categoryAliases(source).forEach((alias) => aliases.add(alias));
+      categoryAliases(catalogCategoriesById.get(id)?.title).forEach((alias) => aliases.add(alias));
+    });
+    return storefrontProducts.filter((product) => productCategoryAliases(product).some((alias) => aliases.has(alias)));
+  }, [catalogCategories, catalogCategoriesById, categoryId, collectCategoryIds, storefrontProducts]);
 
   const handleCategorySelect = useCallback((categoryId) => {
     navigate(categoryId === 'all' ? '/dashboard/category' : `/dashboard/category/${encodeURIComponent(categoryId)}`);
@@ -262,10 +274,25 @@ const Dashboard = () => {
 
   if (isCatalogRoute) {
     return (
-      <div className="space-y-5 pb-6">
+      <div className="space-y-5 pb-6 sm:space-y-6">
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col justify-center gap-3 px-0.5 sm:px-2">
+          <StorefrontPromotions language={language} onSellTarget={() => navigate('/buy-target')} />
+          <ProductSearchBar products={storefrontProducts} language={language} onSelectProduct={handleProductSelect} forceIconRight placeholder={isArabic ? 'ابحث عن منتج...' : 'Search for a product...'} noResultsLabel={isArabic ? 'لا يوجد منتج مطابق' : 'No matching product found'} className="mx-auto w-full" inputClassName="h-12 rounded-full" />
+        </div>
+        {categoryId && currentCategory && (
+          <nav className="mx-auto flex max-w-5xl flex-wrap items-center gap-1 px-1 text-sm" aria-label={isArabic ? 'مسار الأقسام' : 'Category breadcrumb'}>
+            <button type="button" onClick={() => handleCategorySelect('all')} className="font-medium text-[var(--color-primary)] hover:underline">{isArabic ? 'الرئيسية' : 'Home'}</button>
+            {breadcrumbTrail.map((category) => (
+              <span key={category.id} className="flex items-center gap-1">
+                <ChevronRight className="h-3.5 w-3.5 text-[var(--color-text-secondary)]" />
+                <button type="button" onClick={() => handleCategorySelect(category.id)} className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)] hover:underline">{category.title}</button>
+              </span>
+            ))}
+          </nav>
+        )}
         {(currentSubcategories.length > 0 || currentProducts.length > 0) && (
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {currentSubcategories.map((category, index) => <CategoryCard key={category.id} category={category} index={index} onSelect={handleCategorySelect} />)}
+          <section className={categoryId ? 'grid grid-cols-3 gap-3 p-1 sm:gap-4' : 'relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4'}>
+            {currentSubcategories.map((category, index) => <CategoryCard key={category.id} category={category} index={index} onSelect={handleCategorySelect} variant={categoryId ? 'plain' : 'clean'} />)}
             {currentProducts.map((product) => <ProductCardSimple key={product.id} product={product} onOpen={setSelectedProduct} unavailableLabel={isArabic ? 'غير متاح' : 'Unavailable'} />)}
           </section>
         )}

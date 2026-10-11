@@ -58,7 +58,7 @@ const HeroSlider = ({ slides }) => {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-1.5 sm:space-y-2">
       <section
-        className="relative aspect-[2048/752] touch-pan-y select-none overflow-hidden rounded-[1.35rem] border border-[color:rgb(var(--color-border-rgb)/0.58)] bg-[var(--color-card)] shadow-[0_22px_70px_-34px_rgb(0_0_0/0.9),0_0_40px_-26px_rgb(var(--color-primary-rgb)/0.7)] sm:rounded-[1.65rem]"
+        className="brand-hero-frame relative aspect-[2048/752] touch-pan-y select-none overflow-hidden rounded-[1.35rem] border border-[color:rgb(var(--color-border-rgb)/0.58)] bg-[var(--color-card)] shadow-[0_22px_70px_-34px_rgb(0_0_0/0.9),0_0_40px_-26px_rgb(var(--color-primary-rgb)/0.7)] sm:rounded-[1.65rem]"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={() => { dragStartX.current = null; }}

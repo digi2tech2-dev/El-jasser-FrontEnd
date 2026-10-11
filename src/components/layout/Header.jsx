@@ -201,36 +201,62 @@ const Header = ({ toggleSidebar }) => {
         'app-shell-header-panel ka-card-panel w-full max-w-full overflow-visible rounded-[18px] border px-2 py-0.5 backdrop-blur-[22px] sm:rounded-[24px] sm:px-4 sm:py-1',
         isAdmin && 'border-[color:rgb(var(--color-primary-rgb)/0.26)]'
       )}>
-        <div dir="ltr" className="relative grid min-h-[2.55rem] min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-1.5 sm:min-h-[2.9rem] sm:gap-4">
-          <div className="col-start-2 row-start-1 flex min-w-0 items-center justify-self-end gap-5 sm:gap-6">
+        <div dir="ltr" className="relative grid min-h-[2.55rem] min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1.5 sm:min-h-[2.9rem] sm:gap-4">
+          <div className="col-start-1 row-start-1 flex min-w-0 max-w-full items-center justify-self-start">
+            {shouldShowWallet && (
+              <div className="inline-flex min-w-0 max-w-full items-center">
+                <button
+                  type="button"
+                  onClick={() => navigate(walletTargetPath)}
+                  className="inline-flex h-[1.875rem] min-w-0 max-w-full items-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] px-1.5 text-start text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] min-[380px]:h-8 sm:hidden"
+                  aria-label={language === 'ar' ? 'الرصيد' : 'Balance'}
+                >
+                  <span className="header-wallet-balance max-w-[48px] truncate text-[0.62rem] font-semibold text-[var(--color-text)] min-[380px]:max-w-[62px]">
+                    {walletDisplayValue}
+                  </span>
+                  <span className="inline-flex h-[1.375rem] w-[1.375rem] shrink-0 items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary)]">
+                    <Wallet className="h-3 w-3" />
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate(walletTargetPath)}
+                  className="hidden h-9 min-w-0 max-w-full items-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] px-3 text-start text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] sm:inline-flex"
+                  aria-label={language === 'ar' ? 'المحفظة' : 'Wallet'}
+                >
+                  <span className="min-w-0">
+                    <span className="header-wallet-balance block truncate text-xs font-semibold text-[var(--color-text)]">
+                      {walletDisplayValue}
+                    </span>
+                  </span>
+                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary)]">
+                    <Wallet className="h-4 w-4" />
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="col-start-2 row-start-1 flex items-center justify-self-center">
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="inline-flex -translate-x-10 scale-[1.2] items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+              className="inline-flex shrink-0 items-center rounded-[14px] px-1 py-0.5 transition-all hover:-translate-y-0.5"
             >
               <img
                 src={headerBrandImage}
                 alt="شعار الموقع"
-                className="h-8 w-auto max-w-[4rem] shrink-0 object-contain drop-shadow-[0_4px_8px_rgba(224,177,59,0.24)] min-[380px]:h-9 sm:h-10"
+                className="h-8 w-auto max-w-[4rem] shrink-0 object-contain drop-shadow-[0_4px_8px_rgba(224,177,59,0.24)] min-[380px]:h-9 min-[380px]:max-w-[4.5rem] sm:h-10 sm:max-w-[5rem]"
                 decoding="async"
               />
             </button>
-
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] hover:text-[var(--color-primary)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
-              aria-label={language === 'ar' ? 'فتح القائمة' : 'Open menu'}
-            >
-              <Menu className="h-3.5 w-3.5" />
-            </button>
-
           </div>
 
           <div className={cn(
-            'header-mobile-actions col-start-1 row-start-1 flex min-w-0 shrink-0 items-center gap-1 justify-self-start px-0 sm:gap-2'
+            'header-mobile-actions relative col-start-3 row-start-1 flex min-w-0 items-center gap-0.5 justify-self-end px-0 min-[380px]:gap-1 sm:gap-2'
           )}>
-            <div ref={notificationsRef} className="relative">
+            <div ref={notificationsRef} className="flex shrink-0 items-center">
               <button
                 type="button"
                 onClick={handleNotificationsToggle}
@@ -246,7 +272,7 @@ const Header = ({ toggleSidebar }) => {
               </button>
 
               {isNotificationsOpen ? (
-                <div className={`absolute top-12 z-50 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[color:rgb(var(--color-card-rgb)/0.96)] shadow-[0_26px_70px_-42px_rgb(0_0_0/0.92)] backdrop-blur-xl ${isRTL ? 'left-0' : 'right-0'}`}>
+                <div dir={isRTL ? 'rtl' : 'ltr'} className="absolute right-0 top-12 z-50 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[color:rgb(var(--color-card-rgb)/0.96)] shadow-[0_26px_70px_-42px_rgb(0_0_0/0.92)] backdrop-blur-xl">
                   <div className="border-b border-[color:rgb(var(--color-border-rgb)/0.68)] px-4 py-3">
                     <p className="text-sm font-bold text-[var(--color-text)]">الإشعارات</p>
                   </div>
@@ -314,39 +340,14 @@ const Header = ({ toggleSidebar }) => {
               </button>
             ) : null}
 
-            {shouldShowWallet && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => navigate(walletTargetPath)}
-                  className="inline-flex h-[1.875rem] shrink-0 items-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] px-1.5 text-start text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] min-[380px]:h-8 sm:hidden"
-                  aria-label={language === 'ar' ? 'الرصيد' : 'Balance'}
-                >
-                    <span className="header-wallet-balance max-w-[48px] truncate text-[0.62rem] font-semibold text-[var(--color-text)] min-[380px]:max-w-[62px]">
-                    {walletDisplayValue}
-                  </span>
-                  <span className="inline-flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary)]">
-                    <Wallet className="h-3 w-3" />
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate(walletTargetPath)}
-                  className="hidden h-9 items-center gap-2 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] px-3 text-start text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] sm:inline-flex"
-                  aria-label={language === 'ar' ? 'المحفظة' : 'Wallet'}
-                >
-                  <span className="min-w-0">
-                    <span className="header-wallet-balance block truncate text-xs font-semibold text-[var(--color-text)]">
-                      {walletDisplayValue}
-                    </span>
-                  </span>
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary)]">
-                    <Wallet className="h-4 w-4" />
-                  </span>
-                </button>
-              </>
-            )}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-elevated-rgb)/0.78))] text-[var(--color-text)] shadow-[var(--shadow-subtle)] transition-all hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.52)] hover:text-[var(--color-primary)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
+              aria-label={language === 'ar' ? 'فتح القائمة' : 'Open menu'}
+            >
+              <Menu className="h-3.5 w-3.5" />
+            </button>
           </div>
 
         </div>

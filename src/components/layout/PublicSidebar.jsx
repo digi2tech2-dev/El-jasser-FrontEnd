@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 import dragonLogo from '../../assets/elgny.webp';
+import SidebarWave from './SidebarWave';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4.5 w-4.5 shrink-0">
@@ -84,9 +85,10 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
         }}
         className="fixed right-3 top-3 z-[110] block h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] overflow-hidden transition-[transform,width] duration-200 ease-out sm:right-4 sm:top-4 sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] motion-reduce:transition-none"
       >
-        <div className={cn(
-          'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col overflow-hidden rounded-[32px] border backdrop-blur-[24px]'
+        <div style={{ clipPath: 'url(#public-sidebar-wave)' }} className={cn(
+          'app-shell-sidebar-panel ka-sidebar-panel sidebar-wave-panel relative flex h-full flex-col overflow-hidden rounded-[32px] border backdrop-blur-[24px]'
         )}>
+          <SidebarWave id="public-sidebar-wave" />
           <div className="relative z-10 px-4 pb-4 pt-5">
             <div className="ka-sidebar-action-card mt-4">
               <div className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-text)]">

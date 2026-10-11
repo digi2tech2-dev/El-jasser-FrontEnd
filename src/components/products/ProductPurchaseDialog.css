@@ -5219,8 +5219,8 @@
 }
 
 .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow) .ppd-gold-usd {
-  font-size: 0.48rem !important;
-  padding: 0.12rem 0.3rem !important;
+  font-size: 0.62rem !important;
+  padding: 0.18rem 0.45rem !important;
 }
 
 .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow) .purchase-dialog-field {
@@ -5383,4 +5383,136 @@
 .purchase-dialog-overlay .purchase-dialog-backdrop {
   backdrop-filter: blur(8px) saturate(1.05);
   -webkit-backdrop-filter: blur(8px) saturate(1.05);
+}
+
+/* Shared royal palette; dimensions and purchase states stay unchanged. */
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow) {
+  --ppd-gold-hi: var(--color-secondary-soft);
+  --ppd-gold: var(--brand-gold);
+  border-color: var(--brand-gold) !important;
+  background: linear-gradient(150deg, var(--color-card), var(--color-surface)) !important;
+  color: var(--color-text) !important;
+  box-shadow: inset 0 1px rgb(var(--brand-gold-rgb) / 0.22), var(--shadow-medium) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-product h2, .purchase-dialog-field-label, .purchase-dialog-field > span) {
+  color: var(--color-text) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-description, .ppd-gold-label, .ppd-gold-range, .ppd-gold-usd) {
+  color: var(--color-text-secondary) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-field, .purchase-dialog-image, .ppd-gold-row, .purchase-dialog-secondary) {
+  border-color: rgb(var(--brand-gold-rgb) / 0.4) !important;
+  background: var(--color-card) !important;
+  color: var(--color-text) !important;
+  box-shadow: inset 0 1px rgb(var(--brand-gold-rgb) / 0.1) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-field input, .purchase-dialog-field select, .purchase-dialog-input-shell input, .ppd-gold-input) {
+  border-color: rgb(var(--brand-gold-rgb) / 0.4) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+.purchase-dialog-primary:not(:disabled) {
+  border-color: var(--brand-gold) !important;
+  background: var(--brand-metal) !important;
+  color: #102440 !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-primary:not(:disabled) svg, .purchase-dialog-field-label svg) { color: inherit !important; }
+
+html.performance-lite:is(.dark, :not(.dark)) .purchase-dialog-overlay .purchase-dialog-card { box-shadow: none !important; }
+html.performance-lite:is(.dark, :not(.dark)) .purchase-dialog-overlay .purchase-dialog-backdrop {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* A vector rim follows the scalloped silhouette without adding image downloads. */
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference.purchase-dialog-card--royal:not(.is-wallet-flow) {
+  border-color: transparent !important;
+  border-radius: 0 !important;
+}
+
+.purchase-dialog-card > .purchase-dialog-royal-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-description, .purchase-dialog-field, .ppd-gold-row, .purchase-dialog-price-card) {
+  border-color: rgb(var(--brand-gold-rgb) / 0.48) !important;
+  background: linear-gradient(125deg, rgb(var(--brand-gold-rgb) / 0.09), transparent 60%), var(--color-card) !important;
+  box-shadow: inset 0 1px rgb(var(--brand-gold-rgb) / 0.18) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+.purchase-dialog-description::before { background: none !important; }
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-description p, .ppd-gold-price, .purchase-dialog-copy-card strong) {
+  color: var(--color-text) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-description-icon, .ppd-gold-total-icon, .purchase-dialog-copy-card svg) {
+  color: var(--color-secondary) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-id-mark, .purchase-dialog-input-badge) {
+  border-color: var(--brand-gold) !important;
+  background: var(--brand-metal) !important;
+  color: var(--brand-navy) !important;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.3) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+.ppd-gold-usd {
+  border: 1px solid rgb(var(--brand-gold-rgb) / 0.5) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+.ppd-gold-divider {
+  background: linear-gradient(180deg, transparent, rgb(var(--brand-gold-rgb) / 0.5), transparent) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(.purchase-dialog-field textarea, .purchase-dialog-input-shell) {
+  border-color: rgb(var(--brand-gold-rgb) / 0.4) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(input, textarea)::placeholder { color: var(--color-text-muted) !important; opacity: 1; }
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+:is(input, select, textarea):focus-visible {
+  border-color: var(--brand-gold) !important;
+  outline: 2px solid var(--brand-gold) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+
+:root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
+.purchase-dialog-close {
+  border: 1px solid var(--brand-gold) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  box-shadow: inset 0 1px rgb(var(--brand-gold-rgb) / 0.2) !important;
 }

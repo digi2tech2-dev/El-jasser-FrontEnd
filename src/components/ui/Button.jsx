@@ -14,7 +14,7 @@ export const buttonClassName = baseButtonClassName;
 const Button = React.forwardRef(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
   const variants = {
     primary:
-      'glow-button border-transparent bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-soft)_48%,var(--color-primary-hover))] text-[var(--color-button-text)] shadow-[var(--shadow-gold)] hover:brightness-[1.03] hover:shadow-[0_26px_58px_-28px_rgb(var(--color-primary-rgb)/0.56)]',
+      'glow-button border-transparent bg-[image:var(--brand-action)] text-[var(--brand-action-text)] shadow-[var(--shadow-gold)] hover:brightness-[1.03] hover:shadow-[0_26px_58px_-28px_rgb(var(--color-primary-rgb)/0.56)]',
     secondary:
       'border-[color:rgb(var(--color-border-rgb)/0.82)] bg-[color:rgb(var(--color-elevated-rgb)/0.76)] text-[var(--color-text)] shadow-[var(--shadow-subtle)] backdrop-blur-xl hover:border-[color:rgb(var(--color-primary-rgb)/0.2)] hover:bg-[color:rgb(var(--color-surface-rgb)/0.86)]',
     danger:

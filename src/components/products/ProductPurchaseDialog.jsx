@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Copy, FileText, LockKeyhole, Package, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -30,6 +30,7 @@ import { devLogger } from '../../utils/devLogger';
 import { useBodyScrollLock } from '../../utils/bodyScrollLock';
 import AddBalance from '../../pages/AddBalance';
 import PaymentDetails from '../../pages/PaymentDetails';
+import SidebarWave from '../layout/SidebarWave';
 import './ProductPurchaseDialog.css';
 
 const getCopy = (language = 'ar') => (
@@ -199,6 +200,7 @@ const ProductPurchaseDialog = ({
   requireAuth = false,
   onRequireAuth,
 }) => {
+  const royalFrameId = `purchase-frame-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const navigate = useNavigate();
   const { language, dir } = useLanguage();
   const { addToast } = useToast();
@@ -801,6 +803,7 @@ const ProductPurchaseDialog = ({
     );
   };
 
+  const hasRoyalFrame = !successOrder && (!showBalanceTopup || topupStep === 'summary');
   const dialog = (
     <div className="purchase-dialog-overlay" dir={dir} role="dialog" aria-modal="true">
       <button type="button" className="purchase-dialog-backdrop" onClick={onClose} aria-label={copy.cancel} />
@@ -809,8 +812,10 @@ const ProductPurchaseDialog = ({
         initial={{ opacity: 0, y: 28, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.18 }}
-        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : (successOrder ? '' : 'purchase-dialog-card--reference')}`}
+        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : (successOrder ? '' : 'purchase-dialog-card--reference')} ${hasRoyalFrame ? 'purchase-dialog-card--royal' : ''}`}
+        style={hasRoyalFrame ? { clipPath: `url(#${royalFrameId})` } : undefined}
       >
+        {hasRoyalFrame ? <SidebarWave id={royalFrameId} variant="purchase" /> : null}
         <div className="purchase-dialog-grid" />
         <button type="button" className="purchase-dialog-close" onClick={onClose} aria-label="Close">
           <X className="h-5 w-5" />

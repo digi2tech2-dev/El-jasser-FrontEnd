@@ -624,7 +624,7 @@ const PaymentDetails = ({
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.25, delay: 0.08, ease: 'easeOut' }}
           onSubmit={handleSubmit}
-          className="mx-auto min-w-0 max-w-2xl py-5"
+          className="deposit-payment-form mx-auto min-w-0 max-w-2xl py-5"
         >
           <div className="mb-5 flex items-center gap-2.5">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500 dark:text-indigo-300">
@@ -636,92 +636,122 @@ const PaymentDetails = ({
             </div>
           </div>
 
-          {visibleMethodFields.map((field) => {
-            const config = fieldConfigs[field];
-            if (!config) return null;
+          <div className="deposit-details-grid" dir={dir}>
+            {visibleMethodFields.map((field) => {
+              const config = fieldConfigs[field];
+              if (!config) return null;
 
-            return (
-              <div key={field} className="mb-3">
-                <label className={`mb-1.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
-                  <span>{config.label}</span>
+              return (
+                <div key={field} className={`deposit-form-field ${field === 'amount' && needsTransactionNumber ? 'deposit-form-field--amount' : 'deposit-form-field--wide'}`}>
+                  <label htmlFor={`payment-${field}`} className={`mb-1.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                    <span>{config.label}</span>
+                    {field === 'amount' ? (
+                      <FieldCompletionBadge complete={Number(formData.amount) > 0} />
+                    ) : null}
+                  </label>
                   {field === 'amount' ? (
-                    <FieldCompletionBadge complete={Number(formData.amount) > 0} />
-                  ) : null}
-                </label>
-                {field === 'amount' ? (
-                  <div
-                    className="flex h-12 overflow-hidden rounded-xl border border-amber-400/55 bg-[color:rgb(var(--color-surface-rgb)/0.72)] shadow-inner shadow-black/5 transition focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-400/15 dark:bg-[linear-gradient(110deg,rgb(15_23_42/0.82),rgb(30_27_18/0.76))] dark:shadow-black/15"
-                    dir={dir}
-                  >
-                    <span
-                      className="grid min-w-16 shrink-0 place-items-center border-e border-amber-500/55 bg-[linear-gradient(145deg,#fde047,#facc15_55%,#eab308)] px-3 font-['Poppins'] text-xl font-black text-slate-950 shadow-[0_0_24px_-12px_rgb(234_179_8/0.9)]"
-                      dir="ltr"
-                      title={paymentCurrencyCode}
+                    <div
+                      className="deposit-field-control deposit-field-control--amount"
+                      dir={dir}
                     >
-                      {paymentCurrencySymbol}
-                    </span>
+                      <span
+                        className="deposit-field-symbol"
+                        dir="ltr"
+                        title={paymentCurrencyCode}
+                      >
+                        {paymentCurrencySymbol}
+                      </span>
+                      <input
+                        id={`payment-${field}`}
+                        type={config.type}
+                        value={formData[field] || ''}
+                        onChange={(e) => handleInputChange(field, e.target.value)}
+                        placeholder={config.placeholder}
+                        min={config.min}
+                        step={config.step}
+                        className="payment-amount-input deposit-field-input"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  ) : (
                     <input
+                      id={`payment-${field}`}
                       type={config.type}
                       value={formData[field] || ''}
                       onChange={(e) => handleInputChange(field, e.target.value)}
                       placeholder={config.placeholder}
                       min={config.min}
                       step={config.step}
-                      className="payment-amount-input min-w-0 flex-1 appearance-none bg-transparent px-4 text-right font-['Poppins'] text-base font-black text-[var(--color-text)] outline-none placeholder:text-right placeholder:font-semibold placeholder:text-[var(--color-text-secondary)] [font-variant-numeric:tabular-nums]"
+                      className={`${paymentInputClassName} ${isRTL ? 'text-right' : 'text-left'}`}
                       disabled={isSubmitting}
                     />
-                  </div>
-                ) : (
-                  <input
-                    type={config.type}
-                    value={formData[field] || ''}
-                    onChange={(e) => handleInputChange(field, e.target.value)}
-                    placeholder={config.placeholder}
-                    min={config.min}
-                    step={config.step}
-                    className={`${paymentInputClassName} ${isRTL ? 'text-right' : 'text-left'}`}
-                    disabled={isSubmitting}
-                  />
-                )}
-                {field === 'amount' && usdPreviewLabel && (
-                  <div className="mt-2 flex items-center gap-2 px-1" dir="ltr">
-                    {/* payment currency pill (only when non-USD) */}
-                    {usdPreviewLabel.local && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/35 bg-amber-50 px-2.5 py-1 dark:border-amber-400/20 dark:bg-amber-400/8">
-                        <span className="text-[10px] font-black text-amber-600 dark:text-amber-300 [font-variant-numeric:tabular-nums]">
-                          {usdPreviewLabel.localSymbol}
+                  )}
+                  {field === 'amount' && usdPreviewLabel && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 px-1" dir="ltr">
+                      {/* payment currency pill (only when non-USD) */}
+                      {usdPreviewLabel.local && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/35 bg-amber-50 px-2.5 py-1 dark:border-amber-400/20 dark:bg-amber-400/8">
+                          <span className="text-[10px] font-black text-amber-600 dark:text-amber-300 [font-variant-numeric:tabular-nums]">
+                            {usdPreviewLabel.localSymbol}
+                          </span>
+                          <span className="font-['Poppins'] text-xs font-extrabold tracking-wide text-amber-700 dark:text-amber-200 [font-variant-numeric:tabular-nums]">
+                            {usdPreviewLabel.local}
+                          </span>
+                          <span className="rounded bg-amber-200/60 px-1 text-[9px] font-black text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
+                            {usdPreviewLabel.localCode}
+                          </span>
                         </span>
-                        <span className="font-['Poppins'] text-xs font-extrabold tracking-wide text-amber-700 dark:text-amber-200 [font-variant-numeric:tabular-nums]">
-                          {usdPreviewLabel.local}
-                        </span>
-                        <span className="rounded bg-amber-200/60 px-1 text-[9px] font-black text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
-                          {usdPreviewLabel.localCode}
-                        </span>
-                      </span>
-                    )}
+                      )}
 
-                    {/* arrow separator */}
-                    {usdPreviewLabel.local && (
-                      <span className="text-[10px] font-black text-gray-400 dark:text-gray-500">≈</span>
-                    )}
+                      {/* arrow separator */}
+                      {usdPreviewLabel.local && (
+                        <span className="text-[10px] font-black text-gray-400 dark:text-gray-500">≈</span>
+                      )}
 
-                    {/* USD equivalent pill */}
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-50 px-2.5 py-1 dark:border-emerald-400/20 dark:bg-emerald-400/8">
-                      <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">$</span>
-                      <span className="font-['Poppins'] text-xs font-extrabold tracking-wide text-emerald-700 dark:text-emerald-300 [font-variant-numeric:tabular-nums]">
-                        {usdPreviewLabel.usd}
+                      {/* USD equivalent pill */}
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-50 px-2.5 py-1 dark:border-emerald-400/20 dark:bg-emerald-400/8">
+                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">$</span>
+                        <span className="font-['Poppins'] text-xs font-extrabold tracking-wide text-emerald-700 dark:text-emerald-300 [font-variant-numeric:tabular-nums]">
+                          {usdPreviewLabel.usd}
+                        </span>
+                        <span className="rounded bg-emerald-200/60 px-1 text-[9px] font-black text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-400">
+                          USD
+                        </span>
                       </span>
-                      <span className="rounded bg-emerald-200/60 px-1 text-[9px] font-black text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-400">
-                        USD
-                      </span>
-                    </span>
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {needsTransactionNumber && (
+            <div className="deposit-form-field deposit-form-field--transaction">
+              <label htmlFor="payment-transaction-id" className={`mb-1.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
+                <span>رقم العملية</span>
+                <FieldCompletionBadge complete={Boolean(String(formData.transactionId || '').trim())} />
+              </label>
+              <div
+                className="deposit-field-control deposit-field-control--transaction"
+                dir={dir}
+              >
+                <span className="deposit-field-symbol">
+                  <Hash className="h-5 w-5 drop-shadow-sm" />
+                </span>
+                <input
+                  id="payment-transaction-id"
+                  type="text"
+                  value={formData.transactionId || ''}
+                  onChange={(e) => handleInputChange('transactionId', e.target.value)}
+                  placeholder="أدخل رقم العملية"
+                  className="deposit-field-input"
+                  disabled={isSubmitting}
+                  required
+                />
               </div>
-            );
-          })}
+          </div>
+          )}
+          </div>
 
-          <div className="grid gap-x-4 sm:grid-cols-2">
           {senderDetailRequirement && (
             <div className="mb-4">
               <label className={`mb-1.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -769,33 +799,6 @@ const PaymentDetails = ({
             </div>
           )}
 
-          {needsTransactionNumber && (
-          <div className="mb-4">
-            <label className={`mb-1.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
-              <span>رقم العملية</span>
-              <FieldCompletionBadge complete={Boolean(String(formData.transactionId || '').trim())} />
-            </label>
-            <div
-              className="flex h-12 overflow-hidden rounded-xl border border-indigo-400/55 bg-indigo-50/50 shadow-inner shadow-black/5 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-400/15 dark:bg-[linear-gradient(110deg,rgb(30_27_75/0.78),rgb(8_47_73/0.72))] dark:shadow-black/15"
-              dir={dir}
-            >
-              <span className="grid min-w-16 shrink-0 place-items-center border-e border-indigo-600/50 bg-[linear-gradient(145deg,#818cf8,#4f46e5_52%,#2563eb)] text-white shadow-[0_0_24px_-12px_rgb(79_70_229/0.9)]">
-                <Hash className="h-5 w-5 drop-shadow-sm" />
-              </span>
-              <input
-                type="text"
-                value={formData.transactionId || ''}
-                onChange={(e) => handleInputChange('transactionId', e.target.value)}
-                placeholder="أدخل رقم العملية"
-                className="min-w-0 flex-1 bg-transparent px-4 text-right font-['Poppins'] text-sm font-black tracking-wide text-indigo-700 outline-none placeholder:font-semibold placeholder:tracking-normal placeholder:text-[var(--color-text-secondary)] dark:text-indigo-200 [font-variant-numeric:tabular-nums]"
-                disabled={isSubmitting}
-                required
-              />
-            </div>
-          </div>
-          )}
-          </div>
-
           {requiresReceipt && (
             <div className="mb-5 border-t border-[color:rgb(var(--color-border-rgb)/0.58)] pt-5">
               <label className={`mb-2.5 flex items-center justify-between gap-2 text-xs font-black text-[var(--color-text)] ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -811,7 +814,7 @@ const PaymentDetails = ({
             </div>
           )}
 
-          <div className="mb-5 rounded-2xl border border-indigo-500/15 bg-[linear-gradient(135deg,rgb(6_182_212/0.07),rgb(79_70_229/0.08))] p-4">
+          <div className="deposit-payment-summary mb-5 rounded-2xl border border-indigo-500/15 bg-[linear-gradient(135deg,rgb(6_182_212/0.07),rgb(79_70_229/0.08))] p-4">
             <div className="flex items-center justify-between gap-3 px-1 text-xs">
               <span className="font-bold text-[var(--color-text-secondary)]">
                 {t('payments.subtotalLabel', {
@@ -869,7 +872,7 @@ const PaymentDetails = ({
             aria-busy={isSubmitting}
             whileTap={{ scale: 0.985 }}
             whileHover={!isSubmitting ? { y: -1 } : undefined}
-            className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#0891b2_0%,#2563eb_55%,#4f46e5_100%)] px-5 text-sm font-black text-white shadow-[0_20px_38px_-22px_rgba(37,99,235,0.9)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+            className="deposit-submit-button group flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#0891b2_0%,#2563eb_55%,#4f46e5_100%)] px-5 text-sm font-black text-white shadow-[0_20px_38px_-22px_rgba(37,99,235,0.9)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

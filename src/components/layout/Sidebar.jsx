@@ -46,6 +46,7 @@ import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../..
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
 import dragonLogo from '../../assets/elgny.webp';
+import SidebarWave from './SidebarWave';
 
 const ADMIN_NAV_ROLES = ['admin', 'super_admin', ...SUPERVISOR_ROLES];
 
@@ -164,7 +165,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     },
     { icon: IdCard, label: t('sidebar.myAccount', { defaultValue: dir === 'rtl' ? 'حسابي' : 'My Account' }), path: '/account', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
     { icon: LockKeyhole, label: t('sidebar.accountProtection', { defaultValue: dir === 'rtl' ? 'حماية الحساب' : 'Account Security' }), path: '/account-security', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
-    { icon: Share2, label: dir === 'rtl' ? 'رابط الإحالة اكسب واسحب' : 'Referral Link — Earn & Withdraw', path: '/referral', roles: ['customer'] },
+    { icon: Share2, label: dir === 'rtl' ? 'العملاء التابعة لي' : 'My Customers', path: '/referral', roles: ['customer'] },
     {
       icon: ShoppingCart,
       label: t('sidebar.myOrders', { defaultValue: dir === 'rtl' ? 'طلباتي' : 'My Orders' }),
@@ -321,11 +322,13 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
           isMobile && !isOpen && 'pointer-events-none'
         )}
       >
-        <div className={cn(
+        <div style={isExpanded ? { clipPath: 'url(#account-sidebar-wave)' } : undefined} className={cn(
           'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col rounded-[32px] border',
+          isExpanded && 'sidebar-wave-panel',
           !isMobile && 'backdrop-blur-[24px]',
           isAdmin && 'border-[color:rgb(var(--color-primary-rgb)/0.26)]'
         )}>
+          {isExpanded && <SidebarWave id="account-sidebar-wave" />}
           <div className={cn('relative z-10', isExpanded ? 'px-4 pb-2 pt-2' : 'px-4 pb-4 pt-5')}>
             <div className={cn('relative flex items-center', isExpanded ? 'justify-center' : 'justify-center')}>
               {!isExpanded && (
