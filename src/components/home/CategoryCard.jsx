@@ -61,7 +61,7 @@ const CategoryCard = ({
       style={{ animation: 'page-fade-in 280ms ease-out both', animationDelay: `${Math.min(index * 35, 210)}ms` }}
     >
       <div className="flex w-full justify-center">
-        <div className="relative inline-block max-w-full overflow-hidden rounded-[1.35rem]">
+        <div className="storefront-category-image-frame relative inline-block max-w-full overflow-hidden rounded-[1.35rem]">
           <img
             src={category.image}
             alt={category.title}

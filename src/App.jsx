@@ -11,6 +11,7 @@ import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
 import AppUpdateController from './components/app/AppUpdateController';
 import appLogo from './assets/elgny.webp';
+import appIconImage from './assets/تطبيق.jpeg';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -23,6 +24,7 @@ import {
 } from './utils/accountStatus';
 import useAuthStore from './store/useAuthStore';
 import { routeLoaders } from './transitions/routeModules';
+import { isNativeApp } from './utils/platform';
 
 const Layout = lazy(routeLoaders.Layout);
 const Auth = lazy(routeLoaders.Auth);
@@ -525,7 +527,7 @@ const AnimatedAppRoutes = ({ location }) => {
 };
 
 const LoginAfterIntroPrompt = ({ isOpen, onClose, onContinue }) => {
-  if (!isOpen) return null;
+  if (!isOpen || isNativeApp()) return null;
 
   return (
     <div className="login-after-intro" role="dialog" aria-modal="true" aria-labelledby="login-after-intro-title">
@@ -534,7 +536,7 @@ const LoginAfterIntroPrompt = ({ isOpen, onClose, onContinue }) => {
         <section className="login-after-intro__card">
         <div className="login-after-intro__brand" dir="ltr">
           <span className="login-after-intro__icon" aria-hidden="true">
-            <img src={appLogo} alt="" />
+            <img src={appIconImage} alt="" />
           </span>
           <span>EL-JASSER APP</span>
         </div>

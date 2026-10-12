@@ -11,6 +11,7 @@ import {
   Coins,
   Copy,
   CreditCard,
+  Download,
   Headset,
   FolderKanban,
   Gauge,
@@ -45,6 +46,7 @@ import HeaderBrand from './HeaderBrand';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
+import { isNativeApp } from '../../utils/platform';
 import dragonLogo from '../../assets/elgny.webp';
 import SidebarWave from './SidebarWave';
 
@@ -165,6 +167,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     },
     { icon: IdCard, label: t('sidebar.myAccount', { defaultValue: dir === 'rtl' ? 'حسابي' : 'My Account' }), path: '/account', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
     { icon: LockKeyhole, label: t('sidebar.accountProtection', { defaultValue: dir === 'rtl' ? 'حماية الحساب' : 'Account Security' }), path: '/account-security', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
+    { icon: Download, label: dir === 'rtl' ? 'حمّل التطبيق على أندرويد' : 'Download the Android app', path: '/download-app', roles: ['admin', 'customer', ...SUPERVISOR_ROLES], visible: () => !isNativeApp() },
     { icon: Share2, label: dir === 'rtl' ? 'العملاء التابعة لي' : 'My Customers', path: '/referral', roles: ['customer'] },
     {
       icon: ShoppingCart,

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2, Copy, Download, ExternalLink, HardDriveDownload, Info, ShieldCheck, Smartphone, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import brandIconImage from '../assets/elgny.webp';
+import appIconImage from '../assets/تطبيق.jpeg';
 import { fetchAndroidReleaseManifest, getReleaseNotesForLanguage } from '../services/appUpdate';
 
 const formatSize = (bytes, language) => {
@@ -63,6 +64,7 @@ const DownloadApp = () => {
           <div className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-amber-300/20 blur-3xl" />
           <div className="relative grid items-center gap-7 lg:grid-cols-[1.08fr_0.92fr]">
             <div>
+              <img src={appIconImage} alt={isArabic ? 'صورة تطبيق EL-JASSER' : 'EL-JASSER app icon'} className="mb-5 h-24 w-24 rounded-[1.4rem] border border-amber-200/60 object-cover shadow-[0_14px_35px_-18px_rgba(8,127,155,0.8)] sm:h-28 sm:w-28" />
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-3 py-1.5 text-xs font-black text-cyan-800 dark:text-cyan-100">
                 <Smartphone className="h-4 w-4" /> Android app
               </div>

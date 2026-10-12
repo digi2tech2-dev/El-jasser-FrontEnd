@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  Download,
   Headset,
   House,
   InfoIcon,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 import dragonLogo from '../../assets/elgny.webp';
+import { isNativeApp } from '../../utils/platform';
 import SidebarWave from './SidebarWave';
 
 const GoogleMark = () => (
@@ -51,6 +53,12 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
       onClick: onAbout,
       isActive: pathname === '/about-us',
     },
+    ...(!isNativeApp() ? [{
+      icon: Download,
+      label: isArabic ? 'حمّل التطبيق على أندرويد' : 'Download the Android app',
+      onClick: () => { navigate('/download-app'); onClose(); },
+      isActive: pathname === '/download-app',
+    }] : []),
     {
       icon: Code2,
       label: isArabic ? 'تم الإنشاء بواسطة' : 'Created By',

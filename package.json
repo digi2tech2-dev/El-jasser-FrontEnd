@@ -11,6 +11,7 @@
     "android:open": "cap open android",
     "android:apk": "cap sync android && cd android && gradlew.bat assembleDebug",
     "generate:favicons": "node scripts/generate-favicons.mjs",
+    "generate:app-icons": "node scripts/generate-app-icons.mjs",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test:app-update": "node --test src/services/appUpdate.test.js"
