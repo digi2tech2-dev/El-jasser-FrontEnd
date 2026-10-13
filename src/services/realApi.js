@@ -355,21 +355,18 @@ const requestTokenRefresh = async (refreshToken) => {
 let refreshUnsupported = false;
 
 let refreshInFlight = null;
-let refreshQueue = [];
-const flushRefreshQueue = (error, token) => {
-  const queue = [...refreshQueue];
-  refreshQueue = [];
-  queue.forEach(({ resolve, reject, request }) => {
-    if (error) {
-      reject(error);
-      return;
-    }
-    request.headers = {
-      ...(request.headers || {}),
-      Authorization: `Bearer ${token}`,
-    };
-    resolve(http(request));
-  });
+const refreshAccessToken = (refreshToken) => {
+  if (!refreshInFlight) {
+    refreshInFlight = requestTokenRefresh(refreshToken).finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight;
+};
+
+const isConfirmedSessionFailure = (error) => {
+  const status = Number(error?.response?.status || error?.status || 0);
+  return status === 400 || status === 401 || status === 403 || status === 404;
 };
 
 // ─── Request interceptor: attach JWT ─────────────────────────────────────────
@@ -401,27 +398,8 @@ http.interceptors.response.use(
       if (canRetryWithRefresh) {
         originalRequest._retryWithRefresh = true;
 
-        if (refreshInFlight) {
-          return new Promise((resolve, reject) => {
-            refreshQueue.push({ resolve, reject, request: originalRequest });
-          });
-        }
-
-        refreshInFlight = requestTokenRefresh(refreshToken)
-          .then((nextAccessToken) => {
-            flushRefreshQueue(null, nextAccessToken);
-            return nextAccessToken;
-          })
-          .catch((refreshError) => {
-            flushRefreshQueue(refreshError, null);
-            throw refreshError;
-          })
-          .finally(() => {
-            refreshInFlight = null;
-          });
-
         try {
-          const nextAccessToken = await refreshInFlight;
+          const nextAccessToken = await refreshAccessToken(refreshToken);
           originalRequest.headers = {
             ...(originalRequest.headers || {}),
             Authorization: `Bearer ${nextAccessToken}`,
@@ -432,7 +410,9 @@ http.interceptors.response.use(
           if (refreshStatus === 404) {
             refreshUnsupported = true;
           }
-          forceLogoutAndRedirect(SESSION_EXPIRED_REASON);
+          if (isConfirmedSessionFailure(refreshError)) {
+            forceLogoutAndRedirect(SESSION_EXPIRED_REASON);
+          }
           return Promise.reject(wrapHttpError(refreshError));
         }
       }
@@ -2098,7 +2078,7 @@ const realApi = {
       if (!refreshToken) return null;
 
       try {
-        const token = await requestTokenRefresh(refreshToken);
+        const token = await refreshAccessToken(refreshToken);
         return { token };
       } catch {
         return null;

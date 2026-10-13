@@ -23,10 +23,7 @@ const isVodafoneCashMethod = (method) => {
   return token.includes('vodafone') || token.includes('فودافون');
 };
 
-const requiresTransactionNumber = (method) => {
-  const type = normalizeMethodType(method?.type);
-  return ['mobile_wallet', 'e_wallet', 'ewallet', 'electronic_wallet'].includes(type);
-};
+const requiresTransactionNumber = (method) => isVodafoneCashMethod(method);
 
 const getReceiverDestination = (method) => {
   const accountNumber = String(method?.accountNumber || '').trim();

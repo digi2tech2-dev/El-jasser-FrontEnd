@@ -803,7 +803,7 @@
     position: absolute;
     right: 50%;
     bottom: calc(100% + 0.75rem);
-    width: 6.25rem;
+    width: 5rem;
     aspect-ratio: 1;
     transform: translateX(50%);
     filter: drop-shadow(0 14px 16px rgb(0 0 0 / 0.26)) drop-shadow(0 0 12px rgb(212 164 45 / 0.2));
@@ -819,6 +819,11 @@
     visibility: visible;
     cursor: pointer;
     text-decoration: none;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
     transition: transform 0.2s ease;
   }
 
@@ -1770,7 +1775,7 @@ html[data-page-transition="running"] {
 
   .floating-whatsapp-promos {
     bottom: calc(100% + 0.6rem);
-    width: 5rem;
+    width: 4rem;
   }
 
   .floating-whatsapp-tooltip {
@@ -7043,6 +7048,10 @@ header .ka-card-panel :where(button[class*="rounded-full"], a[class*="rounded-fu
   mask-composite: exclude;
   animation: neon-edge-orbit 5s linear infinite;
   pointer-events: none;
+}
+
+:root.dark .storefront-category-card--clean .storefront-category-image-frame::before {
+  border-width: 3px;
 }
 
 :root:not(.dark) .storefront-category-card--clean .storefront-category-image-frame::before {

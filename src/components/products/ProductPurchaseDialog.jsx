@@ -1,9 +1,10 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, FileText, LockKeyhole, Package, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
+import { Check, Copy, FileText, Heart, LockKeyhole, Package, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
+import useFavoritesStore, { favoriteUserKey } from '../../store/useFavoritesStore';
 import useMediaStore from '../../store/useMediaStore';
 import useOrderStore from '../../store/useOrderStore';
 import useSystemStore from '../../store/useSystemStore';
@@ -207,6 +208,9 @@ const ProductPurchaseDialog = ({
   const copy = useMemo(() => getCopy(language), [language]);
 
   const user = useAuthStore((state) => state.user);
+  const favoriteKey = favoriteUserKey(user);
+  const isFavorite = useFavoritesStore((state) => Boolean(favoriteKey && (state.favoritesByUser[favoriteKey] || []).includes(String(productId || initialProduct?.id || ''))));
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const updateUserSession = useAuthStore((state) => state.updateUserSession);
   const products = useMediaStore((state) => state.products);
   const loadProducts = useMediaStore((state) => state.loadProducts);
@@ -958,7 +962,7 @@ const ProductPurchaseDialog = ({
           </div>
         ) : (
           <>
-            <div className="purchase-dialog-product">
+            <div className="purchase-dialog-product purchase-dialog-product--inline">
               <div className="purchase-dialog-platform-logo" title="Dra90n STORE">
                 <img className="purchase-dialog-logo-dark" src={brandLogoDark} alt="Dra90n STORE" />
                 <img className="purchase-dialog-logo-light" src={brandLogoLight} alt="Dra90n STORE" />
@@ -968,11 +972,30 @@ const ProductPurchaseDialog = ({
                   <ProductImage product={product} />
                 </div>
               </div>
-              <div className="min-w-0">
-                <h2>{displayNameAr}</h2>
-                {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr">{displayNameEn}</p> : null}
-                <span className={isPurchasable ? 'is-available' : 'is-unavailable'}>{statusLabel}</span>
+              <div className="purchase-dialog-product-copy min-w-0">
+                <div className="purchase-dialog-product-line">
+                  <h2 title={displayNameAr}>{displayNameAr}</h2>
+                  {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr" title={displayNameEn}>{displayNameEn}</p> : null}
+                  <span className={isPurchasable ? 'is-available' : 'is-unavailable'}>{statusLabel}</span>
+                </div>
               </div>
+              {favoriteKey ? (
+                <button
+                  type="button"
+                  className={`purchase-dialog-favorite${isFavorite ? ' is-favorite' : ''}`}
+                  onClick={() => {
+                    toggleFavorite(favoriteKey, product.id);
+                    addToast(isFavorite
+                      ? (language === 'en' ? 'Removed from favorites' : 'تمت الإزالة من المفضلة')
+                      : (language === 'en' ? 'Added to favorites' : 'تمت الإضافة إلى المفضلة'), 'success');
+                  }}
+                  aria-label={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                  aria-pressed={isFavorite}
+                  title={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                >
+                  <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
+                </button>
+              ) : null}
             </div>
 
             {productDescription || copy.shippingNotice ? (

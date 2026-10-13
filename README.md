@@ -359,7 +359,7 @@ Authentication state is owned by `src/store/useAuthStore.js` and the real backen
 - Refresh calls `POST /auth/refresh` with `{ refreshToken }`.
 - Concurrent requests wait behind a single refresh attempt.
 - Login, register, Google, 2FA, and refresh endpoints skip forced-logout handling.
-- If refresh is unsupported or fails, the adapter clears `auth-storage`, writes `auth:logout-reason = "expired"`, and dispatches `auth:force-logout`.
+- A confirmed refresh rejection clears `auth-storage`, writes `auth:logout-reason = "expired"`, and dispatches `auth:force-logout`. Network and server errors leave the saved session intact for a later retry.
 - `SessionBootstrap` listens for `auth:force-logout` and calls the auth-store logout action.
 
 ### Logout
@@ -786,7 +786,7 @@ Do not assume tests exist or pass unless a script is added and run.
 | Missing `/api` in base URL | Add `/api`; the backend mounts routes under `/api`, and upload URL resolution expects this shape. |
 | CORS errors | Backend CORS must allow the frontend origin, especially `http://localhost:3000` in local dev. |
 | Auth redirect loop | Clear `auth-storage` and `auth:logout-reason`, then log in again. Also check account status returned by backend. |
-| Refresh-token failure | The frontend calls `POST /auth/refresh`; if the backend does not implement it or returns an error, the frontend clears auth and forces logout. |
+| Refresh-token failure | The frontend calls `POST /auth/refresh` after an authentication error. Network and server errors keep the saved session; a confirmed token rejection or missing refresh endpoint signs the user out. |
 | Multipart deposit upload fails | Ensure the request uses real mode, the backend accepts `receipt`, file size/type is allowed by backend, and the payment method still exists. |
 | Order-field image upload fails | Ensure `/me/upload/order-field-image` exists and accepts field name `image`. |
 | Broken uploaded images | Ensure backend serves `/uploads` and `VITE_API_BASE_URL` includes `/api` so the frontend can derive the backend origin. |

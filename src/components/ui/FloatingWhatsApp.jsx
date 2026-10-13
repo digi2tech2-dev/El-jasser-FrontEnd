@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import { isAdminRole } from '../../utils/authRoles';
 import WhatsAppContactChooser from './WhatsAppContactChooser';
+import floatingImage from '../../assets/عائم.jpeg';
 
 const FloatingWhatsApp = () => {
   const [showContactChooser, setShowContactChooser] = useState(false);
@@ -26,9 +27,25 @@ const FloatingWhatsApp = () => {
     ? 'مرحباً، أحتاج مساعدة من فريق El-Jasser'
     : 'Hello, I need help from the El-Jasser team';
   const tooltipText = isArabic ? 'تواصل معنا' : 'Chat with us';
+  const showFloatingImage = location.pathname === '/'
+    || location.pathname === '/catalog'
+    || location.pathname === '/dashboard'
+    || location.pathname.startsWith('/dashboard/');
 
   return (
     <div className="floating-whatsapp">
+      {showFloatingImage && (
+        <div className="floating-whatsapp-promos">
+          <button
+            type="button"
+            className="floating-whatsapp-promo"
+            onClick={() => setShowContactChooser(true)}
+            aria-label={isArabic ? 'تواصل معنا عبر واتساب' : 'Contact us on WhatsApp'}
+          >
+            <img className="floating-whatsapp-promo-image" src={floatingImage} alt="" />
+          </button>
+        </div>
+      )}
       <button
         type="button"
         onClick={() => setShowContactChooser(true)}

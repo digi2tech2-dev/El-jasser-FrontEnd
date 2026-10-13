@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
-import apiClient from '../../services/client';
 import { initializeNativePush, PUSH_ACTION_EVENT } from '../../services/pushNotifications';
 
 const AUTH_FORCE_LOGOUT_EVENT = 'auth:force-logout';
@@ -141,12 +140,6 @@ const SessionBootstrap = () => {
     let idleHandle = null;
 
     const syncSession = async () => {
-      await runSilently(async () => {
-        await apiClient.auth.refreshSession?.();
-      });
-
-      if (cancelled) return;
-
       let profileRequiresCompletion = false;
       await runSilently(async () => {
         const profile = await useAuthStore.getState().refreshProfile?.({ force: true });
