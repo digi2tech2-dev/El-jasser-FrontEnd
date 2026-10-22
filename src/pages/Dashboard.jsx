@@ -20,6 +20,7 @@ import slideFourHeroImage from '../assets/slide-4.webp';
 import targetBannerImage from '../assets/target-banner.webp';
 import genieArtwork from '../assets/elgny.webp';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
+import { warmProductImages } from '../utils/productImageWarmup';
 import {
   createStorefrontCategories,
   createStorefrontProducts,
@@ -90,7 +91,11 @@ const Dashboard = () => {
   }, [refreshProfile]);
 
   useEffect(() => {
+    let lastRefreshAt = 0;
     const refreshProducts = () => {
+      const now = Date.now();
+      if (now - lastRefreshAt < 2 * 60 * 1000) return;
+      lastRefreshAt = now;
       void loadProducts({ force: true, bypassCache: true });
     };
     const refreshWhenVisible = () => {
@@ -100,7 +105,7 @@ const Dashboard = () => {
     refreshProducts();
     window.addEventListener('focus', refreshProducts);
     document.addEventListener('visibilitychange', refreshWhenVisible);
-    const refreshInterval = window.setInterval(refreshProducts, 30_000);
+    const refreshInterval = window.setInterval(refreshProducts, 2 * 60 * 1000);
 
     return () => {
       window.removeEventListener('focus', refreshProducts);
@@ -113,7 +118,12 @@ const Dashboard = () => {
     if (!isRealProvider) return undefined;
     let mounted = true;
     apiClient.publicCatalog.fetch()
-      .then((catalog) => { if (mounted) setPublicCatalog(catalog); })
+      .then((catalog) => {
+        if (mounted) {
+          setPublicCatalog(catalog);
+          warmProductImages(catalog?.products);
+        }
+      })
       .catch(() => { if (mounted) setPublicCatalog(null); });
     return () => { mounted = false; };
   }, []);
@@ -267,7 +277,7 @@ const Dashboard = () => {
         {(currentSubcategories.length > 0 || currentProducts.length > 0) && (
           <section className={categoryId ? 'grid grid-cols-3 gap-3 p-1 sm:gap-4' : 'relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4'}>
             {currentSubcategories.map((category, index) => <CategoryCard key={category.id} category={category} index={index} onSelect={handleCategorySelect} variant={categoryId ? 'plain' : 'clean'} />)}
-            {currentProducts.map((product) => <ProductCardSimple key={product.id} product={product} onOpen={setSelectedProduct} unavailableLabel={isArabic ? 'غير متاح' : 'Unavailable'} />)}
+            {currentProducts.map((product, index) => <ProductCardSimple key={product.id} product={product} priority={index < 9} onOpen={setSelectedProduct} unavailableLabel={isArabic ? 'غير متاح' : 'Unavailable'} />)}
           </section>
         )}
         {categoryId && !currentSubcategories.length && !currentProducts.length && (

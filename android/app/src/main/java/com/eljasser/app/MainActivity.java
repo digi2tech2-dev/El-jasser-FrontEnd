@@ -24,23 +24,20 @@ public class MainActivity extends BridgeActivity {
         // plugins to its builder before that happens.
         registerPlugin(NativeGoogleAuthPlugin.class);
         super.onCreate(savedInstanceState);
-        refreshRemoteSiteAssets();
+        enableRemoteSiteCache();
         requestRequiredPermissions();
     }
 
     /**
-     * The APK loads a remote Vite site. Cached HTML can reference hashed CSS
-     * files removed by a later deployment, leaving the app without styling.
-     * Keep cookies and local storage, but reload the page with fresh assets.
+     * Keep WebView's disk cache across launches. The web app validates its HTML
+     * online while hashed assets and product images can be reused locally.
      */
-    private void refreshRemoteSiteAssets() {
+    private void enableRemoteSiteCache() {
         if (getBridge() == null) return;
         WebView webView = getBridge().getWebView();
         if (webView == null) return;
 
-        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        webView.clearCache(true);
-        webView.reload();
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
     }
 
     /**

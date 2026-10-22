@@ -10,6 +10,7 @@ const ProductCardSimple = React.memo(({
   showCategory = false,
   buyLabel = 'Buy now',
   unavailableLabel = 'غير متاح',
+  priority = false,
 }) => {
   const isUnavailable = product.storefrontStatus?.isPurchasable === false;
   const resolvedUnavailableLabel = product.storefrontStatus?.badgeLabel || unavailableLabel;
@@ -39,8 +40,9 @@ const ProductCardSimple = React.memo(({
           <img
             src={resolvedImageSrc}
             alt={displayName}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
             decoding="async"
+            fetchPriority={priority ? 'high' : 'auto'}
             sizes="(max-width: 640px) 32vw, (max-width: 1024px) 24vw, 18vw"
             className={cn(
               'relative block aspect-square h-full w-full bg-transparent object-contain object-center p-2 transition duration-500 group-hover:scale-[1.04]',

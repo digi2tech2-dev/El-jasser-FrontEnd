@@ -651,6 +651,11 @@ const useAuthStore = create((set, get) => ({
           profileRefreshRequest = apiClient.auth.getProfile(currentUserId)
             .then((profile) => {
               const current = get();
+              // A late response must never restore an account after logout or
+              // overwrite a different account that signed in meanwhile.
+              if (!current.token || current.token !== currentState.token || current.user?.id !== currentUserId) {
+                return null;
+              }
               const nextUser = withCanonicalWalletFields({ ...current.user, ...profile });
               const nextStatus = nextUser?.profileCompletionRequired
                 ? 'profile_completion_required'

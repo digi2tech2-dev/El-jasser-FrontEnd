@@ -39,6 +39,18 @@ const SidebarWave = ({ id, variant = 'sidebar' }) => {
       ) : null}
     </defs>
     <path d={outline} fill="none" stroke={isPurchase ? `url(#${id}-gold)` : 'var(--brand-gold)'} strokeWidth={isPurchase ? 3 : 1.5} vectorEffect="non-scaling-stroke" />
+    {isPurchase ? (
+      <path
+        className="purchase-dialog-royal-neon"
+        d={outline}
+        fill="none"
+        stroke="#64e8ff"
+        strokeWidth="4"
+        vectorEffect="non-scaling-stroke"
+        pathLength="100"
+        strokeDasharray="12 88"
+      />
+    ) : null}
   </svg>
   );
 };

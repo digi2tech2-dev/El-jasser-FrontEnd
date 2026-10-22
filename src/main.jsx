@@ -6,6 +6,7 @@ import './i18n';
 import { devLogger } from './utils/devLogger';
 import { cleanupVolatileAppStorage } from './utils/storageMaintenance';
 import { applyPerformanceMode } from './utils/performanceMode';
+import { Capacitor } from '@capacitor/core';
 
 const isExternalExtensionPermissionError = (value) => {
   const message = String(
@@ -83,3 +84,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 );
 
 hideBootLoader();
+
+// Register after rendering so cache setup does not delay the first screen.
+if (Capacitor.isNativePlatform() && 'serviceWorker' in navigator) {
+  const registerAppCache = () => {
+    void navigator.serviceWorker.register('/app-cache-sw.js', { scope: '/' }).catch(() => {});
+  };
+  if (document.readyState === 'complete') registerAppCache();
+  else window.addEventListener('load', registerAppCache, { once: true });
+}

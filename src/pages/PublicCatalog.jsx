@@ -40,6 +40,7 @@ import {
 } from '../utils/storefront';
 import { buildStoreSeo, toAbsoluteUrl } from '../utils/seo';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
+import { warmProductImages } from '../utils/productImageWarmup';
 import slideOneImage from '../assets/slide-1.webp';
 import slideTwoImage from '../assets/slide-2.webp';
 import slideThreeImage from '../assets/slide-3.webp';
@@ -254,6 +255,7 @@ const PublicCatalog = () => {
               categories: nextCategories,
               products: nextProducts,
             });
+            if (nextProducts) warmProductImages(nextProducts);
           }
         })
         .catch(() => {
@@ -834,10 +836,11 @@ const PublicCatalog = () => {
                         variant="plain"
                       />
                     ))}
-                    {currentProducts.map((product) => (
+                    {currentProducts.map((product, index) => (
                       <ProductCardSimple
                         key={product.id}
                         product={product}
+                        priority={index < 9}
                         onOpen={handleProductSelect}
                         buyLabel={copy.loginToBuy}
                         unavailableLabel={copy.unavailable}
@@ -848,10 +851,11 @@ const PublicCatalog = () => {
 
                 {isInsideCategory && currentProducts.length > 0 && !shouldMergeProductsWithSubcategories && (
                   <div className="grid grid-cols-3 gap-3 p-1 sm:gap-4">
-                    {currentProducts.map((product) => (
+                    {currentProducts.map((product, index) => (
                       <ProductCardSimple
                         key={product.id}
                         product={product}
+                        priority={index < 9}
                         onOpen={handleProductSelect}
                         buyLabel={copy.loginToBuy}
                         unavailableLabel={copy.unavailable}

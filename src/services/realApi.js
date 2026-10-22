@@ -22,6 +22,7 @@ import {
 // ─── Axios instance ──────────────────────────────────────────────────────────
 
 import { resolveImageUrl } from '../utils/imageUrl';
+import { prepareProductImage } from '../utils/productImage';
 import { resolveUserAvatar } from '../utils/avatar';
 import { getAccountAccessRoute, normalizeAccountStatus } from '../utils/accountStatus';
 import { readReferralBridge, readReferralCodeFromSearch } from '../utils/referralCode';
@@ -3975,15 +3976,31 @@ const realApi = {
     },
 
     create: async (payload = {}) => {
-      const formData = buildTargetAppFormData(payload);
-      const res = await http.post('/admin/target-apps', formData);
+      const imageFile = payload.imageFile || payload.file;
+      const optimizedFile = imageFile ? await prepareProductImage(imageFile) : null;
+      const makeFormData = (file) => buildTargetAppFormData(file ? { ...payload, imageFile: file } : payload);
+      let res;
+      try {
+        res = await http.post('/admin/target-apps', makeFormData(optimizedFile));
+      } catch (error) {
+        if (!optimizedFile || optimizedFile === imageFile || ![400, 415, 422].includes(error?.status)) throw error;
+        res = await http.post('/admin/target-apps', makeFormData(imageFile));
+      }
       const data = unwrap(res);
       return normaliseTargetApp(data?.app || data);
     },
 
     update: async (id, payload = {}) => {
-      const formData = buildTargetAppFormData(payload, { partial: true });
-      const res = await http.patch(`/admin/target-apps/${id}`, formData);
+      const imageFile = payload.imageFile || payload.file;
+      const optimizedFile = imageFile ? await prepareProductImage(imageFile) : null;
+      const makeFormData = (file) => buildTargetAppFormData(file ? { ...payload, imageFile: file } : payload, { partial: true });
+      let res;
+      try {
+        res = await http.patch(`/admin/target-apps/${id}`, makeFormData(optimizedFile));
+      } catch (error) {
+        if (!optimizedFile || optimizedFile === imageFile || ![400, 415, 422].includes(error?.status)) throw error;
+        res = await http.patch(`/admin/target-apps/${id}`, makeFormData(imageFile));
+      }
       const data = unwrap(res);
       return normaliseTargetApp(data?.app || data);
     },
@@ -4394,11 +4411,21 @@ const realApi = {
  * @returns {Promise<string>} The relative path (e.g. '/uploads/products/123-abc.jpg')
  */
 export const uploadImage = async (category, file) => {
-  const formData = new FormData();
-  formData.append('image', file);
-  const res = await http.post(`/upload/${category}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const optimizedFile = category === 'products' ? await prepareProductImage(file) : file;
+  const send = (image) => {
+    const formData = new FormData();
+    formData.append('image', image);
+    return http.post(`/upload/${category}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  };
+  let res;
+  try {
+    res = await send(optimizedFile);
+  } catch (error) {
+    if (optimizedFile === file || ![400, 415, 422].includes(error?.status)) throw error;
+    res = await send(file);
+  }
   const data = unwrap(res);
   return data?.path || '';
 };

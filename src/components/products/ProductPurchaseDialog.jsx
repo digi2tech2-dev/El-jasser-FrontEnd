@@ -624,15 +624,8 @@ const ProductPurchaseDialog = ({
         || returnedOrder?.displayOrderId
         || returnedId
       ).trim();
-      let returnedWalletSource = result?.wallet || result?.walletSummary || result?.user || returnedOrder?.wallet || returnedOrder?.walletSummary || null;
-      if (!returnedWalletSource && user?.id) {
-        try {
-          returnedWalletSource = await apiClient.auth.getProfile(user.id);
-        } catch (profileError) {
-          devLogger.warnUnlessBenign('Failed to refresh profile after purchase', profileError, { once: true });
-        }
-      }
-      const nextBalance = Number(result?.updatedBalance);
+      const returnedWalletSource = result?.wallet || result?.walletSummary || result?.user || returnedOrder?.wallet || returnedOrder?.walletSummary || null;
+      const nextBalance = result?.updatedBalance == null ? Number.NaN : Number(result.updatedBalance);
       const nextWalletSummary = getWalletBalanceSummary(
         returnedWalletSource
         || (Number.isFinite(nextBalance)
@@ -660,6 +653,9 @@ const ProductPurchaseDialog = ({
         status: returnedOrder?.statusLabel || returnedOrder?.status || copy.fallbackStatus,
       });
       addToast(language === 'en' ? 'Order placed successfully!' : 'تم تنفيذ الطلب بنجاح!', 'success');
+      if (!returnedWalletSource && !Number.isFinite(nextBalance)) {
+        void useAuthStore.getState().refreshProfile({ force: true });
+      }
     } catch (error) {
       devLogger.error('Purchase failed', error);
       setServerError(getReadableErrorMessage(

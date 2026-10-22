@@ -5,6 +5,7 @@ import useNotificationStore from './useNotificationStore';
 import useAuthStore from './useAuthStore';
 import useAdminStore from './useAdminStore';
 import useMediaStore from './useMediaStore';
+import useSystemStore from './useSystemStore';
 import { getManualOrderStatusLabel, isManualStatusEditableOrder, normalizeManualOrderStatus } from '../utils/orders';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
@@ -226,9 +227,10 @@ const useOrderStore = create((set, get) => ({
             ''
           ).trim();
 
-          // Get current pricing and exchange rates for financial snapshot
-          const currencies = await apiClient.system.currencies().catch(() => []);
-          const products = await apiClient.products.list().catch(() => []);
+          // The purchase dialog already priced the order. Avoid two sequential
+          // catalog requests before sending the time-sensitive order request.
+          const currencies = useSystemStore.getState().currencies || [];
+          const products = useMediaStore.getState().products || [];
 
           const product = products.find((p) => p.id === order.productId);
           const currencyCode = String(order.currencyCode || 'USD').toUpperCase();

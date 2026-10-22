@@ -5479,6 +5479,19 @@ html.performance-lite:is(.dark, :not(.dark)) .purchase-dialog-overlay .purchase-
   pointer-events: none;
 }
 
+.purchase-dialog-royal-neon {
+  filter: drop-shadow(0 0 3px #63eaff) drop-shadow(0 0 7px #21a7ff);
+  animation: purchase-rim-travel 4s linear infinite;
+}
+
+@keyframes purchase-rim-travel {
+  to { stroke-dashoffset: -100; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .purchase-dialog-royal-neon { animation: none; stroke-dasharray: 100 0; opacity: 0.55; }
+}
+
 :root:is(.dark, :not(.dark)) .purchase-dialog-card.purchase-dialog-card--reference:not(.is-wallet-flow)
 :is(.purchase-dialog-description, .purchase-dialog-field, .ppd-gold-row, .purchase-dialog-price-card) {
   border-color: rgb(var(--brand-gold-rgb) / 0.48) !important;

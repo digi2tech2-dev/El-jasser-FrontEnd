@@ -49,13 +49,11 @@ await Promise.all(densities.map(async ([density, iconSize, foregroundSize]) => {
   ]);
 }));
 
-const [icon, foreground] = await Promise.all([
-  renderIcon(432),
-  renderForeground(432),
-]);
 const anyDensityDirectory = path.join(resourceDir, 'mipmap-anydpi-v26');
+// Android's adaptive icon XML already owns ic_launcher and ic_launcher_round
+// in this directory. Only its foreground image belongs here.
 await Promise.all([
-  fs.writeFile(path.join(anyDensityDirectory, 'ic_launcher.webp'), icon),
-  fs.writeFile(path.join(anyDensityDirectory, 'ic_launcher_round.webp'), icon),
-  fs.writeFile(path.join(anyDensityDirectory, 'ic_launcher_foreground.webp'), foreground),
+  fs.rm(path.join(anyDensityDirectory, 'ic_launcher.webp'), { force: true }),
+  fs.rm(path.join(anyDensityDirectory, 'ic_launcher_round.webp'), { force: true }),
+  fs.writeFile(path.join(anyDensityDirectory, 'ic_launcher_foreground.webp'), await renderForeground(432)),
 ]);

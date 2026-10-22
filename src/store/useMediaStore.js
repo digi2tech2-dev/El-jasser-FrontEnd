@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { mockProducts, mockCategories } from '../data/mockData';
 import apiClient from '../services/client';
+import { warmProductImages } from '../utils/productImageWarmup';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
@@ -547,6 +548,8 @@ const useMediaStore = create((set, get) => ({
               error: null,
               lastLoadedAt: loadedAt,
             });
+
+            warmProductImages(normalizedProducts);
 
             writeSessionCache({
               categories: safeCategories,
