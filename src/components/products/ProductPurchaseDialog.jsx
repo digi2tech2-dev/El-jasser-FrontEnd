@@ -21,6 +21,7 @@ import {
 } from '../../utils/pricing';
 import { getReadableErrorMessage } from '../../utils/errorMessages';
 import {
+  clampProductQuantity,
   getProductQuantityMeta,
   resolveProductOrderFields,
   sanitizeOrderFieldValue,
@@ -70,6 +71,7 @@ const getCopy = (language = 'ar') => (
         aboveMax: 'Quantity is above the maximum.',
         emptyUserId: 'User ID is required.',
         insufficientBalance: 'Insufficient balance.',
+        balanceShortfallMessage: 'Your balance is insufficient. Add',
         balanceRequiredTitle: 'Top up to complete your order',
         balanceRequiredDescription: 'Your balance is short by the amount below.',
         currentBalance: 'Available balance',
@@ -91,7 +93,7 @@ const getCopy = (language = 'ar') => (
         usdEquivalent: 'المعادل بالدولار',
         usdSettlementNote: 'السعر الأساسي للمنصة بالدولار',
         shippingNotice: 'الشحن يتم خلال ثواني معدوده',
-        quantity: 'الكمية',
+        quantity: 'العدد',
         quantityPlaceholder: 'أدخل الكمية',
         minQuantity: 'أقل كمية',
         maxQuantity: 'أقصى كمية',
@@ -114,6 +116,7 @@ const getCopy = (language = 'ar') => (
         aboveMax: 'الكمية أكبر من الحد الأقصى.',
         emptyUserId: 'ايدي الحساب مطلوب.',
         insufficientBalance: 'الرصيد غير كافي.',
+        balanceShortfallMessage: 'رصيدك غير كافي، تحتاج لإضافة رصيد',
         balanceRequiredTitle: 'اشحن رصيدك لإتمام الطلب',
         balanceRequiredDescription: 'رصيدك الحالي لا يكفي، وتحتاج إلى شحن المبلغ الموضح بالأسفل.',
         currentBalance: 'الرصيد المتاح',
@@ -130,10 +133,6 @@ const normalizeQuantityDigits = (value) => String(value || '')
   .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
   .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
   .replace(/\D/g, '');
-const formatQuantityInput = (value) => {
-  const digits = normalizeQuantityDigits(value);
-  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-};
 const parseQuantityInput = (value) => Number.parseInt(normalizeQuantityDigits(value), 10);
 const isUploadFieldType = (type) => ['image', 'file'].includes(String(type || '').trim().toLowerCase());
 
@@ -308,6 +307,11 @@ const ProductPurchaseDialog = ({
   const quantityMeta = useMemo(() => (product ? getProductQuantityMeta(product) : null), [product]);
   const orderFields = useMemo(() => (product ? resolveProductOrderFields(product, language) : []), [language, product]);
 
+  useEffect(() => {
+    if (!quantityMeta) return;
+    setQuantityInput(String(quantityMeta.minQty));
+  }, [product?.id, quantityMeta?.minQty]);
+
   const pricingUser = user || pricingPreviewUser || null;
   const shouldRequireAuth = Boolean(requireAuth && !user);
   const userCurrencyCode = String(pricingUser?.currency || 'USD').toUpperCase();
@@ -331,6 +335,7 @@ const ProductPurchaseDialog = ({
   const balanceShortfall = normalizeMoneyAmount(Math.max(0, totalPrice - availableBalance));
   const formattedAvailableBalance = formatCurrencyAmount(availableBalance, userCurrencyCode, currencies, locale);
   const formattedBalanceShortfall = formatCurrencyAmount(balanceShortfall, userCurrencyCode, currencies, locale);
+  const shouldShowBalanceWarning = Boolean(user) && hasValidPrice && balanceShortfall > 0;
   const agentProductId = String(
     product?.providerProductId
     || product?.externalProductId
@@ -982,17 +987,18 @@ const ProductPurchaseDialog = ({
                 <input
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9,]*"
+                  pattern="[0-9]*"
                   dir="ltr"
                   className="ppd-gold-input"
                   value={quantityInput}
-                  placeholder={copy.quantityPlaceholder}
+                  placeholder={`${copy.minQuantity}: ${formatCount(quantityMeta.minQty)}`}
                   onChange={(event) => {
-                    setQuantityInput(formatQuantityInput(event.target.value));
+                    setQuantityInput(normalizeQuantityDigits(event.target.value));
                     setFormError('');
                   }}
+                  onBlur={() => setQuantityInput(String(clampProductQuantity(quantityInput, product)))}
                 />
-                <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} — {formatCount(quantityMeta.maxQty)}</span>
+                <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} · {formatCount(quantityMeta.maxQty)}</span>
               </div>
               <div className="ppd-gold-divider" aria-hidden="true" />
               <div className="ppd-gold-total">
@@ -1001,6 +1007,13 @@ const ProductPurchaseDialog = ({
                 {shouldShowUsdEquivalent ? <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span> : null}
               </div>
             </div>
+
+            {shouldShowBalanceWarning ? (
+              <p className="purchase-oscar-balance-warning" role="alert">
+                <span>{copy.balanceShortfallMessage}</span>
+                <strong dir="ltr">{formattedBalanceShortfall}</strong>
+              </p>
+            ) : null}
 
             {hasPrimaryOrderField ? (
               <div className="purchase-dialog-field purchase-oscar-user-field">

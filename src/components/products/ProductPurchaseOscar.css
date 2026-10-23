@@ -325,7 +325,29 @@
 .purchase-dialog-card--oscar .ppd-gold-range {
   justify-self: center;
   color: #64748b !important;
-  font-size: 0.62rem !important;
+  font-size: 0.56rem !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-balance-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0.35rem;
+  color: #dc2626 !important;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-balance-warning strong {
+  color: inherit;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-balance-warning {
+  color: #fca5a5 !important;
 }
 
 .purchase-dialog-card--oscar .ppd-gold-label {
