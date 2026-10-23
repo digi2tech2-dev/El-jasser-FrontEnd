@@ -1,6 +1,6 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, FileText, Heart, LockKeyhole, Package, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
+import { Box, Check, Copy, FileText, Heart, LockKeyhole, Package, ShoppingBag, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
@@ -13,7 +13,6 @@ import { useToast } from '../ui/Toast';
 import { useLanguage } from '../../context/LanguageContext';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import brandLogoDark from '../../assets/elgny.webp';
-import brandLogoLight from '../../assets/elgny.webp';
 import {
   calculateProductPrice,
   formatCurrencyAmount,
@@ -31,8 +30,8 @@ import { devLogger } from '../../utils/devLogger';
 import { useBodyScrollLock } from '../../utils/bodyScrollLock';
 import AddBalance from '../../pages/AddBalance';
 import PaymentDetails from '../../pages/PaymentDetails';
-import SidebarWave from '../layout/SidebarWave';
 import './ProductPurchaseDialog.css';
+import './ProductPurchaseOscar.css';
 
 const getCopy = (language = 'ar') => (
   language === 'en'
@@ -149,7 +148,7 @@ const ProductImage = ({ product }) => {
     return <img src={resolveImageUrl(product.image)} alt={product?.name || ''} onError={() => setImageFailed(true)} />;
   }
 
-  return <img src={brandLogoDark} alt="Dra90n STORE" className="purchase-dialog-fallback-logo" />;
+  return <img src={brandLogoDark} alt="El-jasser" className="purchase-dialog-fallback-logo" />;
 };
 
 const SummaryCell = ({ label, value, icon, onClick, title }) => {
@@ -201,7 +200,6 @@ const ProductPurchaseDialog = ({
   requireAuth = false,
   onRequireAuth,
 }) => {
-  const royalFrameId = `purchase-frame-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const navigate = useNavigate();
   const { language, dir } = useLanguage();
   const { addToast } = useToast();
@@ -803,7 +801,6 @@ const ProductPurchaseDialog = ({
     );
   };
 
-  const hasRoyalFrame = !successOrder && (!showBalanceTopup || topupStep === 'summary');
   const dialog = (
     <div className="purchase-dialog-overlay" dir={dir} role="dialog" aria-modal="true">
       <button type="button" className="purchase-dialog-backdrop" onClick={onClose} aria-label={copy.cancel} />
@@ -812,12 +809,11 @@ const ProductPurchaseDialog = ({
         initial={{ opacity: 0, y: 28, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.18 }}
-        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : (successOrder ? '' : 'purchase-dialog-card--reference')} ${hasRoyalFrame ? 'purchase-dialog-card--royal' : ''}`}
-        style={hasRoyalFrame ? { clipPath: `url(#${royalFrameId})` } : undefined}
+        className={`purchase-dialog-card ${showBalanceTopup ? (topupStep !== 'summary' ? 'is-wallet-flow' : 'purchase-dialog-card--reference') : (successOrder ? 'purchase-dialog-card--oscar-success' : 'purchase-dialog-card--oscar')}`}
       >
-        {hasRoyalFrame ? <SidebarWave id={royalFrameId} variant="purchase" /> : null}
+        {!successOrder && !showBalanceTopup ? <span className="purchase-oscar-neon-frame" aria-hidden="true" /> : null}
         <div className="purchase-dialog-grid" />
-        <button type="button" className="purchase-dialog-close" onClick={onClose} aria-label="Close">
+        <button type="button" className="purchase-dialog-close" onClick={onClose} disabled={isSubmitting} aria-label={language === 'en' ? 'Close' : 'إغلاق'}>
           <X className="h-5 w-5" />
         </button>
 
@@ -958,54 +954,20 @@ const ProductPurchaseDialog = ({
           </div>
         ) : (
           <>
-            <div className="purchase-dialog-product purchase-dialog-product--inline">
-              <div className="purchase-dialog-platform-logo" title="Dra90n STORE">
-                <img className="purchase-dialog-logo-dark" src={brandLogoDark} alt="Dra90n STORE" />
-                <img className="purchase-dialog-logo-light" src={brandLogoLight} alt="Dra90n STORE" />
+            <header className="purchase-oscar-header">
+              <span className="purchase-oscar-bag" aria-hidden="true"><ShoppingBag size={21} strokeWidth={2.4} /></span>
+              <div className="purchase-oscar-title-block">
+                <h2 title={displayNameAr}>{displayNameAr}</h2>
+                {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr" title={displayNameEn}>{displayNameEn}</p> : null}
+                <span className={`purchase-oscar-status ${isPurchasable ? 'is-available' : 'is-unavailable'}`}>{statusLabel}</span>
+                <span className="purchase-oscar-title-line" aria-hidden="true" />
               </div>
-              <div className="purchase-dialog-product-visual">
-                <div className={`purchase-dialog-image ${isPurchasable ? '' : 'is-unavailable'}`}>
-                  <ProductImage product={product} />
-                </div>
-              </div>
-              <div className="purchase-dialog-product-copy min-w-0">
-                <div className="purchase-dialog-product-line">
-                  <h2 title={displayNameAr}>{displayNameAr}</h2>
-                  {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr" title={displayNameEn}>{displayNameEn}</p> : null}
-                  <span className={isPurchasable ? 'is-available' : 'is-unavailable'}>{statusLabel}</span>
-                </div>
-              </div>
-              {favoriteKey ? (
-                <button
-                  type="button"
-                  className={`purchase-dialog-favorite${isFavorite ? ' is-favorite' : ''}`}
-                  onClick={() => {
-                    toggleFavorite(favoriteKey, product.id);
-                    addToast(isFavorite
-                      ? (language === 'en' ? 'Removed from favorites' : 'تمت الإزالة من المفضلة')
-                      : (language === 'en' ? 'Added to favorites' : 'تمت الإضافة إلى المفضلة'), 'success');
-                  }}
-                  aria-label={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
-                  aria-pressed={isFavorite}
-                  title={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
-                >
-                  <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
-                </button>
-              ) : null}
-            </div>
+            </header>
 
-            {productDescription || copy.shippingNotice ? (
-              <section
-                className="purchase-dialog-description"
-                aria-label={language === 'en' ? 'Product description' : 'وصف المنتج'}
-              >
-                <FileText className="purchase-dialog-description-icon h-4 w-4" aria-hidden="true" />
-                <p>{productDescription || copy.shippingNotice}</p>
-              </section>
-            ) : null}
+            <p className="purchase-oscar-description">{productDescription || copy.shippingNotice}</p>
 
             {displayedAccountNumber ? (
-              <div className="purchase-dialog-price-card">
+              <div className="purchase-dialog-price-card purchase-oscar-account">
                 <button type="button" className="purchase-dialog-copy-card" onClick={copyAccountNumber} title={copy.accountCopied}>
                   <span>{copy.accountNumber}</span>
                   <strong dir="ltr">{displayedAccountNumber}</strong>
@@ -1014,10 +976,9 @@ const ProductPurchaseDialog = ({
               </div>
             ) : null}
 
-            {/* ── Quantity + Total — single premium row ── */}
-            <div className="ppd-gold-row">
+            <div className="ppd-gold-row purchase-oscar-info">
               <div className="ppd-gold-qty">
-                <span className="ppd-gold-label">{copy.quantity}</span>
+                <div className="purchase-oscar-cell-heading"><span className="purchase-oscar-mini-icon"><Box size={17} /></span><span className="ppd-gold-label">{copy.quantity}</span></div>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -1025,7 +986,7 @@ const ProductPurchaseDialog = ({
                   dir="ltr"
                   className="ppd-gold-input"
                   value={quantityInput}
-                  placeholder="0"
+                  placeholder={copy.quantityPlaceholder}
                   onChange={(event) => {
                     setQuantityInput(formatQuantityInput(event.target.value));
                     setFormError('');
@@ -1033,25 +994,19 @@ const ProductPurchaseDialog = ({
                 />
                 <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} — {formatCount(quantityMeta.maxQty)}</span>
               </div>
-              <div className="ppd-gold-divider" />
+              <div className="ppd-gold-divider" aria-hidden="true" />
               <div className="ppd-gold-total">
-                <WalletCards className="ppd-gold-total-icon" aria-hidden="true" />
-                <span className="ppd-gold-label">{copy.total}</span>
-                <strong className="ppd-gold-price" dir="ltr">{formattedTotalPrice}</strong>
-                {shouldShowUsdEquivalent ? (
-                  <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span>
-                ) : null}
+                <div className="purchase-oscar-cell-heading"><span className="purchase-oscar-mini-icon"><Zap size={16} fill="currentColor" /></span><span className="ppd-gold-label">{copy.total}</span></div>
+                <output className="ppd-gold-price purchase-oscar-total-output" dir="ltr" aria-label={copy.total}>{formattedTotalPrice}</output>
+                {shouldShowUsdEquivalent ? <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span> : null}
               </div>
             </div>
 
             {hasPrimaryOrderField ? (
-              <div className="purchase-dialog-field">
-                <span className="purchase-dialog-field-label"><span className="purchase-dialog-id-mark" aria-hidden="true">ID</span>{primaryOrderFieldLabel}</span>
+              <div className="purchase-dialog-field purchase-oscar-user-field">
+                <span className="purchase-dialog-field-label"><span className="purchase-oscar-mini-icon" aria-hidden="true"><UserRound size={17} /></span>{primaryOrderFieldLabel}</span>
                 <div className={primaryOrderField?.isVerifiable === true ? 'grid grid-cols-[minmax(0,1fr)_auto] gap-2' : ''}>
                   <div className="purchase-dialog-input-shell">
-                    <span className="purchase-dialog-input-badge" aria-hidden="true">
-                      ID
-                    </span>
                     <input
                       type="text"
                       value={userId}
@@ -1081,12 +1036,38 @@ const ProductPurchaseDialog = ({
                 disabled={isSubmitting || !isPurchasable || (!shouldRequireAuth && !hasValidPrice)}
               >
                 <LockKeyhole className="h-5 w-5" />
-                {purchaseButtonLabel}
+                <span>{purchaseButtonLabel}</span>
               </button>
-              <button type="button" className="purchase-dialog-secondary" onClick={onClose}>
+              <button type="button" className="purchase-dialog-secondary" onClick={onClose} disabled={isSubmitting}>
                 {copy.cancel}
               </button>
             </div>
+            <figure className="purchase-oscar-showcase">
+              {favoriteKey ? (
+                <button
+                  type="button"
+                  className={`purchase-dialog-favorite${isFavorite ? ' is-favorite' : ''}`}
+                  onClick={() => {
+                    toggleFavorite(favoriteKey, product.id);
+                    addToast(isFavorite
+                      ? (language === 'en' ? 'Removed from favorites' : 'تمت الإزالة من المفضلة')
+                      : (language === 'en' ? 'Added to favorites' : 'تمت الإضافة إلى المفضلة'), 'success');
+                  }}
+                  aria-label={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                  aria-pressed={isFavorite}
+                  title={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                >
+                  <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
+                </button>
+              ) : null}
+              <div className="purchase-oscar-stage">
+                <span className="purchase-oscar-ring-glow" aria-hidden="true" />
+                <span className="purchase-oscar-energy-ring" aria-hidden="true" />
+                <span className="purchase-oscar-ring-core" aria-hidden="true" />
+                <span className="purchase-oscar-display-base" aria-hidden="true" />
+                <div className={`purchase-oscar-product-image${isPurchasable ? '' : ' is-unavailable'}`}><ProductImage product={product} /></div>
+              </div>
+            </figure>
           </>
         )}
       </motion.section>

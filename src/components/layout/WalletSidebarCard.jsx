@@ -115,7 +115,7 @@ const WalletSidebarCard = ({ className, isVisible = true, onNavigate }) => {
               className="ka-sidebar-topup-button inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-[10px] border border-amber-200/45 bg-[linear-gradient(105deg,#7c2719_0%,#b66a22_42%,#e6b84e_100%)] px-2 text-[10px] font-black text-white shadow-[0_8px_20px_-10px_rgba(181,112,30,0.86),inset_0_1px_0_rgba(255,255,255,0.28)] transition-all hover:-translate-y-px hover:brightness-110 hover:shadow-[0_12px_24px_-10px_rgba(181,112,30,0.95)] active:translate-y-0"
             >
               <ArrowUpLeft className="h-3.5 w-3.5" />
-              <span>اشحن الآن</span>
+              <span>إضافة رصيد</span>
             </button>
         )}
       </div>
