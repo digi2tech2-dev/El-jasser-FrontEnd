@@ -16,8 +16,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { formatNumber } from '../../utils/intl';
 import { getProductStatus, validateProductForm } from '../../utils/productStatus';
 
-const PROVIDER_PRODUCTS_LIMIT = 2000;
-const PROVIDER_PRODUCTS_PAGE_SIZE = 80;
 const PRODUCT_FORM_STEPS = [
     { id: 'basic', number: 1, labelAr: 'الأساسيات', labelEn: 'Basics' },
     { id: 'pricing', number: 2, labelAr: 'الربط والسعر', labelEn: 'Pricing' },
@@ -352,7 +350,6 @@ const AdminProducts = () => {
     const [providers, setProviders] = useState([]);
     const [providerProducts, setProviderProducts] = useState([]);
     const [providerProductQuery, setProviderProductQuery] = useState('');
-    const [providerProductsVisibleCount, setProviderProductsVisibleCount] = useState(PROVIDER_PRODUCTS_PAGE_SIZE);
     const [isSyncingPrice, setIsSyncingPrice] = useState(false);
     const [selectedMainCategoryId, setSelectedMainCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
@@ -578,7 +575,7 @@ const AdminProducts = () => {
             return;
         }
         apiClient.products
-            .listProviderProducts(selectedSupplier, { limit: PROVIDER_PRODUCTS_LIMIT })
+            .listProviderProducts(selectedSupplier)
             .then((items) => {
                 const nextItems = Array.isArray(items) ? items : [];
                 setProviderProducts(nextItems);
@@ -609,10 +606,6 @@ const AdminProducts = () => {
     const hasSyncedProviderLink = Boolean(productForm.syncPriceWithProvider && selectedSupplierId && selectedProviderProductId);
     const canSyncWithProvider = Boolean(hasSyncedProviderLink && !productForm.enableManualPrice);
 
-    useEffect(() => {
-        setProviderProductsVisibleCount(PROVIDER_PRODUCTS_PAGE_SIZE);
-    }, [isProductModalOpen, selectedSupplierId, providerProductQuery]);
-
     const selectedProviderProduct = useMemo(
         () => providerProducts.find((product) => hasMatchingProviderProduct(
             product,
@@ -629,10 +622,6 @@ const AdminProducts = () => {
 
         return providerProducts.filter((product) => getProviderProductSearchToken(product).includes(normalizedQuery));
     }, [providerProducts, providerProductQuery]);
-    const visibleProviderProducts = useMemo(
-        () => filteredProviderProducts.slice(0, providerProductsVisibleCount),
-        [filteredProviderProducts, providerProductsVisibleCount]
-    );
     const activeProviders = useMemo(
         () => providers.filter((provider) => provider.isActive !== false),
         [providers]
@@ -825,7 +814,6 @@ const AdminProducts = () => {
 
     const openProductModal = (product = null) => {
         setProductFormStep(PRODUCT_FORM_STEPS[0].id);
-        setProviderProductsVisibleCount(PROVIDER_PRODUCTS_PAGE_SIZE);
         if (product) {
             const linkedProviderId = String(product.providerId || product.supplierId || '').trim();
             const linkedProviderProductId = String(product.providerProductId || product.externalProductId || '').trim();
@@ -2119,9 +2107,6 @@ const AdminProducts = () => {
                                                     <div className="flex items-center justify-between gap-3 px-1 text-xs text-[var(--color-muted)]">
                                                         <span>
                                                             {isEnglish ? `${filteredProviderProducts.length} products found` : `${filteredProviderProducts.length} منتج متاح`}
-                                                            {filteredProviderProducts.length > visibleProviderProducts.length
-                                                                ? (isEnglish ? `, showing ${visibleProviderProducts.length}` : `، يتم عرض ${visibleProviderProducts.length}`)
-                                                                : ''}
                                                         </span>
                                                         {selectedProviderProduct ? (
                                                             <span className="truncate text-[var(--color-primary)]">
@@ -2131,7 +2116,7 @@ const AdminProducts = () => {
                                                     </div>
 
                                                     <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-                                                        {visibleProviderProducts.length ? visibleProviderProducts.map((providerProduct) => {
+                                                        {filteredProviderProducts.length ? filteredProviderProducts.map((providerProduct) => {
                                                             const isSelected = hasMatchingProviderProduct(
                                                                 providerProduct,
                                                                 productForm.providerProductId,
@@ -2192,20 +2177,6 @@ const AdminProducts = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    {filteredProviderProducts.length > visibleProviderProducts.length ? (
-                                                        <Button
-                                                            type="button"
-                                                            variant="secondary"
-                                                            className="w-full rounded-xl text-xs"
-                                                            onClick={() => setProviderProductsVisibleCount((current) => (
-                                                                Math.min(current + PROVIDER_PRODUCTS_PAGE_SIZE, filteredProviderProducts.length)
-                                                            ))}
-                                                        >
-                                                            {isEnglish
-                                                                ? `Show more (${visibleProviderProducts.length}/${filteredProviderProducts.length})`
-                                                                : `عرض المزيد (${visibleProviderProducts.length}/${filteredProviderProducts.length})`}
-                                                        </Button>
-                                                    ) : null}
                                                 </>
                                             ) : (
                                                 <div className="rounded-[var(--radius-md)] border border-dashed border-[color:rgb(var(--color-border-rgb)/0.92)] bg-[color:rgb(var(--color-elevated-rgb)/0.68)] px-4 py-5 text-center text-sm text-[var(--color-text-secondary)]">

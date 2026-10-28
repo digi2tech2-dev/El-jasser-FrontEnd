@@ -2522,10 +2522,11 @@ const realApi = {
     /**
      * GET /admin/provider-products/:providerId — raw provider products.
      */
-    listProviderProducts: async (providerId, { limit = 2000 } = {}) => {
-      const res = await http.get(`/admin/provider-products/${providerId}`, {
-        params: { limit },
-      });
+    listProviderProducts: async (providerId, { limit } = {}) => {
+      const params = Number.isFinite(Number(limit)) && Number(limit) > 0
+        ? { limit: Number(limit) }
+        : undefined;
+      const res = await http.get(`/admin/provider-products/${providerId}`, params ? { params } : undefined);
       const data = unwrap(res);
       const items = Array.isArray(data)
         ? data
