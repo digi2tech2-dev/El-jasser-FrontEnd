@@ -11,6 +11,7 @@
  */
 
 import axios from 'axios';
+import { fetchProviderCatalog } from './providerCatalog';
 import { devLogger } from '../utils/devLogger';
 import { getWalletBalanceSummary } from '../utils/money';
 import { isSiteWalletPaymentMethod, normalizePaymentGroups } from '../utils/paymentSettings';
@@ -2522,19 +2523,18 @@ const realApi = {
     /**
      * GET /admin/provider-products/:providerId — raw provider products.
      */
-    listProviderProducts: async (providerId, { limit } = {}) => {
-      const params = Number.isFinite(Number(limit)) && Number(limit) > 0
-        ? { limit: Number(limit) }
-        : undefined;
-      const res = await http.get(`/admin/provider-products/${providerId}`, params ? { params } : undefined);
-      const data = unwrap(res);
-      const items = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.providerProducts)
-          ? data.providerProducts
-          : Array.isArray(data?.products)
-            ? data.products
-            : [];
+    listProviderProducts: async (providerId, { signal } = {}) => {
+      const items = await fetchProviderCatalog(async (page) => {
+        const res = await http.get(`/admin/provider-products/${encodeURIComponent(providerId)}`, {
+          params: { page, limit: 500 },
+          signal,
+        });
+        const data = unwrap(res);
+        return {
+          items: Array.isArray(data) ? data : (data?.providerProducts ?? data?.products),
+          pagination: res.data?.pagination ?? data?.pagination,
+        };
+      });
       return items.map((pp) => ({
         ...pp,
         id: pp._id || pp.id,

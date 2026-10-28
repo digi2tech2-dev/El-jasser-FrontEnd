@@ -350,6 +350,10 @@ const AdminProducts = () => {
     const [providers, setProviders] = useState([]);
     const [providerProducts, setProviderProducts] = useState([]);
     const [providerProductQuery, setProviderProductQuery] = useState('');
+    const [providerProductsLoading, setProviderProductsLoading] = useState(false);
+    const [providerProductsError, setProviderProductsError] = useState(false);
+    const [providerProductsRetry, setProviderProductsRetry] = useState(0);
+    const [visibleProviderProducts, setVisibleProviderProducts] = useState(100);
     const [isSyncingPrice, setIsSyncingPrice] = useState(false);
     const [selectedMainCategoryId, setSelectedMainCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
@@ -572,34 +576,44 @@ const AdminProducts = () => {
         const selectedSupplier = productForm.supplierId || productForm.providerId;
         if (!isProductModalOpen || !selectedSupplier) {
             setProviderProducts([]);
+            setProviderProductsLoading(false);
+            setProviderProductsError(false);
             return;
         }
+        const controller = new AbortController();
+        let active = true;
+        setProviderProducts([]);
+        setProviderProductsError(false);
+        setProviderProductsLoading(true);
         apiClient.products
-            .listProviderProducts(selectedSupplier)
+            .listProviderProducts(selectedSupplier, { signal: controller.signal })
             .then((items) => {
+                if (!active) return;
                 const nextItems = Array.isArray(items) ? items : [];
                 setProviderProducts(nextItems);
-                // If the currently selected product ID is not in the new list, reset it
-                setProductForm((prev) => {
-                    const currentPPId = prev.providerProductId || prev.externalProductId;
-                    if (currentPPId && !nextItems.some((p) => hasMatchingProviderProduct(p, prev.providerProductId, prev.externalProductId))) {
-                        return { ...prev, externalProductId: '', providerProductId: '', externalProductName: '' };
-                    }
-                    return prev;
-                });
             })
             .catch(() => {
+                if (!active) return;
                 setProviderProducts([]);
+                setProviderProductsError(true);
                 addToast('فشل تحميل منتجات المزود', 'error');
+            })
+            .finally(() => {
+                if (active) setProviderProductsLoading(false);
             });
-        // Fix 4: Only re-fetch when the provider ID changes or the modal opens/closes.
-        // providerProductId/externalProductId are removed to prevent race conditions
-        // when they are cleared by the provider onChange handler.
-    }, [isProductModalOpen, productForm.providerId, productForm.supplierId, addToast]);
+        return () => {
+            active = false;
+            controller.abort();
+        };
+    }, [isProductModalOpen, productForm.providerId, productForm.supplierId, providerProductsRetry, addToast]);
 
     useEffect(() => {
         setProviderProductQuery('');
     }, [isProductModalOpen, productForm.providerId, productForm.supplierId]);
+
+    useEffect(() => {
+        setVisibleProviderProducts(100);
+    }, [providerProductQuery, productForm.providerId, productForm.supplierId]);
 
     const selectedSupplierId = productForm.supplierId || productForm.providerId;
     const selectedProviderProductId = productForm.providerProductId || productForm.externalProductId;
@@ -2106,7 +2120,9 @@ const AdminProducts = () => {
 
                                                     <div className="flex items-center justify-between gap-3 px-1 text-xs text-[var(--color-muted)]">
                                                         <span>
-                                                            {isEnglish ? `${filteredProviderProducts.length} products found` : `${filteredProviderProducts.length} منتج متاح`}
+                                                            {providerProductsLoading
+                                                                ? (isEnglish ? 'Loading supplier products...' : 'جارٍ تحميل منتجات المورد...')
+                                                                : (isEnglish ? `${filteredProviderProducts.length} products found` : `${filteredProviderProducts.length} منتج متاح`)}
                                                         </span>
                                                         {selectedProviderProduct ? (
                                                             <span className="truncate text-[var(--color-primary)]">
@@ -2116,7 +2132,18 @@ const AdminProducts = () => {
                                                     </div>
 
                                                     <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-                                                        {filteredProviderProducts.length ? filteredProviderProducts.map((providerProduct) => {
+                                                        {providerProductsLoading ? (
+                                                            <div className="px-4 py-5 text-center text-sm text-[var(--color-text-secondary)]" role="status">
+                                                                {isEnglish ? 'Loading supplier products...' : 'جارٍ تحميل منتجات المورد...'}
+                                                            </div>
+                                                        ) : providerProductsError ? (
+                                                            <div className="px-4 py-5 text-center text-sm text-[var(--color-text-secondary)]" role="alert">
+                                                                <p>{isEnglish ? 'Could not load supplier products.' : 'تعذر تحميل منتجات المورد.'}</p>
+                                                                <button type="button" className="mt-2 text-[var(--color-primary)] underline" onClick={() => setProviderProductsRetry((value) => value + 1)}>
+                                                                    {isEnglish ? 'Try again' : 'إعادة المحاولة'}
+                                                                </button>
+                                                            </div>
+                                                        ) : filteredProviderProducts.length ? filteredProviderProducts.slice(0, visibleProviderProducts).map((providerProduct) => {
                                                             const isSelected = hasMatchingProviderProduct(
                                                                 providerProduct,
                                                                 productForm.providerProductId,
@@ -2177,6 +2204,11 @@ const AdminProducts = () => {
                                                             </div>
                                                         )}
                                                     </div>
+                                                    {!providerProductsLoading && !providerProductsError && filteredProviderProducts.length > visibleProviderProducts ? (
+                                                        <button type="button" className="self-center text-sm text-[var(--color-primary)] underline" onClick={() => setVisibleProviderProducts((value) => value + 100)}>
+                                                            {isEnglish ? 'Show more products' : 'عرض المزيد من المنتجات'}
+                                                        </button>
+                                                    ) : null}
                                                 </>
                                             ) : (
                                                 <div className="rounded-[var(--radius-md)] border border-dashed border-[color:rgb(var(--color-border-rgb)/0.92)] bg-[color:rgb(var(--color-elevated-rgb)/0.68)] px-4 py-5 text-center text-sm text-[var(--color-text-secondary)]">
