@@ -11,6 +11,7 @@ import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { buildPhoneLink, buildWhatsAppLink, getAdminWhatsAppNumber, getSupportContacts } from '../utils/whatsapp';
+import useSystemStore from '../store/useSystemStore';
 import brandIconImage from '../assets/elgny.webp';
 
 const AboutUsPage = () => {
@@ -20,7 +21,8 @@ const AboutUsPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isArabic = String(i18n.resolvedLanguage || i18n.language || 'ar').toLowerCase().startsWith('ar');
-  const supportContacts = getSupportContacts();
+  const contactsSetting = useSystemStore((state) => state.paymentSettings?.supportContacts);
+  const supportContacts = getSupportContacts(contactsSetting);
 
   useBodyScrollLock(isMenuOpen);
 

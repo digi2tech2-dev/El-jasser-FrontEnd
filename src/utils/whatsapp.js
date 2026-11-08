@@ -57,4 +57,25 @@ export const buildPhoneLink = (number) => {
 export const getDefaultWhatsAppNumber = () => FALLBACK_WHATSAPP_NUMBER;
 export const getAdminWhatsAppNumber = () => normalizeWhatsAppNumber(ENV_ADMIN_WHATSAPP_NUMBER || FALLBACK_WHATSAPP_NUMBER);
 export const getSupportPhoneNumber = () => SUPPORT_PHONE_NUMBER;
-export const getSupportContacts = () => SUPPORT_CONTACTS;
+export const resolveSupportContacts = (value, isArabic = true) => {
+  const defaultEntries = () => SUPPORT_CONTACTS.map((contact, index) => ({
+    id: `default-${index}`, name: isArabic ? (contact.nameAr || contact.nameEn) : (contact.nameEn || contact.nameAr),
+    role: isArabic ? 'خدمة العملاء' : 'Customer support', number: `+${normalizeWhatsAppNumber(contact.number)}`,
+  }));
+  if (!value) return defaultEntries();
+  if (Array.isArray(value?.entries)) return value.entries.length || Number(value.revision || 0) > 0 ? value.entries : defaultEntries();
+  if (value?.owner || value?.support) return [
+    ...(value.owner ? [{ id: 'legacy-owner', name: isArabic ? 'صاحب الموقع' : 'Site owner', role: isArabic ? 'الإدارة' : 'Management', number: value.owner }] : []),
+    ...(value.support ? [{ id: 'legacy-support', name: isArabic ? 'خدمة العملاء' : 'Customer support', role: isArabic ? 'الدعم' : 'Support', number: value.support }] : []),
+  ];
+  return [];
+};
+export const getSupportContacts = (value = null) => {
+  const entries = value && (Array.isArray(value.entries) || value.owner || value.support)
+    ? resolveSupportContacts(value) : SUPPORT_CONTACTS;
+  return entries.map((contact) => ({
+    ...contact, type: contact.type || 'whatsapp',
+    nameAr: contact.nameAr || contact.name || contact.nameEn || '',
+    nameEn: contact.nameEn || contact.name || contact.nameAr || '',
+  }));
+};

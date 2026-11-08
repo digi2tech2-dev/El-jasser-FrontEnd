@@ -6,6 +6,7 @@ import {
   Eye,
   KeyRound,
   MailCheck,
+  Package,
   RotateCcw,
   Search,
   Wallet,
@@ -173,6 +174,7 @@ const AdminUsers = () => {
 
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState('');
+  const [userViewFilter, setUserViewFilter] = useState('balance_high');
   const deferredSearch = useDeferredValue(search);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -209,18 +211,26 @@ const AdminUsers = () => {
     Promise.resolve(loadWallets({ force: true })).catch(() => null);
   }, [loadCurrencies, loadGroups, loadWallets]);
 
-  // Search and status are applied by the API, so results and counts span every
-  // user page instead of only the users that happened to be loaded first.
-  useEffect(() => {
-    const status = filter === 'all' || filter === 'deleted' ? '' : filter;
-    loadUsers({
-      force: true,
-      page: 1,
+  const userListQuery = useMemo(() => {
+    const viewOptions = {
+      balance_low: { sortBy: 'walletBalance', sortOrder: 'asc' },
+      balance_high: { sortBy: 'walletBalance', sortOrder: 'desc' },
+      api_enabled: { sortBy: 'createdAt', sortOrder: 'desc', isApiEnabled: true },
+      joined_recent: { sortBy: 'createdAt', sortOrder: 'desc' },
+      joined_old: { sortBy: 'createdAt', sortOrder: 'asc' },
+    };
+    return {
       search: filter === 'deleted' ? '' : deferredSearch,
-      status,
+      status: filter === 'approved' ? 'ACTIVE' : filter === 'rejected' ? 'REJECTED' : undefined,
       role: 'customer',
-    });
-  }, [deferredSearch, filter, loadUsers]);
+      ...(viewOptions[userViewFilter] || viewOptions.balance_high),
+    };
+  }, [deferredSearch, filter, userViewFilter]);
+
+  // Apply search, status, balance/API filters and ordering on the complete server-side user list.
+  useEffect(() => {
+    loadUsers({ ...userListQuery, force: true, page: 1 });
+  }, [loadUsers, userListQuery]);
 
   useEffect(() => {
     if (!FILTER_OPTIONS.includes(statusFromQuery)) return;
@@ -310,13 +320,10 @@ const AdminUsers = () => {
         ].join(' ');
         const normalizedHaystack = normalizeUserSearchText(haystack);
         const matchesSearch = !searchTokens.length || searchTokens.every((token) => normalizedHaystack.includes(token));
-        return matchesFilter && matchesSearch;
-      })
-      .sort((left, right) => {
-        return Number(right?.walletBalance ?? right?.coins ?? right?.balance ?? 0)
-          - Number(left?.walletBalance ?? left?.coins ?? left?.balance ?? 0);
+        const matchesViewFilter = userViewFilter !== 'api_enabled' || entry?.isApiEnabled === true;
+        return matchesFilter && matchesSearch && matchesViewFilter;
       });
-  }, [customerUsers, deletedCustomerUsers, filter, isArabic, search, walletByUserId]);
+  }, [customerUsers, deletedCustomerUsers, filter, isArabic, search, userViewFilter, walletByUserId]);
 
   const serverPageCount = Number(usersPagination?.pages || 0);
   const usesServerPagination = filter !== 'deleted' && serverPageCount > 1;
@@ -330,7 +337,7 @@ const AdminUsers = () => {
 
   useEffect(() => {
     setLocalPage(1);
-  }, [filter, search]);
+  }, [filter, search, userViewFilter]);
 
   const openDetails = async (entry) => {
     setSelectedUser(entry);
@@ -863,7 +870,7 @@ const AdminUsers = () => {
           </div>
         </div>
 
-        <div className="grid gap-1.5 sm:grid-cols-[minmax(0,1fr)_96px] xl:min-w-[22rem]">
+        <div className="grid gap-1.5 sm:grid-cols-[minmax(0,1fr)_96px_156px] xl:min-w-[34rem]">
           <Input
             placeholder={t('searchUsers')}
             value={search}
@@ -882,6 +889,19 @@ const AdminUsers = () => {
             <option value="approved">مفعّل</option>
             <option value="rejected">مرفوض</option>
             <option value="deleted">محذوفة</option>
+          </select>
+
+          <select
+            aria-label={isArabic ? '\u062a\u0631\u062a\u064a\u0628 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646' : 'Filter users'}
+            className={`border border-[color:rgb(var(--color-border-rgb)/0.95)] bg-[color:rgb(var(--color-surface-rgb)/0.88)] text-[var(--color-text)] outline-none transition focus:border-[color:rgb(var(--color-primary-rgb)/0.45)] ${compactFieldClassName}`}
+            value={userViewFilter}
+            onChange={(event) => setUserViewFilter(event.target.value)}
+          >
+            <option value="balance_high">{isArabic ? '\u0627\u0644\u0623\u0639\u0644\u0649 \u0631\u0635\u064a\u062f\u064b\u0627' : 'Highest balance'}</option>
+            <option value="balance_low">{isArabic ? '\u0627\u0644\u0623\u0642\u0644 \u0631\u0635\u064a\u062f\u064b\u0627' : 'Lowest balance'}</option>
+            <option value="api_enabled">{isArabic ? '\u0645\u0641\u0639\u0651\u0644 \u0644\u062f\u064a\u0647\u0645 API' : 'API enabled'}</option>
+            <option value="joined_recent">{isArabic ? '\u0627\u0644\u0623\u062d\u062f\u062b \u0627\u0646\u0636\u0645\u0627\u0645\u064b\u0627' : 'Recently joined'}</option>
+            <option value="joined_old">{isArabic ? '\u0627\u0644\u0623\u0642\u062f\u0645 \u0627\u0646\u0636\u0645\u0627\u0645\u064b\u0627' : 'Joined earliest'}</option>
           </select>
         </div>
       </div>
@@ -1052,7 +1072,7 @@ const AdminUsers = () => {
               variant="outline"
               className={compactButtonClassName}
               disabled={usesServerPagination ? usersPagination.page <= 1 : safeLocalPage <= 1}
-              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page - 1) : setLocalPage((page) => Math.max(1, page - 1)))}
+              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page - 1, userListQuery) : setLocalPage((page) => Math.max(1, page - 1)))}
             >
               <ChevronRight className="h-3.5 w-3.5" />
               السابق
@@ -1062,7 +1082,7 @@ const AdminUsers = () => {
               variant="outline"
               className={compactButtonClassName}
               disabled={usesServerPagination ? usersPagination.page >= serverPageCount : safeLocalPage >= localPageCount}
-              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page + 1) : setLocalPage((page) => Math.min(localPageCount, page + 1)))}
+              onClick={() => (usesServerPagination ? loadUsersPage(usersPagination.page + 1, userListQuery) : setLocalPage((page) => Math.min(localPageCount, page + 1)))}
             >
               التالي
               <ChevronLeft className="h-3.5 w-3.5" />
@@ -1446,6 +1466,12 @@ const AdminUsers = () => {
           </div>
 
           <div className="flex flex-wrap justify-end gap-1.5 border-t border-[color:rgb(var(--color-border-rgb)/0.84)] pt-3">
+            {filter !== 'deleted' && canManageUsers && selectedUser?.id ? (
+              <Button variant="outline" className={compactButtonClassName} onClick={() => navigate('/admin/users/' + encodeURIComponent(selectedUser.id) + '/products')}>
+                <Package className="h-3.5 w-3.5" />
+                إدارة منتجات المستخدم
+              </Button>
+            ) : null}
             <Button variant="ghost" className={compactButtonClassName} onClick={() => setIsDetailsOpen(false)}>
               إغلاق
             </Button>

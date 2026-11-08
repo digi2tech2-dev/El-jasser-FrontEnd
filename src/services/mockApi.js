@@ -1692,7 +1692,7 @@ const mockApi = {
   
   // --- Admin User Management ---
   users: {
-      list: async ({ search = '', role, status, email } = {}) => {
+      list: async ({ search = '', role, status, email, isApiEnabled } = {}) => {
           await new Promise(resolve => setTimeout(resolve, DELAY));
           const data = getDB('admin-storage', { state: { users: mockUsers } });
         const migrated = await secureUsersInDb(data);
@@ -1706,6 +1706,7 @@ const mockApi = {
           .filter((entry) => {
             if (normalizedRole && String(entry?.role || '').trim().toLowerCase() !== normalizedRole) return false;
             if (normalizedStatus && normalizeAccountStatus(entry?.status) !== normalizedStatus) return false;
+            if (isApiEnabled != null && Boolean(entry?.isApiEnabled) !== Boolean(isApiEnabled)) return false;
             if (normalizedEmail && !String(entry?.email || '').toLowerCase().includes(normalizedEmail)) return false;
             if (!term) return true;
             return String(entry?.name || '').toLowerCase().includes(term)
@@ -1737,6 +1738,45 @@ const mockApi = {
         }
 
         return sanitizeUser(user);
+      },
+
+      listProductsForUser: async (userId) => {
+        const db = getUsersDb();
+        const migrated = await secureUsersInDb(db);
+        if (migrated) saveDB('admin-storage', db);
+        const user = (db?.state?.users || mockUsers).find((entry) => String(entry.id) === String(userId));
+        if (!user) throw new Error('User not found');
+        const products = await mockApi.products.list();
+        const overrides = new Map((user.productOverrides || []).map((item) => [String(item.productId), item]));
+        return {
+          user: { id: user.id, name: user.name, email: user.email, isApiEnabled: Boolean(user.isApiEnabled), currency: user.currency },
+          products: products.filter((product) => product.isDeleted !== true).map((product) => {
+            const override = overrides.get(String(product.id || product._id));
+            return { ...product, id: String(product.id || product._id), priceOverride: override?.priceOverride ?? null, isHiddenForUser: Boolean(override?.isHidden) };
+          }),
+        };
+      },
+
+      updateProductOverride: async (userId, productId, updates = {}) => {
+        const db = getUsersDb();
+        const migrated = await secureUsersInDb(db);
+        if (migrated) saveDB('admin-storage', db);
+        const user = (db?.state?.users || mockUsers).find((entry) => String(entry.id) === String(userId));
+        if (!user) throw new Error('User not found');
+        const productOverrides = Array.isArray(user.productOverrides) ? [...user.productOverrides] : [];
+        const rowIndex = productOverrides.findIndex((item) => String(item.productId) === String(productId));
+        const current = rowIndex >= 0 ? productOverrides[rowIndex] : { productId: String(productId) };
+        const next = {
+          ...current,
+          priceOverride: updates.priceOverride == null || String(updates.priceOverride).trim() === '' ? null : String(updates.priceOverride).trim(),
+          isHidden: updates.isHidden !== undefined ? Boolean(updates.isHidden) : Boolean(current.isHidden),
+        };
+        if (rowIndex >= 0 && next.priceOverride == null && !next.isHidden) productOverrides.splice(rowIndex, 1);
+        else if (rowIndex >= 0) productOverrides[rowIndex] = next;
+        else productOverrides.push(next);
+        user.productOverrides = productOverrides;
+        saveDB('admin-storage', db);
+        return { productId: String(productId), priceOverride: next.priceOverride, isHidden: next.isHidden };
       },
       
       updateStatus: async (userId, status, actorContext) => {

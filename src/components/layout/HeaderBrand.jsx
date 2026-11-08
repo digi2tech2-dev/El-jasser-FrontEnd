@@ -1,14 +1,21 @@
 import React from 'react';
+import { useTheme } from '../../context/ThemeContext';
+import { resolveImageUrl } from '../../utils/imageUrl';
 import BrandMark from './BrandMark';
 import { cn } from '../ui/Button';
 import headerBrandImage from '../../assets/el-jasser-card.webp';
 
-const HeaderBrand = ({ className, iconClassName, textClassName, imageOnly = false }) => (
+const HeaderBrand = ({ className, iconClassName, textClassName, imageOnly = false }) => {
+  const { publishedPlatformTheme } = useTheme();
+  const themedImage = resolveImageUrl(publishedPlatformTheme?.brand?.logoPath);
+  const logoWidth = publishedPlatformTheme?.brand?.logoWidth || 144;
+  return (
   <span dir="ltr" className={cn('inline-flex items-center gap-1.5 rounded-[14px] sm:gap-2.5', className)}>
     {imageOnly ? (
       <>
         <img
-          src={headerBrandImage}
+          src={themedImage || headerBrandImage}
+          style={themedImage ? { width: `${logoWidth}px` } : undefined}
           alt="El-Jasser Card"
           className={cn('h-7 w-auto max-w-[3.25rem] shrink-0 object-contain drop-shadow-[0_5px_10px_rgba(224,177,59,0.24)] min-[380px]:h-8 sm:h-9', iconClassName)}
           decoding="async"
@@ -19,12 +26,12 @@ const HeaderBrand = ({ className, iconClassName, textClassName, imageOnly = fals
         </span>
       </>
     ) : <>
-    <BrandMark
+    {themedImage ? <img src={themedImage} alt="El-Jasser Card" style={{ width: `${logoWidth}px` }} className={cn('h-8 shrink-0 object-contain sm:h-9', iconClassName)} /> : <BrandMark
       size="xs"
       compact
       showCaption={false}
       className={cn('scale-[0.72] min-[380px]:scale-[0.78] sm:scale-[0.84]', iconClassName)}
-    />
+    />}
     <span className={cn('min-w-0 text-center leading-none', textClassName)}>
       <span className="ka-brand-title block bg-[image:var(--brand-metal)] bg-clip-text font-['Orbitron'] text-[0.84rem] font-black leading-none tracking-[0.06em] text-transparent min-[380px]:text-[0.98rem] sm:text-[1.3rem]">
         El-Jasser
@@ -35,6 +42,7 @@ const HeaderBrand = ({ className, iconClassName, textClassName, imageOnly = fals
       </span>
     </>}
   </span>
-);
+  );
+};
 
 export default HeaderBrand;

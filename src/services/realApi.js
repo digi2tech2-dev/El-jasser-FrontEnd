@@ -114,6 +114,8 @@ const normalizePaymentSettingsResponse = (settings) => {
   });
 
   return {
+    supportContacts: source?.supportContacts && typeof source.supportContacts === 'object' ? source.supportContacts : null,
+    adminNotificationWhatsApp: String(source?.adminNotificationWhatsApp || '').trim(),
     countryAccounts: normalizeSettingArray(source?.countryAccounts)
       .map((item) => normalizeAccount(item))
       .filter((item) => item.countryCode),
@@ -1660,6 +1662,7 @@ const productToBE = (fe) => {
   if (fe.category !== undefined) body.category = fe.category;
   if (fe.category !== undefined) body.categoryId = fe.category;
   if (fe.displayOrder !== undefined) body.displayOrder = fe.displayOrder;
+  if (fe.hideFromApi !== undefined) body.hideFromApi = Boolean(fe.hideFromApi);
   if (fe.orderFields !== undefined) body.orderFields = fe.orderFields;
   if (fe.dynamicFields !== undefined) {
     body.dynamicFields = (Array.isArray(fe.dynamicFields) ? fe.dynamicFields : [])
@@ -2377,6 +2380,28 @@ const realApi = {
   },
 
   // ── Products ─────────────────────────────────────────────────────────────
+  productRecovery: {
+    providers: async () => unwrap(await http.get('/admin/product-recovery/providers')),
+    search: async (params) => unwrap(await http.get('/admin/product-recovery/search', { params, timeout: 120000 })),
+  },
+
+  platformTheme: {
+    getPublished: async () => unwrap(await publicHttp.get('/theme/published')),
+    getSettings: async () => unwrap(await http.get('/admin/theme/settings')),
+    getPresets: async () => unwrap(await http.get('/admin/theme/presets')),
+    validate: async (configuration) => unwrap(await http.post('/admin/theme/preview/validate', configuration)),
+    saveDraft: async (configuration) => unwrap(await http.post('/admin/theme/draft', configuration)),
+    resetDraft: async () => unwrap(await http.post('/admin/theme/draft/reset')),
+    publish: async (configuration) => unwrap(await http.post('/admin/theme/publish', configuration)),
+    restore: async (version) => unwrap(await http.post('/admin/theme/restore', { version })),
+    restoreToDraft: async (version) => unwrap(await http.post('/admin/theme/restore-draft', { version })),
+    getHistory: async (page = 1) => unwrap(await http.get('/admin/theme/history', { params: { page } })),
+    getSubscription: async () => unwrap(await http.get('/admin/theme/subscription')),
+    getPayments: async () => unwrap(await http.get('/admin/theme/subscription/payment-status')),
+    getReviewQueue: async () => unwrap(await http.get('/admin/theme/subscription/review-queue')),
+    uploadMedia: async (file) => { const data = new FormData(); data.append('image', file); return unwrap(await http.post('/admin/theme/media/upload', data)); },
+  },
+
   products: {
     /**
      * GET /admin/products (admin) or GET /products (customer)
@@ -2830,17 +2855,20 @@ const realApi = {
       role,
       status,
       email,
+      isApiEnabled,
     } = {}) => {
       const query = new URLSearchParams();
       query.set('page', String(page));
       query.set('limit', String(limit));
-      // Sorting is performed in the store. Only send parameters documented by
-      // the API because strict deployments reject unknown query fields.
-      void sortBy;
-      void sortOrder;
+      query.set('sortBy', String(sortBy));
+      query.set('sortOrder', String(sortOrder));
       if (String(search || '').trim()) query.set('search', String(search).trim());
       if (role) query.set('role', String(role).toUpperCase());
-      if (status) query.set('status', String(status).toUpperCase());
+      if (status) {
+        const normalizedStatus = String(status).trim().toLowerCase();
+        query.set('status', normalizedStatus === 'approved' ? 'ACTIVE' : normalizedStatus.toUpperCase());
+      }
+      if (isApiEnabled !== undefined && isApiEnabled !== null) query.set('isApiEnabled', String(Boolean(isApiEnabled)));
       if (email) query.set('email', String(email).trim());
       const res = await http.get(`/admin/users?${query}`);
       const body = res.data || {};
@@ -2908,6 +2936,20 @@ const realApi = {
       const res = await http.get(`/admin/users/${normalizedUserId}`);
       const data = unwrap(res);
       return normaliseUser(data?.user || data);
+    },
+
+    listProductsForUser: async (userId) => {
+      const normalizedUserId = String(userId || '').trim();
+      if (!normalizedUserId) return null;
+      const data = unwrap(await http.get(`/admin/users/${normalizedUserId}/products`));
+      return { user: data?.user || null, products: Array.isArray(data?.products) ? data.products : [] };
+    },
+
+    updateProductOverride: async (userId, productId, updates) => {
+      const normalizedUserId = String(userId || '').trim();
+      const normalizedProductId = String(productId || '').trim();
+      const data = unwrap(await http.patch(`/admin/users/${normalizedUserId}/products/${normalizedProductId}`, updates));
+      return data;
     },
 
     /**
@@ -4212,6 +4254,8 @@ const realApi = {
           instructions: find('paymentInstructions'),
           whatsappNumber: find('whatsappNumber'),
           paymentGroups: find('paymentGroups'),
+          supportContacts: find('supportContacts'),
+          adminNotificationWhatsApp: find('adminNotificationWhatsApp'),
         });
         return normalized;
       } catch (error) {
@@ -4268,12 +4312,16 @@ const realApi = {
         ...(payload?.paymentGroups !== undefined ? {
           paymentGroups: serializePaymentGroupsForApi(payload.paymentGroups),
         } : {}),
+        ...(payload?.supportContacts !== undefined ? { supportContacts: payload.supportContacts } : {}),
+        ...(payload?.adminNotificationWhatsApp !== undefined ? { adminNotificationWhatsApp: String(payload.adminNotificationWhatsApp || '').trim() } : {}),
       };
       const keyMap = {
         countryAccounts: 'paymentCountryAccounts',
         instructions: 'paymentInstructions',
         whatsappNumber: 'whatsappNumber',
         paymentGroups: 'paymentGroups',
+        supportContacts: 'supportContacts',
+        adminNotificationWhatsApp: 'adminNotificationWhatsApp',
       };
       const updates = Object.entries(keyMap)
         .filter(([feKey]) => normalizedPayload[feKey] !== undefined)
@@ -4290,6 +4338,8 @@ const realApi = {
         instructions: find('paymentInstructions'),
         whatsappNumber: find('whatsappNumber'),
         paymentGroups: find('paymentGroups'),
+          supportContacts: find('supportContacts'),
+          adminNotificationWhatsApp: find('adminNotificationWhatsApp'),
       });
     },
 

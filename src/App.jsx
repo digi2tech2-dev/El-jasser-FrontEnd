@@ -2,6 +2,8 @@ import React, { Suspense, lazy, useState } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Download, ExternalLink, X } from 'lucide-react';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminScreenGuard from './components/auth/AdminScreenGuard';
+import './components/auth/AdminScreenGuard.css';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import AdminBottomNav from './components/layout/AdminBottomNav';
@@ -10,6 +12,7 @@ import SessionBootstrap from './components/app/SessionBootstrap';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
 import AppUpdateController from './components/app/AppUpdateController';
+import PullToRefresh from './components/app/PullToRefresh';
 import appLogo from './assets/elgny.webp';
 import appIconImage from './assets/تطبيق.jpeg';
 import { LanguageProvider } from './context/LanguageContext';
@@ -47,8 +50,12 @@ const Account = lazy(routeLoaders.Account);
 const AccountSecurity = lazy(routeLoaders.AccountSecurity);
 const Referral = lazy(routeLoaders.Referral);
 const AdminUsers = lazy(routeLoaders.AdminUsers);
+const AdminUserProducts = lazy(routeLoaders.AdminUserProducts);
 const AdminGroups = lazy(routeLoaders.AdminGroups);
 const AdminProducts = lazy(routeLoaders.AdminProducts);
+const ProductRecovery = lazy(routeLoaders.ProductRecovery);
+const PlatformThemeEditor = lazy(routeLoaders.PlatformThemeEditor);
+const PlatformThemeSubscriptions = lazy(routeLoaders.PlatformThemeSubscriptions);
 const AdminWallet = lazy(routeLoaders.AdminWallet);
 const AdminReferrals = lazy(routeLoaders.AdminReferrals);
 const AdminCurrencies = lazy(routeLoaders.AdminCurrencies);
@@ -391,6 +398,14 @@ const AnimatedAppRoutes = ({ location }) => {
           )}
         />
         <Route
+          path="/admin/users/:userId/products"
+          element={(
+            <ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_USERS}>
+              {renderSuspended(<AdminUserProducts />)}
+            </ProtectedRoute>
+          )}
+        />
+        <Route
           path="/admin/users"
           element={(
             <ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_USERS}>
@@ -406,6 +421,15 @@ const AnimatedAppRoutes = ({ location }) => {
             </ProtectedRoute>
           )}
         />
+        <Route path="/admin/themes" element={<ProtectedRoute roles={['admin']}>
+          {renderSuspended(<PlatformThemeEditor />)}
+        </ProtectedRoute>} />
+        <Route path="/admin/theme/subscriptions" element={<ProtectedRoute roles={['admin']}>
+          {renderSuspended(<PlatformThemeSubscriptions />)}
+        </ProtectedRoute>} />
+        <Route path="/admin/product-recovery" element={<ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_PRODUCTS}>
+          {renderSuspended(<ProductRecovery />)}
+        </ProtectedRoute>} />
         <Route
           path="/admin/products"
           element={(
@@ -621,6 +645,8 @@ function App() {
             </PageTransition>
             <MobileBottomNav />
             <AdminBottomNav />
+            <AdminScreenGuard />
+            <PullToRefresh />
             <FloatingWhatsApp />
             <LoginAfterIntroPrompt
               isOpen={showLoginPrompt}

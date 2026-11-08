@@ -18,7 +18,8 @@ const WALLETS_CACHE_TTL = isRealProvider ? 15 * 1000 : 60 * 1000;
 const USERS_PAGE_LIMIT = 100;
 const USERS_DEFAULT_SORT_BY = 'walletBalance';
 const USERS_DEFAULT_SORT_ORDER = 'desc';
-let usersRequest = null;
+const usersRequests = new Map();
+let activeUsersRequestKey = '';
 let walletsRequest = null;
 const walletTransactionsRequests = new Map();
 
@@ -36,6 +37,19 @@ const sortUsersByBalanceDesc = (users) => (
   [...(Array.isArray(users) ? users : [])]
     .sort((left, right) => getUserBalanceForSort(right) - getUserBalanceForSort(left))
 );
+
+const sortUsersForList = (users, sortBy = USERS_DEFAULT_SORT_BY, sortOrder = USERS_DEFAULT_SORT_ORDER) => {
+  const direction = sortOrder === 'asc' ? 1 : -1;
+  const getValue = (entry) => {
+    if (sortBy === 'walletBalance') return getUserBalanceForSort(entry);
+    if (sortBy === 'createdAt') return new Date(entry?.createdAt || entry?.joinDate || entry?.registeredAt || 0).getTime() || 0;
+    return String(entry?.[sortBy] || '').toLocaleLowerCase();
+  };
+  return [...(Array.isArray(users) ? users : [])].sort((left, right) => {
+    const a = getValue(left); const b = getValue(right);
+    return (typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b))) * direction;
+  });
+};
 
 const getCurrencyRate = (currencies, currencyCode) => {
   const normalizedCode = String(currencyCode || 'USD').toUpperCase();
@@ -220,39 +234,46 @@ const useAdminStore = create((set, get) => ({
 
       appendAdminActivity: (entry) => appendAdminActivity(set, entry),
 
-      loadUsers: async ({ force = false, page } = {}) => {
+      loadUsers: async (options = {}) => {
+        const {
+          force = false, page, search = '', status, role, sortBy = USERS_DEFAULT_SORT_BY,
+          sortOrder = USERS_DEFAULT_SORT_ORDER, isApiEnabled,
+        } = options;
         const requestedPageCandidate = Number(page ?? get().usersCurrentPage ?? 1);
         const requestedPage = Number.isFinite(requestedPageCandidate) && requestedPageCandidate > 0
           ? Math.floor(requestedPageCandidate)
           : 1;
-        const { users, usersLastLoadedAt } = get();
-        const hasUsers = Array.isArray(users) && users.length > 0;
-        const shouldBypassHydratedCache = isRealProvider && !hasFetchedAdminUsersFromBackendThisSession;
-        const hasFreshUsers = !shouldBypassHydratedCache
-          && hasUsers
-          && !page
-          && (Date.now() - Number(usersLastLoadedAt || 0) < USERS_CACHE_TTL);
-
-        if (!force && hasFreshUsers) {
-          return users;
-        }
-
-        if (usersRequest) {
-          return usersRequest;
-        }
-
-        set({ isLoadingUsers: true });
-
-        usersRequest = apiClient.users.list({
+        const requestOptions = {
           page: requestedPage,
           limit: USERS_PAGE_LIMIT,
-          sortBy: USERS_DEFAULT_SORT_BY,
-          sortOrder: USERS_DEFAULT_SORT_ORDER,
-        })
+          sortBy,
+          sortOrder,
+          ...(String(search || '').trim() ? { search: String(search).trim() } : {}),
+          ...(status ? { status } : {}),
+          ...(role ? { role } : {}),
+          ...(isApiEnabled !== undefined && isApiEnabled !== null ? { isApiEnabled: Boolean(isApiEnabled) } : {}),
+        };
+        const requestKey = JSON.stringify(requestOptions);
+        activeUsersRequestKey = requestKey;
+        const { users, usersLastLoadedAt } = get();
+        const hasUsers = Array.isArray(users) && users.length > 0;
+        const hasScopedQuery = Boolean(search || status || role || isApiEnabled !== undefined);
+        const shouldBypassHydratedCache = isRealProvider && !hasFetchedAdminUsersFromBackendThisSession;
+        const hasFreshUsers = !force
+          && !shouldBypassHydratedCache
+          && hasUsers
+          && !page
+          && !hasScopedQuery
+          && (Date.now() - Number(usersLastLoadedAt || 0) < USERS_CACHE_TTL);
+
+        if (hasFreshUsers) return users;
+        if (usersRequests.has(requestKey)) return usersRequests.get(requestKey);
+        set({ isLoadingUsers: true });
+
+        const request = apiClient.users.list(requestOptions)
           .then(async (result) => {
-            // Handle both old (array) and new ({ users, pagination }) response shapes
             const items = Array.isArray(result) ? result : (result?.users || []);
-            const nextUsers = sortUsersByBalanceDesc(items.length ? items : (isRealProvider ? [] : mockUsers));
+            const nextUsers = sortUsersForList(items.length ? items : (isRealProvider ? [] : mockUsers), sortBy, sortOrder);
             const pagination = result?.pagination || null;
             const currentPage = Number.isFinite(Number(pagination?.page))
               ? Math.floor(Number(pagination.page))
@@ -260,6 +281,7 @@ const useAdminStore = create((set, get) => ({
             const nextDeletedUsers = apiClient.users.listDeleted
               ? await apiClient.users.listDeleted().catch(() => [])
               : [];
+            if (activeUsersRequestKey !== requestKey) return nextUsers;
             set({
               users: nextUsers,
               deletedUsers: Array.isArray(nextDeletedUsers) ? nextDeletedUsers : [],
@@ -268,32 +290,30 @@ const useAdminStore = create((set, get) => ({
               usersLastLoadedAt: Date.now(),
               isLoadingUsers: false,
             });
-
-            if (isRealProvider) {
-              hasFetchedAdminUsersFromBackendThisSession = true;
-            }
+            if (isRealProvider) hasFetchedAdminUsersFromBackendThisSession = true;
             return nextUsers;
           })
-          .catch((_error) => {
-            if (!hasUsers) {
-              set({ users: sortUsersByBalanceDesc(isRealProvider ? [] : mockUsers) });
+          .catch(() => {
+            if (activeUsersRequestKey === requestKey) {
+              if (!hasUsers) set({ users: sortUsersByBalanceDesc(isRealProvider ? [] : mockUsers) });
+              set({ isLoadingUsers: false });
             }
-            set({ isLoadingUsers: false });
             return get().users;
           })
           .finally(() => {
-            usersRequest = null;
+            usersRequests.delete(requestKey);
+            if (activeUsersRequestKey === requestKey) set({ isLoadingUsers: false });
           });
-
-        return usersRequest;
+        usersRequests.set(requestKey, request);
+        return request;
       },
 
-      loadUsersPage: async (page) => {
+      loadUsersPage: async (page, filters = {}) => {
         const requestedPageCandidate = Number(page);
         const requestedPage = Number.isFinite(requestedPageCandidate) && requestedPageCandidate > 0
           ? Math.floor(requestedPageCandidate)
           : 1;
-        return get().loadUsers({ force: true, page: requestedPage });
+        return get().loadUsers({ ...filters, force: true, page: requestedPage });
       },
 
       getUserById: async (userId, { force = false } = {}) => {

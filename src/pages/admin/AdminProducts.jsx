@@ -395,6 +395,7 @@ const AdminProducts = () => {
         // =====================================================
         productStatus: 'available',
         isVisibleInStore: true,
+        hideFromApi: false,
         showWhenUnavailable: true,
         pauseSales: false,
         pauseReason: '',
@@ -870,6 +871,7 @@ const AdminProducts = () => {
                 status: product.status || 'active',
                 productStatus: String(product.productStatus || '').trim().toLowerCase() === 'unavailable' ? 'unavailable' : 'available',
                 isVisibleInStore: product.isVisibleInStore !== false,
+                hideFromApi: Boolean(product.hideFromApi),
                 showWhenUnavailable: product.showWhenUnavailable !== undefined
                     ? Boolean(product.showWhenUnavailable)
                     : String(product.productStatus || '').trim().toLowerCase() === 'unavailable',
@@ -925,6 +927,7 @@ const AdminProducts = () => {
                 status: 'active',
                 productStatus: 'available',
                 isVisibleInStore: true,
+                hideFromApi: false,
                 showWhenUnavailable: true,
                 pauseSales: false,
                 pauseReason: '',
@@ -1109,6 +1112,7 @@ const AdminProducts = () => {
             // إعدادات المنتج
             productStatus: availabilityStatus,
             isVisibleInStore: showProduct,
+            hideFromApi: Boolean(productForm.hideFromApi),
             showWhenUnavailable: showProduct && availabilityStatus === 'unavailable',
             pauseSales: productForm.pauseSales,
             pauseReason: productForm.pauseReason,
@@ -2619,6 +2623,12 @@ const AdminProducts = () => {
 
                     {/* Preview حالة المنتج النهائية */}
                     {productFormStep === 'fields' ? (
+                    <>
+                    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-900/20">
+                        <input type="checkbox" checked={Boolean(productForm.hideFromApi)} onChange={(event) => setProductForm((prev) => ({ ...prev, hideFromApi: event.target.checked }))} className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                        <span><span className="block text-sm font-semibold text-gray-900 dark:text-white">{isEnglish ? 'Hide product from API' : '\u0625\u062e\u0641\u0627\u0621 \u0627\u0644\u0645\u0646\u062a\u062c \u0645\u0646 \u0627\u0644 API'}</span><span className="mt-1 block text-xs text-gray-600 dark:text-gray-300">{isEnglish ? 'The product stays visible on the website, but is omitted from connected API catalogs.' : '\u0633\u064a\u0638\u0644 \u0627\u0644\u0645\u0646\u062a\u062c \u0638\u0627\u0647\u0631\u064b\u0627 \u062f\u0627\u062e\u0644 \u0627\u0644\u0645\u0648\u0642\u0639\u060c \u0648\u0644\u0646 \u064a\u0638\u0647\u0631 \u0641\u064a \u0642\u0648\u0627\u0626\u0645 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0639\u0628\u0631 API.'}</span></span>
+                    </label>
+
                     <div className="space-y-2 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:border-indigo-900 dark:bg-indigo-900/20">
                         <h4 className="font-semibold text-indigo-900 dark:text-indigo-100">معاينة: كيف سيبدو المنتج للعميل</h4>
                         {(() => {
@@ -2643,6 +2653,7 @@ const AdminProducts = () => {
                             );
                         })()}
                     </div>
+                    </>
                     ) : null}
 
                     <div className="grid grid-cols-2 gap-2 border-t border-[color:rgb(var(--color-border-rgb)/0.7)] pt-4 sm:flex sm:justify-end">

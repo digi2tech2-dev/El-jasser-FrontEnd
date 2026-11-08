@@ -2,9 +2,11 @@ import React from 'react';
 import { ArrowUpLeft, Clock3, Headphones, MessageCircle, Phone, ShieldCheck } from 'lucide-react';
 import Modal from './Modal';
 import { buildPhoneLink, buildWhatsAppLink, getSupportContacts } from '../../utils/whatsapp';
+import useSystemStore from '../../store/useSystemStore';
 
 const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true }) => {
-  const contacts = getSupportContacts();
+  const contactsSetting = useSystemStore((state) => state.paymentSettings?.supportContacts);
+  const contacts = getSupportContacts(contactsSetting);
 
   const openContact = (contact) => {
     if (contact.type === 'phone') {
