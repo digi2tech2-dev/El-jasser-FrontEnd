@@ -1752,7 +1752,7 @@ const mockApi = {
           user: { id: user.id, name: user.name, email: user.email, isApiEnabled: Boolean(user.isApiEnabled), currency: user.currency },
           products: products.filter((product) => product.isDeleted !== true).map((product) => {
             const override = overrides.get(String(product.id || product._id));
-            return { ...product, id: String(product.id || product._id), priceOverride: override?.priceOverride ?? null, isHiddenForUser: Boolean(override?.isHidden) };
+            return { ...product, id: String(product.id || product._id), priceOverride: override?.priceOverride ?? null, isHiddenForUser: Boolean(override?.isHidden), isHiddenFromApiForUser: Boolean(override?.isHiddenFromApi) };
           }),
         };
       },
@@ -1770,13 +1770,16 @@ const mockApi = {
           ...current,
           priceOverride: updates.priceOverride == null || String(updates.priceOverride).trim() === '' ? null : String(updates.priceOverride).trim(),
           isHidden: updates.isHidden !== undefined ? Boolean(updates.isHidden) : Boolean(current.isHidden),
+          isHiddenFromApi: updates.isHiddenFromApi !== undefined ? Boolean(updates.isHiddenFromApi) : Boolean(current.isHiddenFromApi),
         };
-        if (rowIndex >= 0 && next.priceOverride == null && !next.isHidden) productOverrides.splice(rowIndex, 1);
+        if (next.priceOverride == null && !next.isHidden && !next.isHiddenFromApi) {
+          if (rowIndex >= 0) productOverrides.splice(rowIndex, 1);
+        }
         else if (rowIndex >= 0) productOverrides[rowIndex] = next;
         else productOverrides.push(next);
         user.productOverrides = productOverrides;
         saveDB('admin-storage', db);
-        return { productId: String(productId), priceOverride: next.priceOverride, isHidden: next.isHidden };
+        return { productId: String(productId), priceOverride: next.priceOverride, isHidden: next.isHidden, isHiddenFromApi: next.isHiddenFromApi };
       },
       
       updateStatus: async (userId, status, actorContext) => {
