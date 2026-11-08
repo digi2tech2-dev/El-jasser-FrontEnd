@@ -18,6 +18,12 @@ export default function ProductRecovery() {
   const [error, setError] = useState('');
   const requestId = useRef(0);
   const pendingSearchTimer = useRef(null);
+  const warningDialogRef = useRef(null);
+
+  useEffect(() => {
+    const dialog = warningDialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+  }, []);
 
   useEffect(() => {
     apiClient.productRecovery.providers()
@@ -25,12 +31,12 @@ export default function ProductRecovery() {
       .catch(() => setError(ar ? 'تعذر تحميل الموردين.' : 'Could not load providers.'));
   }, [ar]);
 
-  const search = async (nextPage = 1) => {
+  const search = async (nextPage = 1, refresh = false) => {
     const id = ++requestId.current;
     setLoading(true);
     setError('');
     try {
-      const data = await apiClient.productRecovery.search({ ...query, page: nextPage, limit: 24 });
+      const data = await apiClient.productRecovery.search({ ...query, page: nextPage, limit: 24, refresh });
       if (!data || !Array.isArray(data.items)) throw new Error('Invalid response');
       if (requestId.current === id) {
         setResults(data);
@@ -75,17 +81,38 @@ export default function ProductRecovery() {
 
   return (
     <main dir={ar ? 'rtl' : 'ltr'} className="mx-auto max-w-7xl space-y-5 px-3 py-5 sm:px-6">
+      <dialog
+        ref={warningDialogRef}
+        aria-labelledby="recovery-currency-warning-title"
+        aria-describedby="recovery-currency-warning-message"
+        onCancel={(event) => event.preventDefault()}
+        className="fixed inset-0 m-auto w-[92vw] max-w-md rounded-2xl border border-amber-500/40 bg-[var(--color-card)] p-0 text-[var(--color-text)] shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      >
+        <div className="space-y-4 p-5 sm:p-6">
+          <h2 id="recovery-currency-warning-title" className="text-lg font-black text-amber-600">{ar ? 'تنبيه هام' : 'Important notice'}</h2>
+          <p id="recovery-currency-warning-message" className="text-sm leading-7">
+            {ar
+              ? 'يرجى التأكد أن جميع الموردين بعملة الدولار، وإذا كان غير ذلك يُنصح بعدم استخدام استرداد المنتجات. شكرًا لتفهمكم.'
+              : 'Please make sure all suppliers use US dollars. If any supplier uses another currency, we recommend not using product recovery. Thank you for your understanding.'}
+          </p>
+          <form method="dialog" className="flex justify-end">
+            <button autoFocus type="submit" className="rounded-xl bg-[var(--color-primary)] px-6 py-2.5 text-sm font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]">
+              {ar ? 'موافق' : 'OK'}
+            </button>
+          </form>
+        </div>
+      </dialog>
       <header className="rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-slate-900 to-cyan-950 p-5 text-white">
         <PackageSearch className="mb-3 h-8 w-8 text-cyan-300" />
         <h1 className="text-2xl font-black">{ar ? 'استرداد المنتجات' : 'Product recovery'}</h1>
-        <p className="mt-2 text-sm text-slate-300">{ar ? 'ابحث مباشرةً في الموردين النشطين وقارن الأسعار المؤكدة.' : 'Search active suppliers and compare confirmed prices.'}</p>
+        <p className="mt-2 text-sm text-slate-300">{ar ? 'ابحث في الموردين النشطين واعرض أسعارهم كما أرسلوها. زر البحث يجلب أحدث الأسعار.' : 'Search active suppliers and see their prices as provided. Search fetches fresh prices.'}</p>
       </header>
 
       <form onSubmit={(event) => {
         event.preventDefault();
         clearTimeout(pendingSearchTimer.current);
         pendingSearchTimer.current = null;
-        void search(1);
+        void search(1, true);
       }} className="space-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-4">
         <div className="grid grid-cols-3 items-end gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-5">
           <label className="col-span-2 min-w-0 order-1 sm:col-span-2 2xl:order-1 2xl:col-span-1">
@@ -136,7 +163,7 @@ export default function ProductRecovery() {
               <div className="min-w-0 flex-1">
                 <h2 className="break-words font-black">{item.name}</h2>
                 <p className="mt-1 text-xs text-[var(--color-text-secondary)]">{ar ? 'المورد:' : 'Supplier:'} {item.providerName} · {item.available === null ? (ar ? 'التوفر غير مؤكد' : 'Availability unconfirmed') : item.available ? (ar ? 'متاح' : 'Available') : (ar ? 'غير متاح' : 'Unavailable')}</p>
-                <p className="mt-1 text-sm font-bold">{item.price != null ? String(item.price) + ' ' + String(item.currency || '') : (ar ? 'السعر أو العملة غير مؤكدين' : 'Price or currency unconfirmed')}</p>
+                <p className="mt-1 text-sm font-bold">{item.price != null ? String(item.price) + (item.currency ? ' ' + item.currency : '') : (ar ? 'السعر غير متاح من المورد' : 'Supplier price unavailable')}</p>
                 <p className="text-xs text-[var(--color-text-secondary)]">{item.limitsVerified ? String(item.minQty) + ' – ' + String(item.maxQty) : (ar ? 'الحدود تحتاج مراجعة' : 'Limits need review')}</p>
                 {item.description && <p className="mt-1 line-clamp-2 text-xs text-[var(--color-text-secondary)]">{item.description}</p>}
               </div>
