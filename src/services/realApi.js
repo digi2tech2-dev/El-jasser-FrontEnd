@@ -1858,6 +1858,11 @@ const isAdmin = () => {
 
 const realApi = {
 
+  maintenance: {
+    getStatus: async () => unwrap(await http.get('/maintenance/status', { headers: { 'Cache-Control': 'no-cache' } })),
+    setEnabled: async (enabled) => unwrap(await http.patch('/maintenance/status', { enabled })),
+  },
+
   quota: {
     getMine: async () => {
       const res = await http.get('/me/quota');
@@ -2383,6 +2388,8 @@ const realApi = {
   productRecovery: {
     providers: async () => unwrap(await http.get('/admin/product-recovery/providers')),
     search: async (params) => unwrap(await http.get('/admin/product-recovery/search', { params, timeout: 120000 })),
+    uploadImage: async (file) => { const formData = new FormData(); formData.append('image', file); const data = unwrap(await http.post('/upload/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } })); return data?.path; },
+    publish: async (products) => unwrap(await http.post('/admin/product-recovery/publish', { products }, { timeout: 120000 })),
   },
 
   platformTheme: {

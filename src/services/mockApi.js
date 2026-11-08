@@ -22,6 +22,7 @@ import {
 } from '../utils/transactionCurrency';
 
 const DELAY = 800; // Simulated network latency in ms
+let mockMaintenanceEnabled = false;
 const ACCOUNT_SECURITY_STORAGE_KEY = 'ka-card-account-security-v1';
 const AUTH_STORAGE_KEY = 'auth-storage';
 
@@ -641,6 +642,19 @@ const defaultPaymentSettings = {
 
 // --- Mock API Service ---
 const mockApi = {
+
+  maintenance: {
+    getStatus: async () => {
+      await new Promise((resolve) => setTimeout(resolve, DELAY));
+      const role = String(getStoredAuthState()?.user?.role || '').toLowerCase();
+      return { enabled: mockMaintenanceEnabled, canBypass: role === 'admin' };
+    },
+    setEnabled: async (enabled) => {
+      await new Promise((resolve) => setTimeout(resolve, DELAY));
+      mockMaintenanceEnabled = enabled === true;
+      return { enabled: mockMaintenanceEnabled, canBypass: true };
+    },
+  },
 
   uploads: {
     orderFieldImage: async (file) => {

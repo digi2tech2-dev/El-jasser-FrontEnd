@@ -27,6 +27,7 @@ import useMediaStore from '../store/useMediaStore';
 import useSystemStore from '../store/useSystemStore';
 import apiClient from '../services/client';
 import DashboardHeader from '../components/admin-dashboard/DashboardHeader';
+import MaintenanceControl from '../components/admin-dashboard/MaintenanceControl';
 import StatsGrid from '../components/admin-dashboard/StatsGrid';
 import RecentOrdersSection from '../components/admin-dashboard/RecentOrdersSection';
 import ManualTopupsSection from '../components/admin-dashboard/ManualTopupsSection';
@@ -1069,6 +1070,8 @@ const AdminDashboard = () => {
         userName={user?.name}
         currentDateLabel={currentDateLabel}
       />
+
+      <MaintenanceControl />
 
       <Card variant="premium" className="admin-dashboard-filter-card overflow-visible p-4 sm:p-6">
         <DashboardDateRangeFilter

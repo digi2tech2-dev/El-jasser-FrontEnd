@@ -13,6 +13,7 @@ import RouteErrorBoundary from './components/app/RouteErrorBoundary';
 import IntroSplash from './components/app/IntroSplash';
 import AppUpdateController from './components/app/AppUpdateController';
 import PullToRefresh from './components/app/PullToRefresh';
+import MaintenanceBoundary from './components/app/MaintenanceBoundary';
 import appLogo from './assets/elgny.webp';
 import appIconImage from './assets/تطبيق.jpeg';
 import { LanguageProvider } from './context/LanguageContext';
@@ -636,6 +637,7 @@ function App() {
         <ToastProvider>
           <BrowserRouter>
             <SessionBootstrap />
+            <MaintenanceBoundary>
             {!isAuthenticated && (
               <IntroSplash onComplete={() => setShowLoginPrompt(true)} />
             )}
@@ -657,6 +659,7 @@ function App() {
               }}
             />
             <WhatsappChannelPrompt isOpen={showWhatsappPrompt} onClose={() => setShowWhatsappPrompt(false)} />
+            </MaintenanceBoundary>
           </BrowserRouter>
         </ToastProvider>
       </LanguageProvider>
